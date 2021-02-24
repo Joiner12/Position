@@ -1,4 +1,12 @@
-function my_closereq(f)
+function figure_closereq(f)
+% 功能:
+%       
+% 定义:
+%       
+% 输入:
+%       
+% 输出:
+%   
 selection = questdlg('Close the figure window?',...
     'Confirmation',...
     'Yes','No','Yes');
