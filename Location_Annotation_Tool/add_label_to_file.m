@@ -11,7 +11,7 @@ function add_label_to_file(lat,lon,src_file,tar_file)
 
 %------------------ 读取原始文件 ------------------%
 origin_file = src_file;
-src_file_id = fopen(origin_file);
+src_file_id = fopen(origin_file,'r');
 src_data = cell(0);
 cnt = 1;
 while ~feof(src_file_id)
@@ -25,23 +25,37 @@ fclose(src_file_id);
 %------------------ 添加标签 ------------------%
 target_file = tar_file;
 tar_file_id = fopen(target_file,'w+');
-loc_label = sprintf('$TRUPS   %.8f    %.8f\n',lat,lon);
+
 pre_splitStr = cell(1,1);
 src_data_len = length(src_data);
+pre_APMSG_str = '';
+loc_label='';
 for i = 1:1:src_data_len
-    line_temp = src_data{i};
-    line_temp = strtrim(line_temp);
+    origin_line = src_data{i};
+    line_temp = strtrim(origin_line);
     expression = '\s+';
     splitStr = regexp(line_temp,expression,'split');
     % 判断以'$APMSG'开头的行,以'$TRUPS'开始的行
     if ~isempty(splitStr) ...
             && strcmp(splitStr{1},'HEAD') ...
             && strcmp(pre_splitStr{1},'$APMSG')
-        fprintf(tar_file_id,loc_label);
+        
+
+        APMSG_str_temp = pre_APMSG_str;
+        expr = '\d{1,}\.\d{1,}';
+        [head,talil] = regexp(APMSG_str_temp,expr);
+        lat_str_temp = sprintf('%0.8f',lat);
+        lon_str_temp = sprintf('%0.8f',lon);
+        space_cnt = head(2)-head(1)-length(lat_str_temp);
+        space_cnt_1 = head(1)-length('$TRUPS')-1;
+        loc_label = sprintf('$TRUPS%*s%.8f%*s%.8f\n',space_cnt_1,...
+            '',lat,space_cnt,'',lon);
+        fprintf(tar_file_id,'%s\n\n',loc_label);
     end
     % 原始数据
-    fprintf(tar_file_id,strcat(line_temp,'\n'));
+    fprintf(tar_file_id,strcat(origin_line,'\n'));
     pre_splitStr = splitStr;
+    pre_APMSG_str = origin_line;
     % 最后一帧数据位置标签
     if isequal(i,src_data_len)
         fprintf(tar_file_id,loc_label);
