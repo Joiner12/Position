@@ -67,6 +67,7 @@ src_file_temp = regexp(origin_file,'\\','split');
 name_temp = strsplit(src_file_temp{end},'.');
 tar_file_name = strcat(name_temp{1},'-added_lat_lon','.',name_temp{end});
 target_file = fullfile(target_folder,tar_file_name);
+% add_label_to_file(lat,lon,origin_file,target_file);
 add_label_to_file(lat,lon,origin_file,target_file);
 ananoted_file = target_file;
 fprintf('%s\n添加位置标签lat:%0.7f lon:%0.7f 完成...\n保存于:%s\n', ...
