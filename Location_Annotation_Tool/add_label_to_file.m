@@ -39,13 +39,10 @@ for i = 1:1:src_data_len
     if ~isempty(splitStr) ...
             && strcmp(splitStr{1},'HEAD') ...
             && strcmp(pre_splitStr{1},'$APMSG')
-        
-
         APMSG_str_temp = pre_APMSG_str;
         expr = '\d{1,}\.\d{1,}';
-        [head,talil] = regexp(APMSG_str_temp,expr);
+        [head,~] = regexp(APMSG_str_temp,expr);
         lat_str_temp = sprintf('%0.8f',lat);
-        lon_str_temp = sprintf('%0.8f',lon);
         space_cnt = head(2)-head(1)-length(lat_str_temp);
         space_cnt_1 = head(1)-length('$TRUPS')-1;
         loc_label = sprintf('$TRUPS%*s%.8f%*s%.8f\n',space_cnt_1,...
