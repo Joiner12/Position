@@ -35,7 +35,7 @@ dist = linspace(1,18,18);
 clearvars -except cm_* m_* kur* dist mean* rssi* ske* varian* std_*
 
 %% 整体统计分析;
-f = figure('name','norm-analysis','Color',[1 1 1]);
+figure('name','norm-analysis','Color',[1 1 1]);
 
 subplot(2,2,1)
 plot_py(dist,mean_vals)
@@ -76,3 +76,5 @@ for i=1:1:18
     saveas(gcf,sprintf('std-rssi-test-%.0fm分析',i));
 end
 tcf;
+
+%% 

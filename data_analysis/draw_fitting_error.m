@@ -42,7 +42,6 @@ hold on
 bar(distance,fitting_error,'FaceColor','none');
 yyaxis right
 set(get(gca, 'YLabel'), 'String', '拟合距离误差/m');
-% 时便携设备接收到的无线信号RSSI强度的
 set(get(gca, 'Title'), 'String', '拟合误差折线图');
 lg_1 = legend(gca,{'原始数据','拟合结果','拟合误差'});
 lg_1.Box = 'off';
@@ -50,7 +49,7 @@ grid minor
 %% 拟合误差
 subplot(212)
 bf = bar(distance,fitting_error,'LineWidth',0.1);
-bf.EdgeColor = 'none';
+% bf.EdgeColor = 'none';
 bf.FaceColor = [0, 191, 255]./255;
 set(get(gca, 'Title'), 'String', '拟合误差');
 set(get(gca, 'XLabel'), 'String', '距离/m');
