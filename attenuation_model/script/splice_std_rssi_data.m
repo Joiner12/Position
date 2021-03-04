@@ -78,3 +78,11 @@ end
 tcf;
 
 %% 
+clearvars -except cm_* m_* kur* dist* mean* rssi* ske* varian* std_*
+
+%% ·Ö¶ÎÄâºÏ
+clc;
+dist_1 = dist(1:5);
+dist_2 = dist(6:end);
+rssi_1 = rssi_gmfs(1:5);
+rssi_2 = rssi_gmfs(6:end);
