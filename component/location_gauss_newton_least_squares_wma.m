@@ -2,14 +2,15 @@ function pos_res = location_gauss_newton_least_squares_wma(ap, param)
 %功能：高斯牛顿迭代最小二乘算法（加权质心结果为初始点）
 %定义：pos_res = location_gauss_newton_least_squares_wma(ap, param)
 %参数： 
-%    ap：待滤波的ap数据
+%    ap：用于计算经纬度的参考点信息
 %    param：函数参数,具体如下
 %           param.iterative_num_max：迭代次数上限
 %输出：
 %    pos_res：计算的位置结果，数据为结构体，包含元素如下：
 %             pos_res.lat：纬度
 %             pos_res.lon：经度
-
+    global test_num;
+    center_flag_test = 0;
     %% 提取ap数据
     ap_num = length(ap);
     rssi_kf = zeros(ap_num, 1);
@@ -81,6 +82,11 @@ function pos_res = location_gauss_newton_least_squares_wma(ap, param)
             elseif abs(error) > iterative_thr * 10
                 %误差大于10倍门限，认为发散，使用质心位置
                 type3_w = centre_pos;
+                
+                if center_flag_test == 0
+                    test_num = test_num + 1;
+                    center_flag_test = 1;
+                end
             else
                 %正常迭代
                 init_pos = type3_w;
@@ -89,7 +95,7 @@ function pos_res = location_gauss_newton_least_squares_wma(ap, param)
 
         %当前算法不支持跨时域
         [pos_res.lat, pos_res.lon] = xy_to_latlon(type3_w.x, type3_w.y, lom(end));
-    elseif ap_num == 0
+    elseif ap_num == 1
         [pos_res.lat, pos_res.lon] = xy_to_latlon(x(1), y(1), lom(1));
     else
         pos_res = [];
