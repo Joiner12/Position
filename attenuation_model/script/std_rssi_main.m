@@ -78,3 +78,33 @@ end
 tcf;
 
 %% 
+clearvars -except cm_* m_* kur* dist* mean* rssi* ske* varian* std_*
+
+%% 分段拟合
+clc;
+dist_1 = dist(1:5);
+dist_2 = dist(6:end);
+rssi_1 = rssi_gmfs(1:5);
+rssi_2 = rssi_gmfs(6:end);
+
+%% 将不同测量结果绘制到一张图上
+clc;
+lgds = cell(size(std_rssi_all));
+tcf('fl');
+figure('name','fl','Color',[1 1 1]);
+markers = ['o','*','+','x','s','d','^','>','<','p','h'];
+for i=1:1:length(std_rssi_all)
+   curdata = std_rssi_all{i,1};
+   info_temp = curdata.info;
+   rssi_temp = curdata.rssi;
+   plot(linspace(1,length(rssi_temp),length(rssi_temp)),... 
+   rssi_temp,'LineWidth',0.2,'MarkerSize',5,...
+   'Marker',markers(randi(length(markers))),...
+   'Color',rand(3,1));
+   hold on
+   lgds{i,1} = info_temp;
+end
+set(get(gca,'Title'),'String','不同距离信号强度时间序列（静态）')
+set(get(gca,'XLabel'),'String','历元个数')
+set(get(gca,'YLabel'),'String','RSSI/dB')
+legend(lgds);

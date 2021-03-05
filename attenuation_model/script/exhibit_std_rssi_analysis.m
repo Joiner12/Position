@@ -2,9 +2,8 @@ function [m_val,v_val,k_val,s_val] = exhibit_std_rssi_analysis(rssi,varargin)
 % 功能: 分析标准RSSI-Dist统计信息
 % 定义: exhibit_std_rssi_dist(rssi,dist)
 % 输入:
-%       rssi:固定距离下RSSI的值(矩阵)
+%       rssi:同等距离下RSSI的多次测量值(矩阵)
 %       varargin:保留参数
-%       save_figure:存储图像
 % 输出:
 %       None
 

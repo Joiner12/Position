@@ -45,11 +45,13 @@ else
 end
 % load & save
 % todo:mat-name(varargin)
-try
-    load(fullfile(tar_folder,'std_diss.mat'));
-catch
-    
+if false
+    try
+        load(fullfile(tar_folder,'std_diss.mat'));
+    catch
+        
+    end
+    % clearvars -except m_* tar_folder;
+    save(fullfile(tar_folder,'std_diss.mat'),'m_*');
 end
-% clearvars -except m_* tar_folder;
-save(fullfile(tar_folder,'std_diss.mat'),'m_*');
 end
