@@ -13,8 +13,8 @@ function [pos_res, pos_queue, jump_num] = final_jump_smooth_filter(cur_pos,...
 %    pos_queue：坐标缓存队列
 %    param：函数参数,具体如下
 %           param.frame_num：当前有效帧号，表征现在是连续处理的第frame_num帧有效数据   
-%           param.fit_dist_thr_max：坐标需拟合的最大距离门限
-%           param.fit_dist_thr_min：坐标需拟合的最小距离门限
+%           param.fit_dist_thr_max：坐标需拟合的最大距离门限(米)
+%           param.fit_dist_thr_min：坐标需拟合的最小距离门限(米)
 %           param.jump_num：连续跳点的次数
 %           param.jump_num_max：允许的连续跳点的次数上限
 %           param.smooth_len：平滑长度

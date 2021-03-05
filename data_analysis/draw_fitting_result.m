@@ -1,4 +1,4 @@
-function draw_fitting_error(distance,rssi,fitting_out,fig_info,varargin)
+function draw_fitting_result(distance,rssi,fitting_out,fig_info,varargin)
 % 函数功能:
 %   绘制拟合误差折线图
 % 函数参数:
