@@ -9,6 +9,7 @@ function ap = prev_dist_calc(ap, calctype, param)
 %               param.logarithmic.rssi_reference：信号传播参考距离d0(d0=1m)后产生的路径损耗,即d0处rssi
 %               param.logarithmic.loss_coef：路径损耗系数,一般取2~3之间
 %           距离高斯对数模型 -- 'gausslog'：
+%               param.gausslog.rssi_thr：高斯模型计算的rssi阈值
 %               param.logarithmic.rssi_reference：信号传播参考距离d0(d0=1m)后产生的路径损耗,即d0处rssi
 %               param.logarithmic.loss_coef：路径损耗系数,一般取2~3之间
 %               param.gauss.a：高斯模型参数a
@@ -20,10 +21,12 @@ function ap = prev_dist_calc(ap, calctype, param)
     for i = 1:length(ap)
         switch calctype
             case 'logarithmic'
+                param.logarithmic.rssi_reference = ap(i).rssi_reference;
                 ap(i).dist = prev_dist_logarithmic(ap(i).rssi,...
                                                    param.logarithmic);
             case 'gausslog'
-                if ap(i).rssi < -100
+                if ap(i).rssi < param.gausslog.rssi_thr
+                    param.logarithmic.rssi_reference = ap(i).rssi_reference;
                     ap(i).dist = prev_dist_logarithmic(ap(i).rssi,...
                                                        param.logarithmic);
                 else

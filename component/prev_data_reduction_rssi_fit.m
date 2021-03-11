@@ -5,6 +5,7 @@ function ap = prev_data_reduction_rssi_fit(ap, type, param)
 %    ap：待拟合的所有ap数据
 %    type：拟合方式，支持形式如下
 %          'mean'：取当前帧所有rssi的均值
+%          'max'：取当前帧所有rssi的最大值
 %          'scope_mean'：依据范围限定，过滤当前帧的所有rssi,取过滤后rssi的均值
 %    param：各个模式的参数,具体如下
 %          'mean'：[]
@@ -39,6 +40,10 @@ function ap = prev_data_reduction_rssi_fit(ap, type, param)
                 end
                 
                 ap(i).rssi = mean(recv_rssi);
+            end
+        case 'max'
+            for i = 1:length(ap)
+                ap(i).rssi = max(ap(i).recv_rssi);
             end
         otherwise
             error('选择的拟合方式错误,没有%s的拟合方式', type);

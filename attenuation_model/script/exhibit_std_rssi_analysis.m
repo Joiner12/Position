@@ -5,7 +5,10 @@ function [m_val,v_val,k_val,s_val] = exhibit_std_rssi_analysis(rssi,varargin)
 %       rssi:同等距离下RSSI的多次测量值(矩阵)
 %       varargin:保留参数
 % 输出:
-%       None
+%       m_val:均值
+%       v_val:协方差
+%       k_val:峰度
+%       s_val:偏度
 
 x = linspace(1,length(rssi),length(rssi));
 y = rssi;
@@ -21,7 +24,7 @@ v_val = var(y);
 k_val = kurtosis(y); % 峰度
 s_val = skewness(y); % 偏度
 
-
+if any(strcmp(varargin,'showfigure'))
 f = figure('Color',[1 1 1]);
 
 subplot(2,2,1)
@@ -66,6 +69,7 @@ annotation(f,'textbox',...
     'FitBoxToText','off',...
     'EdgeColor',[0.650980392156863 0.650980392156863 0.650980392156863]);
 box(gca,'on');
+end
 
 if any(strcmp(varargin,'savefig'))
     saveas(f,'cur.fig')
