@@ -34,38 +34,6 @@ end
 dist = linspace(1,18,18);
 clearvars -except cm_* m_* kur* dist mean* rssi* ske* varian* std_*
 
-%% 整体统计分析;
-figure('name','norm-analysis','Color',[1 1 1]);
-
-subplot(2,2,1)
-plot_py(dist,mean_vals)
-set(get(gca, 'Title'), 'String', '均值随距离变化趋势');
-set(get(gca, 'XLabel'), 'String', '距离/m');
-set(get(gca, 'YLabel'), 'String', 'rssi/dB');
-
-subplot(2,2,2)
-plot_py(dist,variance_vals)
-set(get(gca, 'Title'), 'String', '方差随距离变化趋势');
-set(get(gca, 'XLabel'), 'String', '距离/m');
-set(get(gca, 'YLabel'), 'String', 'rssi/dB^2');
-
-subplot(2,2,3)
-plot_py(dist,kurtosis_vals);
-set(get(gca, 'Title'), 'String', '峰度随距离变化趋势');
-hold on
-plot_py([1 18],[3 3]);
-set(get(gca, 'XLabel'), 'String', '距离/m');
-set(get(gca, 'YLabel'), 'String', '峰度');
-legend({'测试样本峰度','正态分布峰度'})
-
-subplot(2,2,4)
-plot_py(dist,skewness_vals)
-hold on
-plot_py([1,18],[0,0])
-set(get(gca, 'Title'), 'String', '偏度随距离变化趋势');
-set(get(gca, 'XLabel'), 'String', '距离/m');
-set(get(gca, 'YLabel'), 'String', '偏度');
-legend({'测试样本偏度','正态分布偏度(0偏度)'})
 
 %% 单文件分析
 clc;
@@ -79,13 +47,6 @@ tcf;
 
 %% 
 clearvars -except cm_* m_* kur* dist* mean* rssi* ske* varian* std_*
-
-%% 分段拟合
-clc;
-dist_1 = dist(1:5);
-dist_2 = dist(6:end);
-rssi_1 = rssi_gmfs(1:5);
-rssi_2 = rssi_gmfs(6:end);
 
 %% 将不同测量结果绘制到一张图上
 clc;
@@ -108,3 +69,13 @@ set(get(gca,'Title'),'String','不同距离信号强度时间序列（静态）')
 set(get(gca,'XLabel'),'String','历元个数')
 set(get(gca,'YLabel'),'String','RSSI/dB')
 legend(lgds);
+
+%% 
+clc;
+src_folder = 'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\对数衰减模型标准测试HLK-DATA\Part-I';
+get_std_dist_rssi_info(src_folder,pwd);
+
+%%
+clc;
+
+exhibit_std_rssi_analysis(HLK_2m_25cmA3)
