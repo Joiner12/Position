@@ -69,6 +69,7 @@ for j = 1:1:file_cnt
     end
 end
 %}
+
 parse_data = 1;
 if ~isa(file,'cell')
     % file_selected{1,1} = fullfile(path,file);
@@ -95,7 +96,7 @@ end
 % load & save
 % todo:mat-name(varargin)
 outmat_name = varargin{1};
-if isfile(fullfile(tar_folder,outmat_name)) && false
+if isfile(fullfile(tar_folder,outmat_name)) || true
     % clearvars -except m_* tar_folder;
     save(fullfile(tar_folder,'std_diss_hlk.mat'),'HLK_*');
 end
