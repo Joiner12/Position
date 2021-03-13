@@ -9,6 +9,7 @@ function new_ap = prev_data_redcution_integrate_same_ap(ap, param)
 %    new_ap：整合后的ap数据
 %备注：若整合过程中发现同一个ap存在不同的经纬度，依据整合顺序，更新为最新的经纬度
 
+    new_ap = [];
     ap_num = length(ap);
     new_ap_num = 0;
     same_ap_judge_type = param.same_ap_judge_type;
@@ -43,9 +44,14 @@ function new_ap = prev_data_redcution_integrate_same_ap(ap, param)
         if isfind == 0
             %新的ap，增加到输出中
             new_ap_num = new_ap_num + 1;
-            new_ap(new_ap_num) = ap(i); 
-            new_ap(new_ap_num).recv_rssi(1) = ap(i).rssi;
+            new_ap(new_ap_num).name = ap(i).name; 
+            new_ap(new_ap_num).mac = ap(i).mac; 
+            new_ap(new_ap_num).lat = ap(i).lat; 
+            new_ap(new_ap_num).lon = ap(i).lon; 
+            new_ap(new_ap_num).recv_rssi(1) = ap(i).rssi; 
+            new_ap(new_ap_num).rssi_reference = ap(i).rssi_reference;
             new_ap(new_ap_num).rssi = [];
+            
         end
     end
 end

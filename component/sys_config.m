@@ -29,12 +29,13 @@ function config = sys_config()
     config.dbscan_selector_param.dbscan.min_points = 0;         %核心点邻域半径内点数最小值
     
     %% 计算离各个ap的距离
-    config.dist_calc_type = 'gausslog';  %距离计算的模式
+    config.dist_calc_type = 'logarithmic';  %距离计算的模式
     
     %经典距离对数模型：信号传播参考距离d0(d0=1m)后产生的路径损耗,即d0处rssi
-    config.dist_calc_param.logarithmic.rssi_reference = -10.61; 
+%     config.dist_calc_param.logarithmic.rssi_reference = -10.61; 
     %经典距离对数模型：路径损耗系数,一般取2~3之间
-    config.dist_calc_param.logarithmic.loss_coef = 2.732; 
+%     config.dist_calc_param.logarithmic.loss_coef = -1.327; 
+    config.dist_calc_param.logarithmic.loss_coef = -1.886; 
     
     %距离高斯模型：高斯模型参数a
     config.dist_calc_param.gauss.a = 177.5; 
@@ -42,6 +43,12 @@ function config = sys_config()
     config.dist_calc_param.gauss.b = -103;     
     %距离高斯模型：高斯模型参数b
     config.dist_calc_param.gauss.c = 24.28;  
+    
+    %高斯对数模型：高斯模型计算的rssi阈值
+    config.dist_calc_param.gausslog.rssi_thr = -100;  
+    
+    %% 距离三角补偿
+    config.dist_triangle_compensate_meter = 2; %三角补偿的距离(单位：米)
     
     %% NewtonGaussLS 高斯牛顿迭代最小二乘算法（加权质心结果为初始点）
     config.newtongaussls_param.iterative_num_max = 10;
@@ -53,8 +60,8 @@ function config = sys_config()
     config.scope_filter_param.lon_min = 100;  %经度最小值
     
     %% 跳点平滑滤波
-    config.jump_smooth_filter_param.fit_dist_thr_max = 3000; %坐标需拟合的最大距离门限
-    config.jump_smooth_filter_param.fit_dist_thr_min = 1000; %坐标需拟合的最小距离门限
+    config.jump_smooth_filter_param.fit_dist_thr_max = 30;   %坐标需拟合的最大距离门限(米)
+    config.jump_smooth_filter_param.fit_dist_thr_min = 10;   %坐标需拟合的最小距离门限(米)
     config.jump_smooth_filter_param.jump_num = 0;            %连续跳点的次数
     config.jump_smooth_filter_param.jump_num_max = 20;       %允许的连续跳点的次数上限
     config.jump_smooth_filter_param.smooth_len = 5;          %平滑长度
