@@ -20,7 +20,7 @@ for i=1:1:18
     var_temp = strcat('cm_',num2str(i));
     cval.info = sprintf('distance:%.0f m',i);
     eval(['cval.rssi= ',var_temp,';']);
-    eval(['[a,b,c,d]','= exhibit_std_rssi_analysis(',var_temp,');']);
+    eval(['[a,b,c,d]','= get_rssi_statistics(',var_temp,');']);
     eval(['cval.mean_val','=a;']);
     eval(['cval.variance_val','=b;']);
     eval(['cval.kurtosis_val','=c;']);
@@ -40,7 +40,7 @@ clc;
 for i=1:1:18
     tcf;
     var_temp = strcat('cm_',num2str(i));
-    eval(['exhibit_std_rssi_analysis(',var_temp,');']);
+    eval(['get_rssi_statistics(',var_temp,');']);
     saveas(gcf,sprintf('std-rssi-test-%.0fm分析',i));
 end
 tcf;
@@ -128,7 +128,7 @@ hlk_kur_vals_A7 = zeros(0);
 hlk_ske_vals_A7 = zeros(0);
 
 for i = 1:1:length(A3)
-    [mval,varval,kurval,skeval] = exhibit_std_rssi_analysis(A3{i});
+    [mval,varval,kurval,skeval] = get_rssi_statistics(A3{i});
     hlk_mean_vals_A3(i) = mval;
     hlk_var_vals_A3(i) = varval;
     hlk_kur_vals_A3(i) = kurval;
@@ -136,7 +136,7 @@ for i = 1:1:length(A3)
 end
 
 for i = 1:1:length(A7)
-    [mval,varval,kurval,skeval] = exhibit_std_rssi_analysis(A7{i});
+    [mval,varval,kurval,skeval] = get_rssi_statistics(A7{i});
     hlk_mean_vals_A7(i) = mval;
     hlk_var_vals_A7(i) = varval;
     hlk_kur_vals_A7(i) = kurval;
@@ -147,10 +147,13 @@ end
 figure('Color','w');
 dist = 1:1:length(A7);
 dist = dist.*0.25;
-plot_py(dist,hlk_mean_vals_A3);
+plot_py(dist,hlk_mean_vals_A3+3);
 hold on
 plot_py(dist,hlk_mean_vals_A7);
 xlabel('距离/m')
 ylabel('rssi/dB')
 title('RSSI均值随距离变化关系')
 legend({'AP:3';'AP:7'})
+
+%% 
+get_rssi_statistics(HLK_1m_25cmA3,'showfigure')
