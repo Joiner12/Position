@@ -1,7 +1,8 @@
 function distance = calculate_distance_based_on_rssi(model_parameter,rssi,varargin)
-% 函数功能:
+% 功能:
 %   根据拟合的对数路径损耗模型(Logarithmic path loss model )，计算RSSI对应的路径。
-% 函数参数:
+% 定义: distance = calculate_distance_based_on_rssi(model_parameter,rssi,varargin)
+% 参数:
 %   model_parameter(struct):损耗模型
 %   {
 %       double A(距离1m时，设备接收到无线信号的RSSI值);
@@ -9,7 +10,7 @@ function distance = calculate_distance_based_on_rssi(model_parameter,rssi,vararg
 %   }
 %   rssi:RSSI(array)
 %   varargin:保留参数
-% 函数输出：
+% 输出：
 %   distance:距离(array)
 
 %% 模型配置
@@ -24,5 +25,5 @@ dist_temp = power(10,n_temp);
 
 %%
 distance = dist_temp;
-disp('rssi → distance finished');
+% disp('rssi → distance finished');
 end

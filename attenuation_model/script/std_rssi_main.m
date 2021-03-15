@@ -172,3 +172,11 @@ clc;
 leaveUnow = get_std_dist_rssi_data('src_folder',...
     'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\对数衰减模型标准测试HLK-DATA'...
     ,'ap_filter',{'A3','A7'});
+
+%% 
+model_log = create_logarithmic_model_fit(dist, hlk_mean_vals_A7)
+%% 
+% a =      -41.43  (-43.22, -39.64)
+% b =      -1.445  (-1.638, -1.252)
+clc;
+analysis_fit_model(-41.43,1.445,HLK_10m_50cmA7,10.5)
