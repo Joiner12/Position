@@ -1,14 +1,14 @@
 %%
 clc;
 %{
-struct{
-data;
-info;
-mean_val;
-variance_val;
-kurtosis_val;
-skewness_val;
-}
+    struct{
+    data;
+    info;
+    mean_val;
+    variance_val;
+    kurtosis_val;
+    skewness_val;
+    }
 %}
 mean_vals = zeros(18,1);
 variance_vals = zeros(size(mean_vals));
@@ -97,7 +97,7 @@ A3 = {HLK_0m_25cmA3,HLK_0m_50cmA3,HLK_0m_75cmA3,...
     HLK_17m_00cmA3,HLK_17m_25cmA3,HLK_17m_50cmA3,HLK_17m_75cmA3,...
     HLK_18m_00cmA3};
 
-    A7 = {HLK_0m_25cmA7,HLK_0m_50cmA7,HLK_0m_75cmA7,...
+A7 = {HLK_0m_25cmA7,HLK_0m_50cmA7,HLK_0m_75cmA7,...
     HLK_1m_00cmA7,HLK_1m_25cmA7,HLK_1m_50cmA7,HLK_1m_75cmA7,...
     HLK_2m_00cmA7,HLK_2m_25cmA7,HLK_2m_50cmA7,HLK_2m_75cmA7,...
     HLK_3m_00cmA7,HLK_3m_25cmA7,HLK_3m_50cmA7,HLK_3m_75cmA7,...
@@ -143,7 +143,7 @@ for i = 1:1:length(A7)
     hlk_ske_vals_A7(i) = skeval;
 end
 
-%% 
+%%
 figure('Color','w');
 dist = 1:1:length(A7);
 dist = dist.*0.25;
@@ -155,5 +155,20 @@ ylabel('rssi/dB')
 title('RSSI均值随距离变化关系')
 legend({'AP:3';'AP:7'})
 
-%% 
-get_rssi_statistics(HLK_1m_25cmA3,'showfigure')
+%%
+clc;
+cur_file_name = 'HLK-1m-50cm.txt';
+distance_temp = strrep(cur_file_name,'-','_'); % 源数据命名格式:HLK-1m-50cm.txt
+expr = '-[0-9]{1,2}|-[0-9]{2,}';
+distance_temp = regexp(cur_file_name,expr,'match');
+distance_temp = strrep(distance_temp,'-','');
+distance_temp = str2double(distance_temp);
+distance = -1; % 真实距离
+if isequal(length(distance_temp),2)
+    distance = distance_temp(1)+distance_temp(2)/100;
+end
+%%
+clc;
+leaveUnow = get_std_dist_rssi_data('src_folder',...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\对数衰减模型标准测试HLK-DATA'...
+    ,'ap_filter',{'A3','A7'});
