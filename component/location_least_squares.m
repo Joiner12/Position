@@ -1,12 +1,18 @@
-function pos_res = location_least_squares(ap)
+function [pos_res, debug_param] = location_least_squares(ap, debug_param)
 %功能：最小二乘法
-%定义：pos_res = location_least_squares(ap)
+%定义：[pos_res, debug_param] = location_least_squares(ap, debug_param)
 %参数： 
 %    ap：用于计算经纬度的参考点信息
+%    debug_param：调试参数,结构体,所有元素仅用于调试,具体如下：
+%               debug_param.frame_id：当前帧号
+%               debug_param.centroid：数组,通过质心计算距离的帧号
 %输出：
 %    pos_res：计算的位置结果，数据为结构体，包含元素如下：
 %             pos_res.lat：纬度
 %             pos_res.lon：经度
+%    debug_param：调试参数,结构体,所有元素仅用于调试,具体如下：
+%               debug_param.frame_id：当前帧号
+%               debug_param.centroid：数组,通过质心计算距离的帧号
 
     %提取用于最小二乘法的数据（距离、坐标）
     ap_num = length(ap);
@@ -43,6 +49,11 @@ function pos_res = location_least_squares(ap)
         %有参考点,但不足3个点,使用质心
         pos_res.lat = mean(lat);
         pos_res.lon = mean(lon);
+        
+        %仅用于调试
+        len = length(debug_param.centroid);
+        len = len + 1;
+        debug_param.centroid(len) = debug_param.frame_id;
     else
         %不存在参考点
         pos_res = [];

@@ -1,5 +1,6 @@
-function position_error_statistics(position, true_position)
+function position_error_statistics(position, true_position, varargin)
 %功能：位置误差统计
+%定义：position_error_statistics(position, true_position, varargin)
 %参数：
 %    position：待统计的位置信息,结构体数组,具体元素如下：
 %              position(i).lat：纬度
@@ -10,14 +11,67 @@ function position_error_statistics(position, true_position)
 %                   如下：
 %                   true_position(i).lat：纬度
 %                   true_position(i).lon：经度
+%可变参数：
+%    成组传入,组数和各组顺序不做限制,但各组内数据格式必须严格遵从[type, param]
+%    格式,现支持的各组功能如下：
+%    第一组：
+%          格式：'filter_point', filter_points
+%          参数说明：
+%          'filter_point'：点位过滤
+%          filter_points：过滤的点位,表示方式为下标号, 即[1, 2, 3]表示过滤掉
+%                         track_position(1)、track_position(2)、
+%                         track_position(3)表示的点位,若传入的点位中存在点不在
+%                         位置集中,则运行时警告,并只过滤在位置集中的那部分点位
+%输出：
+%
 
+    %% 误差数据统计
     if length(position) ~= length(true_position)
         flag = ['位置信息与其真值个数不同, position:', num2str(length(position)), ...
                 ', true_position: ', num2str(length(true_position))];
         error(flag);
     end
 
-    %% 误差数据统计
+    %处理可变参
+    filter_flag = 0; 
+    if ~isempty(varargin)
+        var_num = length(varargin);
+        
+        if mod(var_num, 2) ~= 0
+            error('可变参传入个数错误');
+        end
+        
+        var_type = cell(var_num / 2, 1);
+        var_param = cell(var_num / 2, 1);
+        var_type(:) = varargin(1:2:end);
+        var_param(:) = varargin(2:2:end);
+        
+        for i = 1:(var_num / 2)
+            switch var_type{i}
+                case 'filter_point'
+                    filter_dist_var = -1;
+                    filter_flag = 1;
+                    all_idx = 1:length(position);
+                    filter_idx = var_param{i};
+                    
+                    if isempty(filter_idx)
+                        filter_idx = [];
+                        statistics_idx = all_idx;
+                        continue;
+                    end
+                    
+                    if ~isempty(find(ismember(filter_idx, all_idx) == 0, length(filter_idx)))
+                        warning('输入的过滤点中,存在点不在位置集内');
+                    end
+                    
+                    filter_idx = filter_idx(ismember(filter_idx, all_idx) == 1);
+                    statistics_idx = all_idx(ismember(all_idx, filter_idx) == 0);
+                otherwise
+                    error(['不支持', var_type{i}, '类型的功能']);
+            end
+        end
+    end
+    
     %统计个点的位置误差及最大误差、最小误差、误差的标准差、误差的方差、误差的均方根
     num = length(position);
     dist = zeros(num, 1);
@@ -27,24 +81,41 @@ function position_error_statistics(position, true_position)
                                true_position(i).lat, true_position(i).lon);
     end
     
-    max_dist = max(dist);
-    min_dist = min(dist);
-    std_dist = std(dist);
-    var_dist = var(dist);
-    rms_dist = sqrt(sum(dist.^2) / length(dist));
+    if filter_flag
+        error_statistics_dist = dist(statistics_idx);
+        dist(filter_idx) = filter_dist_var;
+    else
+        error_statistics_dist = dist;
+    end
+    
+    max_dist = max(error_statistics_dist);
+    min_dist = min(error_statistics_dist);
+    std_dist = std(error_statistics_dist);
+    var_dist = var(error_statistics_dist);
+    rms_dist = sqrt(sum(error_statistics_dist.^2) / length(error_statistics_dist));
     
     %统计各个区间范围内位置点个数,统计的数据范围如下：
-    %[0, 5]米,(5, 10]米,(10, 15]米,(15, 20]米,(20, ~]米
-    dist_num = zeros(5, 1);
-    dist_rate = zeros(5, 1);
-    dist_num(1) = length(find(dist <= 5));
-    dist_num(2) = length(find((dist > 5) & (dist <= 10)));
-    dist_num(3) = length(find((dist > 10) & (dist <= 15)));
-    dist_num(4) = length(find((dist > 15) & (dist <= 20)));
-    dist_num(5) = length(find(dist > 20));
+    %[0, 3]米,(3, 5]米,(5, 7]米,(7, 10]米,(10, 15]米,(15, 20]米,(20, ~]米,
+    %若存在过滤值,统计过滤值个数'过滤值'
+    section_num = 7;
+    if filter_flag
+        section_num = section_num + 1;
+    end
+    dist_num = zeros(section_num, 1);
+    dist_rate = zeros(section_num, 1);
+    dist_num(1) = length(find(error_statistics_dist <= 3));
+    dist_num(2) = length(find((error_statistics_dist > 3) & (error_statistics_dist <= 5)));
+    dist_num(3) = length(find((error_statistics_dist > 5) & (error_statistics_dist <= 7)));
+    dist_num(4) = length(find((error_statistics_dist > 7) & (error_statistics_dist <= 10)));
+    dist_num(5) = length(find((error_statistics_dist > 10) & (error_statistics_dist <= 15)));
+    dist_num(6) = length(find((error_statistics_dist > 15) & (error_statistics_dist <= 20)));
+    dist_num(7) = length(find(error_statistics_dist > 20));
+    if filter_flag
+        dist_num(8) = length(filter_idx);
+    end
     
     dist_all = length(dist);
-    for i = 1:5
+    for i = 1:section_num
         dist_rate(i) = dist_num(i) / dist_all;
     end
     
@@ -66,27 +137,27 @@ function position_error_statistics(position, true_position)
     hold on;
     plot([1, length(dist)], [rms_dist, rms_dist], 'k--');
     hold on;
-%     str = {['最大误差：', num2str(max_dist), '米'], ...
-%            ['最小误差：', num2str(min_dist), '米'],  ...
-%            ['误差的标准差：', num2str(std_dist)], ...
-%            ['误差的方差：', num2str(var_dist)], ...
-%            ['误差的均方根：', num2str(rms_dist)]};
-% 
-%     dim = [.6, .8, .2, .2];       
-%     annotation('textbox', dim, 'String',str,'FitBoxToText','on');   
+    if filter_flag
+        plot([1, length(dist)], [filter_dist_var, filter_dist_var], 'y--');
+        hold on;
+    end
     
-%     str = ['最大误差：', num2str(max_dist), '米', newline, ...
-%            '最小误差：', num2str(min_dist), '米', newline, ...
-%            '误差的标准差：', num2str(std_dist), newline, ...
-%            '误差的方差：', num2str(var_dist), newline, ...
-%            '误差的均方根：', num2str(rms_dist)];
-    legend('误差', ...
-           ['最大误差：', num2str(max_dist), '米'], ...
-           ['最小误差：', num2str(min_dist), '米'], ...
-           ['误差的标准差：', num2str(std_dist)], ...
-           ['误差的方差：', num2str(var_dist)], ...
-           ['误差的均方根：', num2str(rms_dist)]);
-    
+    if filter_flag
+        legend({'误差', ...
+                ['最大误差：', num2str(max_dist), '米'], ...
+                ['最小误差：', num2str(min_dist), '米'], ...
+                ['误差的标准差：', num2str(std_dist)], ...
+                ['误差的方差：', num2str(var_dist)], ...
+                ['误差的均方根：', num2str(rms_dist)], ...
+                '被过滤的点位'});
+    else
+        legend({'误差', ...
+                ['最大误差：', num2str(max_dist), '米'], ...
+                ['最小误差：', num2str(min_dist), '米'], ...
+                ['误差的标准差：', num2str(std_dist)], ...
+                ['误差的方差：', num2str(var_dist)], ...
+                ['误差的均方根：', num2str(rms_dist)]});
+    end
     title('各个位置的误差（单位：米）');
     ylabel('误差：米');
     axis auto;
@@ -94,7 +165,13 @@ function position_error_statistics(position, true_position)
     %绘制误差范围分布图
     subplot(2, 1, 2);
     bar(1:length(dist_rate), dist_rate);
-    set(gca,'XTickLabel',{'[0, 5]米','(5, 10]米','(10, 15]米','(15, 20]米','(20, ~]米'});
+    if filter_flag
+        set(gca,'XTickLabel',{'[0, 3]米','(3, 5]米','(5, 7]米','(7, 10]米', ...
+                              '(10, 15]米', '(15, 20]米', '(20, ~]米', '过滤值'});
+    else
+        set(gca,'XTickLabel',{'[0, 3]米','(3, 5]米','(5, 7]米','(7, 10]米', ...
+                              '(10, 15]米', '(15, 20]米', '(20, ~]米'});
+    end
     
     for i = 1:length(dist_rate)
         str = [num2str(dist_rate(i) * 100, 3), '%(', num2str(dist_num(i)), ')'];

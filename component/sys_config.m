@@ -33,9 +33,9 @@ function config = sys_config()
     
     %经典距离对数模型：信号传播参考距离d0(d0=1m)后产生的路径损耗,即d0处rssi
 %     config.dist_calc_param.logarithmic.rssi_reference = -10.61; 
-    %经典距离对数模型：路径损耗系数,一般取2~3之间
+    %经典距离对数模型：路径损耗系数
 %     config.dist_calc_param.logarithmic.loss_coef = -1.327; 
-    config.dist_calc_param.logarithmic.loss_coef = -1.886; 
+    config.dist_calc_param.logarithmic.loss_coef = -3; 
     
     %距离高斯模型：高斯模型参数a
     config.dist_calc_param.gauss.a = 177.5; 
@@ -46,6 +46,14 @@ function config = sys_config()
     
     %高斯对数模型：高斯模型计算的rssi阈值
     config.dist_calc_param.gausslog.rssi_thr = -100;  
+    
+    %% 分段计算各个ap的距离
+    %环境参数分段rssi阈值
+    config.subsection_dist_calc_param.rssi_thr = -65;
+    %近距离环境参数
+    config.subsection_dist_calc_param.close_range_loss_coef = -2.5;
+    %远距离环境参数
+    config.subsection_dist_calc_param.remote_loss_coef = -3;
     
     %% 距离三角补偿
     config.dist_triangle_compensate_meter = 2; %三角补偿的距离(单位：米)
