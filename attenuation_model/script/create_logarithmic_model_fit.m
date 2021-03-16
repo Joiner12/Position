@@ -60,8 +60,8 @@ if isempty(any(strcmpi(varargin,'piecewise_rssi')))
     % 拟合模型下，不同距离下，相同RSSI波动对距离结果估计的影响
     subplot(2,1,2)
     rssi_c = linspace(min(rssi)-2,max(rssi)+5,50);
-    rssi_c_plus_5db = rssi_c + 10;
-    rssi_c_dec_5db = rssi_c - 10;
+    rssi_c_plus_5db = rssi_c + rssi_fluctuation;
+    rssi_c_dec_5db = rssi_c - rssi_fluctuation;
     dist_plus = power(10,(fcof(1) - rssi_c_plus_5db)/10/fcof(2));
     dist_dec = power(10,(fcof(1) - rssi_c_dec_5db)/10/fcof(2));
     dist_c = power(10,(fcof(1) - rssi_c)/10/fcof(2));
@@ -102,14 +102,13 @@ else
     f_err = fy - dist;
     rssi_c = linspace(min(rssi)-2,max(rssi)+5,50);
 
-    rssi_c_plus_fluc_1 = rssi_c + 10;
-    rssi_c_dece_fluc_2 = rssi_c - 10;
-    
+    rssi_c_plus_fluc_1 = rssi_c + rssi_fluctuation;
+    rssi_c_dece_fluc_1 = rssi_c - rssi_fluctuation;
     % dist_plus = power(10,(fcof(1) - rssi_c_plus_5db)/10/fcof(2));
     % dist_dec = power(10,(fcof(1) - rssi_c_dec_5db)/10/fcof(2));
     % dist_c = power(10,(fcof(1) - rssi_c)/10/fcof(2));
     
-    
+
     %% 绘图
     figure('Name','fitmodel','Color','w');
     subplot(2,1,1)
