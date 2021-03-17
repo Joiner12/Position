@@ -1,0 +1,75 @@
+# Windows default autosave extension
+*.asv
+
+# OSX / *nix default autosave extension
+*.m~
+
+# Compiled MEX binaries (all platforms)
+*.mex*
+
+# Packaged app and toolbox files
+*.mlappinstall
+*.mltbx
+
+# Generated helpsearch folders
+helpsearch*/
+
+# Simulink code generation folders
+slprj/
+sccprj/
+
+# Matlab code generation folders
+codegen/
+
+# Simulink autosave extension
+*.autosave
+
+# Simulink cache files
+*.slxc
+
+# Octave session info
+octave-workspace
+
+# other
+重构总结.docx
+
+# data
+*.mat
+data_analysis/数据格式样例-蓝牙_10
+data_analysis/数据格式样例-蓝牙_5
+data_analysis/数据格式样例-蓝牙_15.txt
+data_analysis/数据格式样例-蓝牙_5.txt
+data_analysis/数据格式样例-蓝牙_20.txt  
+data_analysis/data_1s_100ms
+data_analysis/data_680ms_600ms
+data_analysis/蓝牙数据分析.docx
+data_analysis/HLK_data
+data_import/data_5.txt
+data_import/数据格式样例-蓝牙_5.txt
+data_import/数据格式样例-蓝牙_15.txt
+data_analysis/drawtemp.m
+
+
+~$设计文档.pptx
+
+# 
+Location_Annotation_Tool/GUIs_FEX/
+
+# draft file
+DraftBLE.m
+
+Location_Annotation_Tool/figure_draft.m
+
+# Location_Annotation_Tool/data/
+Location_Annotation_Tool/data/
+
+# std rssi distance data
+!data/对数衰减模型标准测试-data-PartI/std_rssi.mat
+
+# 最新pos_bluetooth文件
+pos_bluetooth.rar
+
+# 
+!attenuation_model/data/std_*.mat
+
+!attenuation_model/script/std_*.mat
