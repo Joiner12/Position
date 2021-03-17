@@ -1,4 +1,4 @@
-function analysis_fit_model(A,b,rssi,true_dist,varargin)
+function analysis_fit_model_normal(A,b,rssi,true_dist,varargin)
 % 功能:分析模型拟合结果 A-10*b*lg(d) = rssi
 % 定义: analysis_fit_model(a,b,rssi,true_dist)
 % 输入: 

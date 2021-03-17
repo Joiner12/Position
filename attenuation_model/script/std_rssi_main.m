@@ -25,17 +25,18 @@ leaveUnow = get_std_dist_rssi_data('src_folder',...
 
 %% 
 clc;
-cf_dist_i = dist(hlk_mean_vals_A7>=-50);
-cf_rssi_i = hlk_mean_vals_A7(hlk_mean_vals_A7>=-50);
+model_log = create_logarithmic_model_fit(dist,hlk_mean_vals_A7,'piecewise_rssi',-50);
 
-cf_dist_ii = dist(hlk_mean_vals_A7 < -50);
-cf_rssi_ii = hlk_mean_vals_A7(hlk_mean_vals_A7 < -50);
-
-model_log_i = create_logarithmic_model_fit(cf_dist_i,cf_rssi_i)
-model_log_ii = create_logarithmic_model_fit(cf_dist_ii,cf_rssi_ii)
-% model_log_1 = create_logarithmic_model_fit(dist(1:3:end),hlk_mean_vals_A7(1:3:end))
 %% 
 % a =      -41.43  (-43.22, -39.64)
 % b =      -1.445  (-1.638, -1.252)
 clc;
-analysis_fit_model(-25.59,3.038,HLK_1m_50cmA7,1.5);
+analysis_fit_model_normal(-25.59,3.038,HLK_1m_50cmA7,1.5);
+
+%%
+% -39.29  1.6
+% -12 4.282 
+clc;
+a = [-39.29,-12];
+b = [1.6 4.282];
+analysis_fit_model_piecewise(a(1),b(1),a(2),b(2),-50,HLK_1m_00cmA7,1)
