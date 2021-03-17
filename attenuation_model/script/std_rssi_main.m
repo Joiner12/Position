@@ -31,7 +31,7 @@ model_log = create_logarithmic_model_fit(dist,hlk_mean_vals_A7,'piecewise_rssi',
 % a =      -41.43  (-43.22, -39.64)
 % b =      -1.445  (-1.638, -1.252)
 clc;
-analysis_fit_model_normal(-25.59,3.038,HLK_1m_50cmA7,1.5);
+analysis_fit_model_normal(-25.59,3.038,HLK_18m_00cmA7,18);
 
 %%
 % -39.29  1.6
