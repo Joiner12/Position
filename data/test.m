@@ -1,0 +1,1 @@
+add_lat_lon_labels(30.548036064, 104.058595340, 'originfile', 'F:\matlab\pos_bluetooth\data\±ßÔµµã.txt');
