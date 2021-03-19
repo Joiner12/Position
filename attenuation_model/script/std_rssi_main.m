@@ -14,60 +14,21 @@ legend({'AP:3';'AP:7'})
 clc;
 noise_data_1 = get_std_dist_rssi_data('src_folder',...
     'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data'...
-    ,'ap_filter',{'A3','A7'});
+    ,'ap_filter',{'HLK_1','HLK_2','HLK_3','HLK_4'});
 
-noise_data_2 = get_std_dist_rssi_data('src_folder',...
-    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data'...
-    ,'ap_filter',{'A3','A7'});
-%%
-dist_a3_1 = zeros(0);
-dist_a7_1 = zeros(0);
-dist_a3_2 = zeros(0);
-dist_a7_2 = zeros(0);
-
-mean_vals_a3_1 = zeros(0);
-mean_vals_a7_1 = zeros(0);
-mean_vals_a3_2 = zeros(0);
-mean_vals_a7_2 = zeros(0);
-cnt_1 = 1;
-cnt_2 = 1;
-
-for i=1:1:length(noise_data_1)
-    temp = noise_data_1{1,i};
-    if strcmpi(temp.apInfo,'A3')
-        mean_vals_a3_1(int8(temp.distance)) = mean(temp.RSSI);
-        dist_a3_1(int8(temp.distance)) = temp.distance;
-    end
-    if strcmpi(temp.apInfo,'A7')
-        mean_vals_a7_1(int8(temp.distance)) = mean(temp.RSSI);
-        dist_a7_1(int8(temp.distance)) = temp.distance;
-    end
+%% 
+tcf;
+figure('Color','w');
+for i = 1:1:length(noise_data_1)
+    aptemp = noise_data_1{1,i};
+    rssitemp = aptemp.RSSI;
+    plot_py(linspace(1,length(rssitemp),length(rssitemp)),rssitemp)
+    hold on
 end
-
-for i=1:1:length(noise_data_2)
-    temp = noise_data_2{1,i};
-    if strcmpi(temp.apInfo,'A3')
-        mean_vals_a3_2(int8(temp.distance/0.25)) = mean(temp.RSSI);
-        dist_a3_2(int8(temp.distance/0.25)) = temp.distance;
-    end
-    if strcmpi(temp.apInfo,'A7')
-        mean_vals_a7_2(int8(temp.distance/0.25)) = mean(temp.RSSI);
-        dist_a7_2(int8(temp.distance/0.25)) = temp.distance;
-    end
-end
-%%
-tcf
-
-figure('Color','w')
-plot(dist_a3_1,mean_vals_a3_1,'-.');
-hold on
-plot(dist_a7_1,mean_vals_a7_1);
-hold on
-plot(dist_a3_2,mean_vals_a3_2,'-.');
-hold on
-plot(dist_a7_2,mean_vals_a7_2);
-legend({'cur-a3','cur-a7','pre-a3','pre-a7'})
-title 干扰对比测试
+xlabel('采样序列');
+ylabel('RSSI/dB')
+title('蓝牙信号强度相互干扰测试')
+legend({'HLK_1','HLK_2','HLK_3','HLK_4'})
 %%
 clc;
 model_log = create_logarithmic_model_fit(dist,hlk_mean_vals_A7,'piecewise_rssi',-50);
@@ -85,6 +46,4 @@ clc;
 a = [-39.29,-12];
 b = [1.6 4.282];
 analysis_fit_model_piecewise(a(1),b(1),a(2),b(2),-50,HLK_1m_00cmA7,1)
-
-%%
 
