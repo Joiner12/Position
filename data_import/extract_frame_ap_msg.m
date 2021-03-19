@@ -1,5 +1,6 @@
 function ap_msg = extract_frame_ap_msg(frame_data)
 %功能：提取各帧信标数据
+%定义：ap_msg = extract_frame_ap_msg(frame_data)
 %参数：
 %    frame_data：各帧数据（blu_data_file_parsing提取出的单文件的原始数据）
 %输出：

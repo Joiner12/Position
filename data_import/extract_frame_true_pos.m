@@ -1,5 +1,6 @@
 function true_pos = extract_frame_true_pos(frame_data, null_val)
 %功能：提取各帧的位置真值
+%定义：true_pos = extract_frame_true_pos(frame_data, null_val)
 %参数：
 %    frame_data：各帧数据（blu_data_file_parsing提取出的单文件的原始数据）
 %    null_val：经纬度无效值,经纬度数据为此值时表示其数据无效,例如true_pos(i)中

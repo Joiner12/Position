@@ -1,5 +1,6 @@
 function env_feat = tencent_lib_environment()
 %功能：获取腾讯大厦实验环境特征位置
+%定义：env_feat = tencent_lib_environment()
 %参数：
 %
 %输出：

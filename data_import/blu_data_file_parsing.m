@@ -1,5 +1,6 @@
 function [data, frame_num_total] = blu_data_file_parsing(file)
 %功能：解析数据文件
+%定义：[data, frame_num_total] = blu_data_file_parsing(file)
 %参数：
 %file：待解析的文件（包含路径，函数将直接按file_name打开文件）
 %输出：
