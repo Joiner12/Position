@@ -4,6 +4,11 @@ function coordinate_trajectory_in_beacon_space(env_feat, ...
                                                draw_type, ...
                                                varargin)
 %功能：信标空间内的坐标轨迹
+%定义：coordinate_trajectory_in_beacon_space(env_feat, ...
+%                                            beacon_position, ...
+%                                            track_position, ...
+%                                            draw_type, ...
+%                                            varargin)
 %参数：
 %    env_feat：环境特征,细胞数组,每个细胞表示一个环境区域，其数据为结构体,具体如 
 %              下所示：
@@ -41,6 +46,14 @@ function coordinate_trajectory_in_beacon_space(env_feat, ...
 %                         位置的对应关系由使用者控制,具体如下：
 %                         true_position(i).lat：纬度
 %                         true_position(i).lon：经度
+%    第二组：
+%          格式：'filter_point', filter_points
+%          参数说明：
+%          'filter_point'：点位过滤
+%          filter_points：过滤的点位,表示方式为下标号, 即[1, 2, 3]表示过滤掉
+%                         track_position(1)、track_position(2)、
+%                         track_position(3)表示的点位,若传入的点位中存在点不在
+%                         轨迹集中,则运行时警告,并只过滤在轨迹集中的那部分点位
 %输出：
 %
 
@@ -94,28 +107,19 @@ function coordinate_trajectory_in_beacon_space(env_feat, ...
         beacon_lon(i) = beacon_position(i).lon;
     end
     
-    %处理轨迹数据
-    track_num = length(track_position);
-    track_lat = zeros(track_num, 1);
-    track_lon = zeros(track_num, 1);
-    
-    for i = 1:track_num
-        track_lat(i) = track_position(i).lat;
-        track_lon(i) = track_position(i).lon;
-    end
-    
     %处理可变参数据
+    track_pos = track_position;
     if ~isempty(varargin)
         var_num = length(varargin);
         
-        if mod(2, var_num) ~= 0
+        if mod(var_num, 2) ~= 0
             error('可变参传入个数错误');
         end
         
         var_type = cell(var_num / 2, 1);
         var_param = cell(var_num / 2, 1);
-        var_type{:} = varargin{1:2:end};
-        var_param{:} = varargin{2:2:end};
+        var_type(:) = varargin(1:2:end);
+        var_param(:) = varargin(2:2:end);
         
         for i = 1:(var_num / 2)
             switch var_type{i}
@@ -128,10 +132,47 @@ function coordinate_trajectory_in_beacon_space(env_feat, ...
                         true_var_lat(j) = var_param{i}(j).lat;
                         true_var_lon(j) = var_param{i}(j).lon;
                     end
+                case 'filter_point'
+                    all_idx = 1:length(track_position);
+                    filter_idx = var_param{i};
+                    
+                    if isempty(filter_idx)
+                        filter_lat = [];
+                        filter_lon = [];
+                        continue;
+                    end
+                    
+                    if ~isempty(find(ismember(filter_idx, all_idx) == 0, length(filter_idx)))
+                        warning('输入的过滤点中,存在点不在轨迹集内');
+                    end
+                    
+                    filter_idx = filter_idx(ismember(filter_idx, all_idx) == 1);
+                    track_idx = all_idx(ismember(all_idx, filter_idx) == 0);
+                    
+                    track_pos = track_position(track_idx);
+                    filter_pos = track_position(filter_idx);
+                    
+                    filter_num = length(filter_pos);
+                    filter_lat = zeros(filter_num, 1);
+                    filter_lon = zeros(filter_num, 1);
+                    for j = 1:filter_num
+                        filter_lat(j) = filter_pos(j).lat;
+                        filter_lon(j) = filter_pos(j).lon;
+                    end
                 otherwise
                     error(['不支持', var_type{i}, '类型的功能']);
             end
         end
+    end
+    
+    %处理轨迹数据
+    track_num = length(track_pos);
+    track_lat = zeros(track_num, 1);
+    track_lon = zeros(track_num, 1);
+    
+    for i = 1:track_num
+        track_lat(i) = track_pos(i).lat;
+        track_lon(i) = track_pos(i).lon;
     end
     
     %% 绘制
@@ -164,7 +205,7 @@ function coordinate_trajectory_in_beacon_space(env_feat, ...
                          'LineWidth', 2,...
                          'MarkerSize', 5,...
                          'MarkerEdgeColor', 'b');
-    text(x, y, num2str(beacon_id), 'color', 'b');
+    text(x, y, num2str(beacon_id), 'color', 'r');
     hold on;
     
     %绘制轨迹
@@ -191,6 +232,13 @@ function coordinate_trajectory_in_beacon_space(env_feat, ...
                     handle_true_pos = plot(x, y, plot_linespec);
                     legend(handle_true_pos, '真实位置');
                     hold on;
+                case 'filter_point'
+                    x = filter_lon;
+                    y = filter_lat;
+
+                    handle_filter_pos = plot(x, y, 'cx');
+                    legend(handle_filter_pos, '被过滤的位置');
+                    hold on;
                 otherwise
                     error(['不支持', var_type{i}, '类型的功能']);
             end
@@ -199,9 +247,19 @@ function coordinate_trajectory_in_beacon_space(env_feat, ...
     
     %设置图示说明
     if exist('handle_true_pos', 'var')
-        legend([handle_beacon, handle_track, handle_true_pos], '信标位置', '轨迹', '真值位置');
+        if exist('handle_filter_pos', 'var')
+            legend([handle_beacon, handle_track, handle_true_pos, handle_filter_pos], ...
+                   '信标位置', '轨迹', '真值位置', '被过滤的位置');
+        else
+            legend([handle_beacon, handle_track, handle_true_pos], ...
+                   '信标位置', '轨迹', '真值位置');
+        end
     else
-        legend([handle_beacon, handle_track], '信标位置', '轨迹');
+        if exist('handle_filter_pos', 'var')
+            legend([handle_beacon, handle_track], '信标位置', '轨迹', '被过滤的位置');
+        else
+            legend([handle_beacon, handle_track], '信标位置', '轨迹');
+        end
     end
     
     title('信标空间内的坐标轨迹');

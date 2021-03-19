@@ -1,5 +1,6 @@
 function data = data_import()
 %功能：从文件夹中选择数据文件，导入数据文件中的数据，可同时导入多份数据文件
+%定义：data = data_import()
 %参数：
 %
 %输出：

@@ -1,5 +1,6 @@
 function data = init_rssi_reference(files_data, rssi_reference)
 %功能：初始化1米处rssi值
+%定义：data = init_rssi_reference(files_data, rssi_reference)
 %参数：
 %    files_data：通过数据导入函数（data_import）导入的各个文件的数据
 %    rssi_reference：初始化的1米处rssi值

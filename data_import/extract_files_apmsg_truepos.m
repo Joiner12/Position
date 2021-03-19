@@ -1,5 +1,6 @@
 function [ap_msg, true_pos] = extract_files_apmsg_truepos(files_data, null_val)
 %功能：提取各文件的信标数据及真值
+%定义：[ap_msg, true_pos] = extract_files_apmsg_truepos(files_data, null_val)
 %参数：
 %    files_data：各个文件数据（data_import提取出的各个文件的原始数据）
 %    null_val：经纬度无效值,经纬度数据为此值时表示其数据无效,例如true_pos{i}(j)

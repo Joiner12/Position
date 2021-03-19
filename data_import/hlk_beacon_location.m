@@ -1,9 +1,14 @@
 function beacon = hlk_beacon_location()
 %功能：获取信标位置
+%定义：beacon = hlk_beacon_location()
 %参数：
 %
 %输出：
-%    beacon：各个信标的位置信息
+%    beacon：各个信标的位置信息,结构体数组,具体形式如下：
+%           beacon(i).name：信标名称
+%           beacon(i).id：信标ID号
+%           beacon(i).lat：信标纬度
+%           beacon(i).lon：信标经度
 
     beacon = [];
     ap_num = 8; %ap个数
