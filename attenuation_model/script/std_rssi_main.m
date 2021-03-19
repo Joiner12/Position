@@ -12,9 +12,9 @@ legend({'AP:3';'AP:7'})
 
 %%
 clc;
-noise_data_1 = get_std_dist_rssi_data('src_folder',...
+std_rssi_one = get_std_dist_rssi_data('src_folder',...
     'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data'...
-    ,'ap_filter',{'HLK_1','HLK_2','HLK_3','HLK_4'});
+    ,'ap_filter',{'HLK_1','HLK_2','HLK_3','HLK_4','HLK_5','HLK_6','HLK_7','HLK_8'});
 
 %% 
 tcf;
