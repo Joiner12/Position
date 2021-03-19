@@ -47,3 +47,18 @@ a = [-39.29,-12];
 b = [1.6 4.282];
 analysis_fit_model_piecewise(a(1),b(1),a(2),b(2),-50,HLK_1m_00cmA7,1)
 
+%% 
+clc;
+tcf('jet');
+figure('Name','jet','Color','w')
+n = 8;
+r = (0:n)'/n;
+theta = pi*(-n:n)/n;
+X = r*cos(theta);
+Y = r*sin(theta);
+C = r*cos(2*theta);
+pcolor(X,Y,C)
+axis equal tight
+% imagesc(xs,ys,data);colormap(jet);clorbar;
+
+colormap(jet);
