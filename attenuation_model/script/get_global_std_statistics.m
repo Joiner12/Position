@@ -10,12 +10,29 @@ function [m_vals,v_vals,k_vals,s_vals] = get_global_std_statistics(parse_data,va
 %       v_vals:与距离对应的rssi方差(dB^2);
 %       k_vals:...............峰度
 %       s_vals:...............偏度
+%       varargin:
+%       'apfilter':节点滤波器
+% example:
+% [~,~,~,~] = get_global_std_statistics(_,'apfilter',{'HLK_1'})
+% 获取AP种包含HLK_1的数据信息
 
 
 %% 输入参数检查
 if ~isa(parse_data,'cell')
     error("输入参数错误");
 end
+
+%% todo: varargin 
+ap_filter = cell(0);
+if any(strcmpi(varargin,'apfilter'))
+    ap_temp = varargin{find(any(strcmpi(varargin,'apfilter')))+1};
+    if isa(ap_temp,'char')
+        ap_filter{1,1}  = ap_temp;
+    else
+        ap_filter = ap_temp;
+    end
+end
+
 
 parse_data_len = length(parse_data);
 parse_data_temp = parse_data;
