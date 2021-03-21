@@ -1,22 +1,5 @@
-%%
-figure('Color','w');
-dist = 1:1:length(A7);
-dist = dist.*0.25;
-plot_py(dist,hlk_mean_vals_A3);
-hold on
-plot_py(dist,hlk_mean_vals_A7);
-xlabel('距离/m')
-ylabel('rssi/dB')
-title('RSSI均值随距离变化关系')
-legend({'AP:3';'AP:7'})
 
 %%
-clc;
-std_rssi_one = get_std_dist_rssi_data('src_folder',...
-    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data'...
-    ,'ap_filter',{'HLK_1','HLK_2','HLK_3','HLK_4','HLK_5','HLK_6','HLK_7','HLK_8'});
-
-%% 
 tcf;
 figure('Color','w');
 for i = 1:1:length(noise_data_1)
@@ -47,7 +30,7 @@ a = [-39.29,-12];
 b = [1.6 4.282];
 analysis_fit_model_piecewise(a(1),b(1),a(2),b(2),-50,HLK_1m_00cmA7,1)
 
-%% 
+%%
 clc;
 tcf('jet');
 figure('Name','jet','Color','w')
