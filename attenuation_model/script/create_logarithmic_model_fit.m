@@ -50,7 +50,6 @@ if isempty(any(strcmpi(varargin,'piecewise_rssi')))
     fy = power(10,(fcof(1) - rssi)/10/fcof(2));
     fy = reshape(fy,size(dist));
     f_err = fy - dist;
-    
     %% Plot fit with data.
     % tcf('fitmodel');
     figure('Name','fitmodel','Color','w');
@@ -105,9 +104,13 @@ else
     disp(temp_2);
     disp(fitresult_2);
     fitresult = {fitresult_1,fitresult_2};
-    %     fcof_1 = coeffvalues(fitresult_1);
-    %     fcof_2 = coeffvalues(fitresult_2);
-    
+    %%  fitresult_1(x) = power(10,(a-x)/10/b)
+    fcof_1 = coeffvalues(fitresult_1);
+    fcof_2 = coeffvalues(fitresult_2);
+    syms x;
+    eq = power(10,(fcof_1(1)-x)/10/fcof_1(2)) == power(10,(fcof_2(1)-x)/10/fcof_2(2));
+    intersection_rssi = solve(eq,x);
+    fprintf('分段曲线交点RSSI:%.2f\n',intersection_rssi);
     %     % 根据拟合结果分析RSSI波动对测距的影响
     %     fy_1 = power(10,(fcof_1(1) - rssi)/10/fcof_1(2));
     %     fy_2 = power(10,(fcof_2(1) - rssi)/10/fcof_2(2));
