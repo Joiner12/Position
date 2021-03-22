@@ -97,16 +97,19 @@ else
     % 拟合
     [fitresult_1, gof_1] = fit( xData_1, yData_1, ft, opts );
     [fitresult_2, gof_2] = fit( xData_2, yData_2, ft, opts );
-     temp_1 = sprintf('拟合结果-rssi >= %.0f',piecewise_rssi);
-    temp_2 = sprintf('拟合结果-rssi < %.0f',piecewise_rssi);
+    fcof_1 = coeffvalues(fitresult_1);
+    fcof_2 = coeffvalues(fitresult_2);
+    temp_1 = sprintf('rssi >= %.0f拟合结果:A=%0.2f,n=%0.2f',piecewise_rssi,...
+        fcof_1(1),fcof_1(2));
+    temp_2 = sprintf('rssi < %.0f拟合结果:A=%0.2f,n=%0.2f',piecewise_rssi,...
+        fcof_2(1),fcof_2(2));
     disp(temp_1);
     disp(fitresult_1);
     disp(temp_2);
     disp(fitresult_2);
     fitresult = {fitresult_1,fitresult_2};
     %%  fitresult_1(x) = power(10,(a-x)/10/b)
-    fcof_1 = coeffvalues(fitresult_1);
-    fcof_2 = coeffvalues(fitresult_2);
+    
     syms x;
     eq = power(10,(fcof_1(1)-x)/10/fcof_1(2)) == power(10,(fcof_2(1)-x)/10/fcof_2(2));
     intersection_rssi = solve(eq,x);
@@ -126,7 +129,7 @@ else
     axeschild=get(gca,'children');
     axeschild(1).Color = 'c';
     axeschild(1).Color = 'r';
-   
+    
     legend('原始数据',temp_1,'原始数据',temp_2, 'Location', 'NorthEast' );
     set(get(gca, 'XLabel'), 'String', 'rssi');
     set(get(gca, 'YLabel'), 'String', 'dist');

@@ -16,8 +16,10 @@ for i=1:1:8
     %     rssi_temp =
     all_rssi_mean{i,1} = rssi_temp;
 end
-clearvars -except std_rssi_one* m_RSSI_HLK_* all_rssi_mean
-save('std_rssi_onepos','std_rssi_one*','m_RSSI_HLK_*','all_rssi_mean')
+
+%%
+clearvars -except std_rssi_one* m_RSSI_HLK_* all_rssi_mean AP_*
+save('std_rssi_onepos','std_rssi_one*','m_RSSI_HLK_*','all_rssi_mean','AP_*')
 %% figure - 1
 clc;
 tcf('ss');
@@ -65,6 +67,7 @@ grid on
 clc;
 tcf;
 for j =1:1:length(all_rssi_mean)
+% for j =1:1:1
     cur_rssi = all_rssi_mean{j};
     len_temp = length(cur_rssi);
     dist = linspace(1,len_temp,len_temp);
@@ -74,8 +77,14 @@ for j =1:1:length(all_rssi_mean)
 end
 
 %%
-syms x;
-fcof_1 = [ -40.99,1.411];
-fcof_2 = [-16.68,3.724];
-eq = power(10,(fcof_1(1)-x)/10/fcof_1(2)) == power(10,(fcof_2(1)-x)/10/fcof_2(2));
-b = vpasolve(eq,x)
+clc;
+model_parameter_1 = [-31.03,2.424];
+model_parameter_2 = [-46.44,0.3551];
+piecewise_rssi = -49.08;
+rssi_test = m_RSSI_HLK_1;
+distance = calculate_distance_based_on_rssi_piecewise(...
+    model_parameter_1,model_parameter_2,rssi_test,piecewise_rssi);
+%% 
+figure('name','hey','Color','w');
+scatter_py(rssi_test,distance);
+
