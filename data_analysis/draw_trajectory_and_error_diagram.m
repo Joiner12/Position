@@ -17,7 +17,7 @@ function draw_trajectory_and_error_diagram(position, ...
 %                                        draw_type, ...
 %                                        varargin)
 %参数：
-%    position：待绘制的位置数据,细胞数组,具体结构如下所示：
+%    position：待绘制的位置数据,元胞数组,具体结构如下所示：
 %              position{i}：第i个文件的待绘制数据
 %              position{i}.pos_res：第i个文件的定位结果
 %              position{i}.true_pos：第i个文件的位置真值
@@ -29,7 +29,7 @@ function draw_trajectory_and_error_diagram(position, ...
 %              position{i}.true_pos(j).lon：第i个文件第j帧的位置真值的经度
 %    null_val：经纬度无效值,经纬度数据为此值时表示其数据无效,例如position{i}.true_pos(j)
 %              中经度或纬度为此值表示position{i}.true_pos(j)的经纬度无效
-%    env_feat：环境特征,细胞数组,每个细胞表示一个环境区域，其数据为结构体,具体如 
+%    env_feat：环境特征,元胞数组,每个元胞表示一个环境区域，其数据为结构体,具体如 
 %              下所示：
 %              env_feat{i}.type：环境特征绘制方式,具体如下所示：
 %                                'closed_cycle'：绘制闭环图线
@@ -58,7 +58,7 @@ function draw_trajectory_and_error_diagram(position, ...
 %          格式：'filter_point', filter_points
 %          参数说明：
 %          'filter_point'：点位过滤
-%          filter_points：过滤的点位,细胞数组,表示各个文件过滤的点位,即
+%          filter_points：过滤的点位,元胞数组,表示各个文件过滤的点位,即
 %                         filter_points{i}表示第i个文件要过滤的点位,过滤的点位                           
 %                         表示方式为下标号, 即filter_points{i} = [1, 2, 3]
 %                         表示过滤掉position{i}.pos_res{1}、position{i}.pos_res{2}、
