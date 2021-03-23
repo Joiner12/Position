@@ -44,8 +44,8 @@ function draw_trajectory_and_error_diagram(position, ...
 %                                    env_feat{i}.position(j).lon：经度
 %    beacon_position：信标位置信息,结构体数组,具体元素如下：
 %                     beacon_position(i).id：信标编号
-%                     beacon_position(i).lat：纬度
-%                     beacon_position(i).lon：经度
+%                     beacon_position(i).lat：纬度(latitude)
+%                     beacon_position(i).lon：经度(longitude)
 %    draw_type：轨迹绘制方式,具体如下：
 %               'splashes'：绘制散点，不绘制轨迹
 %               'trajectory'：绘制轨迹，轨迹连接顺序按track_position顺序,即

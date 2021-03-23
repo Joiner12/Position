@@ -4,8 +4,28 @@ clc;
 std_rssi_one_HLK_8 = get_std_dist_rssi_data('src_folder',...
     'D:\Codes\Location\attenuation_model\data\8节点测试\8节点测试'...
     ,'ap_filter',{'HLK_8'});
+%% 提取静态测试单个位置结果
+clc;
+static_one_HLK_1 = get_std_dist_rssi_data('src_folder',...
+    '../data'...
+    ,'ap_filter',{'HLK_1'});
+%%
+%
+clc;
+model_parameter_1 = [-31.03,2.424]; % rssi >= -50拟合结果:A=-46.44,n=0.36
+model_parameter_2 = [-46.44,0.3551];
+piecewise_rssi = -49.08;
+rssi_test = static_one_HLK_1;
+distance = calculate_distance_based_on_rssi_piecewise(...
+    model_parameter_1,model_parameter_2,rssi_test,piecewise_rssi);
+% 
+figure('name','hey','Color','w');
+scatter_py(rssi_test,distance);
+% 分析实际拟合效果
+analysis_fit_model_piecewise(model_parameter_1(1),model_parameter_1(2),...
+    model_parameter_2(1),model_parameter_2(2),...
+    piecewise_rssi,rssi_test,8,varargin)
 
-clearvars -except std_rssi_one*
 %%
 all_rssi_mean = cell(0);
 for i=1:1:8
@@ -17,7 +37,7 @@ for i=1:1:8
     all_rssi_mean{i,1} = rssi_temp;
 end
 
-%%
+%% save data
 clearvars -except std_rssi_one* m_RSSI_HLK_* all_rssi_mean AP_*
 save('std_rssi_onepos','std_rssi_one*','m_RSSI_HLK_*','all_rssi_mean','AP_*')
 %% figure - 1
@@ -75,16 +95,3 @@ for j =1:1:length(all_rssi_mean)
     create_logarithmic_model_fit(dist,cur_rssi','piecewise_rssi',cur_rssi(dist(dist==8)));
     fprintf('___________________\n');
 end
-
-%%
-clc;
-model_parameter_1 = [-31.03,2.424];
-model_parameter_2 = [-46.44,0.3551];
-piecewise_rssi = -49.08;
-rssi_test = m_RSSI_HLK_1;
-distance = calculate_distance_based_on_rssi_piecewise(...
-    model_parameter_1,model_parameter_2,rssi_test,piecewise_rssi);
-%% 
-figure('name','hey','Color','w');
-scatter_py(rssi_test,distance);
-
