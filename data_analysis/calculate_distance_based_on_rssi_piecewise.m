@@ -1,15 +1,15 @@
 function distance = calculate_distance_based_on_rssi_piecewise(...
-    model_parameter_1,model_parameter_2,rssi,piecewise_rssi,varargin)
+    model_param_less_rssi,model_param_more_rssi,rssi,piecewise_rssi,varargin)
 % 功能:
 %   根据拟合的对数路径损耗模型(Logarithmic path loss model )，计算RSSI对应的路径。
 % 定义: distance = calculate_distance_based_on_rssi(model_parameter,rssi,varargin)
 % 参数:
-%   model_parameter_1:损耗模型(RSSI<piecewise_rssi)
+%   model_param_less_rssi:损耗模型(RSSI<piecewise_rssi)
 %   [
 %       double A(参考RSSI值(dB));
 %       doubel n(衰减因子)
 %   ]
-%   model_parameter_2:损耗模型(RSSI>=piecewise_rssi)
+%   model_param_more_rssi:损耗模型(RSSI>=piecewise_rssi)
 %   [
 %       double A(参考RSSI值(dB));
 %       doubel n(衰减因子)
@@ -20,12 +20,13 @@ function distance = calculate_distance_based_on_rssi_piecewise(...
 % 输出：
 %   distance:距离(array)
 
-%% 模型配置
-A_1 = model_parameter_1(1);
-n_1 = model_parameter_1(2);
 
-A_2 = model_parameter_2(1);
-n_2 = model_parameter_2(2);
+%% 模型配置
+A_1 = model_param_less_rssi(1);
+n_1 = model_param_less_rssi(2);
+
+A_2 = model_param_more_rssi(1);
+n_2 = model_param_more_rssi(2);
 
 %%
 if length(rssi) == 1

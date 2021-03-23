@@ -1,20 +1,22 @@
-%% fitting parameter
+function distance = calc_distance_based_on_rssi_piecewise(ap,varargin)
+% 功能:
+%       根据AP信息查询分段拟合模型获取RSSI对应的距离信息
+% 定义:
+%       distance = calc_distance_based_on_rssi_piecewise(ap,rssi,varargin)
+% 输入:
+%       ap:ap数据，依据各个ap数据的rssi计算对应的距离
+%       varargin:保留参数
+
+
+%% 先验拟合数据结果
 %{
-struct{
-char name[];
-double param_less_rssi[2]; // piecewise < const double A
-double param_more_rssi[2]; // piecewise >= const double A
-double piecewise_rssi; //
+    struct{
+    char name[];
+    double param_less_rssi[2]; // piecewise < const double A
+    double param_more_rssi[2]; // piecewise >= const double A
+    double piecewise_rssi; //
 }
 %}
-clc;
-%{
-AP_ =  struct('Name','onepos_HLK_',...
-    'param_less_rssi',[],...
-    'param_more_rssi',[],...
-    'piecewise_rssi',0);
-%}
-
 AP_1 =  struct('Name','onepos_HLK_1',...
     'param_less_rssi',[-31.03,2.424],...
     'param_more_rssi',[-46.44,0.3551],...
@@ -55,3 +57,25 @@ AP_8 =  struct('Name','onepos_HLK_8',...
     'param_less_rssi',[35.78,8.31],...
     'param_more_rssi',[42.33,1.09],...
     'piecewise_rssi',-54.13);
+
+%% calculation
+ap_params = {AP_1,AP_2,AP_3,AP_4,AP_5,AP_6,AP_7,AP_8};
+ap_name = ap.name;
+ap_rssi = ap.rssi;
+cur_param = struct();
+
+% 查表
+for i = 1:1:length(ap_params)
+    ap_temp = ap_params{i};
+    if strcmp(ap_name,ap_temp.Name)
+        cur_param = ap_temp;
+        break;
+    end
+end
+
+dist = calculate_distance_based_on_rssi_piecewise(...
+    cur_param.param_less_rssi,cur_param.param_more_rssi,...
+    ap_rssi,cur_param.piecewise_rssi);
+distance = dist;
+
+end
