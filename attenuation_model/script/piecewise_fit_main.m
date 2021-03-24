@@ -6,25 +6,36 @@ std_rssi_one_HLK_8 = get_std_dist_rssi_data('src_folder',...
     ,'ap_filter',{'HLK_8'});
 %% 提取静态测试单个位置结果
 clc;
-static_one_HLK_1 = get_std_dist_rssi_data('src_folder',...
+static_one_HLK_8 = get_std_dist_rssi_data('src_folder',...
     '../data'...
-    ,'ap_filter',{'HLK_1'});
+    ,'ap_filter',{'HLK_8'});
 %%
 %
 clc;
-model_parameter_1 = [-31.03,2.424]; % rssi >= -50拟合结果:A=-46.44,n=0.36
-model_parameter_2 = [-46.44,0.3551];
-piecewise_rssi = -49.08;
-rssi_test = static_one_HLK_1{1}.RSSI;
-distance = calculate_distance_based_on_rssi_piecewise(...
-    model_parameter_1,model_parameter_2,rssi_test,piecewise_rssi);
-% 
-figure('name','hey','Color','w');
-scatter_py(rssi_test,distance);
-% 分析实际拟合效果
-analysis_fit_model_piecewise(model_parameter_1(1),model_parameter_1(2),...
-    model_parameter_2(1),model_parameter_2(2),...
-    piecewise_rssi,rssi_test,8)
+% AP_1 =  struct('Name','onepos_HLK_1',...
+%     'param_less_rssi',[-31.03,2.424],...
+%     'param_more_rssi',[-46.44,0.3551],...
+%     'piecewise_rssi', -49.08);
+all_apinfo = {AP_1,AP_2,AP_3,AP_4,...
+    AP_5,AP_6,AP_7,AP_8};
+all_static_oneHLK = {static_one_HLK_1,static_one_HLK_2,static_one_HLK_3,...
+    static_one_HLK_4,static_one_HLK_5,...
+    static_one_HLK_6,static_one_HLK_7,static_one_HLK_8};
+for i = 1:1:length(all_apinfo)
+    cur_ap = all_apinfo{i};
+    cur_static_one_HLK = all_static_oneHLK{i};
+    mp_l = cur_ap.param_less_rssi; % rssi >= -50拟合结果:A=-46.44,n=0.36
+    mp_m = cur_ap.param_more_rssi;
+    piecewise_rssi = cur_ap.piecewise_rssi;
+    rssi_test = cur_static_one_HLK{1}.RSSI;
+    distance = calculate_distance_based_on_rssi_piecewise(mp_l,mp_m,rssi_test,piecewise_rssi);
+    % 分析实际拟合效果
+    % analysis_fit_model_piecewise(Am,bm,Al,bl,piecewise_rssi,rssi,true_dist,varargin)
+    analysis_fit_model_piecewise(mp_m(1),mp_m(2),...
+        mp_l(1),mp_l(2),...
+        piecewise_rssi,rssi_test,10)
+end
+
 
 %%
 all_rssi_mean = cell(0);
@@ -38,8 +49,9 @@ for i=1:1:8
 end
 
 %% save data
-clearvars -except std_rssi_one* m_RSSI_HLK_* all_rssi_mean AP_*
-save('std_rssi_onepos','std_rssi_one*','m_RSSI_HLK_*','all_rssi_mean','AP_*')
+clearvars -except std_rssi_one* m_RSSI_HLK_* all_rssi_mean AP_* static_one* all_apinfo all_static_oneHLK
+% save('std_rssi_onepos','std_rssi_one*','m_RSSI_HLK_*',...
+%     'all_rssi_mean','AP_*','static_one*')
 %% figure - 1
 clc;
 tcf('ss');
@@ -85,13 +97,15 @@ grid on
 
 %% piecewise curve fitting
 clc;
-tcf;
-for j =1:1:length(all_rssi_mean)
-% for j =1:1:1
+
+% for j =1:1:length(all_rssi_mean)
+for j =1:1:8
     cur_rssi = all_rssi_mean{j};
     len_temp = length(cur_rssi);
     dist = linspace(1,len_temp,len_temp);
     fprintf('## AP:%.0f 拟合结果\n ### 分段RSSI:%.1f\n',j,cur_rssi(dist(dist==4)))
-    create_logarithmic_model_fit(dist,cur_rssi','piecewise_rssi',cur_rssi(dist(dist==8)));
+    create_logarithmic_model_fit(dist,cur_rssi','piecewise_rssi',...
+        cur_rssi(dist(dist==8)),'drawpic',false);
     fprintf('___________________\n');
+    tcf;
 end
