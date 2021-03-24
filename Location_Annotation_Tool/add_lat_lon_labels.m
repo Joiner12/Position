@@ -2,8 +2,8 @@ function ananoted_file = add_lat_lon_labels(lat,lon,varargin)
 % 功能: 为蓝牙节点采集的数据添加位置标签(经纬度)
 % 定义: add_lat_lon_labels(lat,lon)
 % 输入:
-%       lat:经度
-%       lon:纬度
+%       lat:纬度
+%       lon:经度
 %       varargin:可选参数(key:value)
 %       可选参数
 %       1.'originfile'指定原始数据文件的完整路径为full_file_path，如果未输入则弹出文件选择对话框;
