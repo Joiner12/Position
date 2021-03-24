@@ -114,7 +114,7 @@ function [position, debug_param] = bluetooth_position(data)
                     pos_queue = queue_clear(pos_queue);
                     position{i} = invalid_situation_pos;
 
-                    continue;
+                    % continue;
                 else
                     %历史数据还有效,利用上次计算的初始定位结果进行后续定位处理
                     pos_res = pos_res_prev;

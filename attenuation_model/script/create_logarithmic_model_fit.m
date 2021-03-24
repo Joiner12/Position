@@ -114,12 +114,15 @@ else
     eq = power(10,(fcof_1(1)-x)/10/fcof_1(2)) == power(10,(fcof_2(1)-x)/10/fcof_2(2));
     intersection_rssi = solve(eq,x);
     fprintf('分段曲线交点RSSI:%.2f\n',intersection_rssi);
-    %     % 根据拟合结果分析RSSI波动对测距的影响
-    %     fy_1 = power(10,(fcof_1(1) - rssi)/10/fcof_1(2));
-    %     fy_2 = power(10,(fcof_2(1) - rssi)/10/fcof_2(2));
+    
+    % 函数句柄-用作绘图
+    fh_1 = @(r) power(10,(fcof_1(1)-r)/10/fcof_1(2));
+    fh_2 = @(r) power(10,(fcof_2(1)-r)/10/fcof_2(2));
+    
+    
     %% 绘图
     figure('Name','fitmodel','Color','w');
-    %     subplot(2,1,1)
+    subplot(2,1,1)
     plot(fitresult_1,rssi, dist);
     axeschild=get(gca,'children');
     axeschild(1).Color = 'c';
@@ -131,10 +134,29 @@ else
     axeschild(1).Color = 'r';
     
     legend('原始数据',temp_1,'原始数据',temp_2, 'Location', 'NorthEast' );
-    set(get(gca, 'XLabel'), 'String', 'rssi');
-    set(get(gca, 'YLabel'), 'String', 'dist');
+    set(get(gca, 'XLabel'), 'String', 'rssi/dB');
+    set(get(gca, 'YLabel'), 'String', 'dist/m');
     grid on
     set(get(gca, 'Title'), 'String', '拟合结果');
+    
+    subplot(2,1,2)
+    x_temp = linspace(intersection_rssi,max(xData_1)+5,100);
+    yfh_1 = fh_1(x_temp);
+    plot(x_temp,yfh_1,'LineWidth',1.5);
+    hold on
+    x_temp = linspace(-90,intersection_rssi,100);
+    yfh_2 = fh_2(x_temp);
+    plot(x_temp,yfh_2,'LineWidth',1.5)
+    hold on
+    scatter_py(rssi,dist);
+    set(get(gca, 'XLabel'), 'String', 'rssi/dB');
+    set(get(gca, 'YLabel'), 'String', 'dist/m');
+    grid on
+    set(get(gca, 'Title'), 'String', '拟合分析');
+    legend(temp_1,temp_2, '原始数据');
+    % fplot(fh_1,[intersection_rssi,max(xData_1)+5]);
+    % hold on
+    % fplot(fh_2,[-90,intersection_rssi])
     
     % todo:拟合模型下，不同距离下，相同RSSI波动对距离结果估计的影响
     %     subplot(2,1,2)
