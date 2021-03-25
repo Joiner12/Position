@@ -12,7 +12,7 @@ addpath('data_import', 'component', 'data_analysis');
 rssi_reference = -50.06763; 
 
 %经纬度无效值
-null_val = -10000; 
+null_val = -10000;
 
 %轨迹图绘制方式,支持如下方式：
 %'splashes'：绘制散点图
