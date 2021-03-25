@@ -16,6 +16,7 @@ function draw_positioning_state(cur_axes,cur_ap,varargin)
 %       none
 % varargin(key:value):
 % 'estimated_positon':定位结果(latitude,longitude)|(x,y)
+% 'true_pos':真实位置(latitude,longitude)|(x,y)
 
 
 %% base map
@@ -87,6 +88,12 @@ if any(strcmp(varargin,'estimated_positon'))
         'MarkerSize',10,'Color','r');
     text(cur_axes,est_pos_x,est_pos_y,'定位位置')
 end
+hold on
+[true_pos_x,true_pos_y,~] = latlon_to_xy(30.54798217,104.05861620);
+true_pos_x = true_pos_x - min_xy(1);
+true_pos_y = true_pos_y - min_xy(2);
+plot(true_pos_x,true_pos_y,'b*')
+text(cur_axes,true_pos_x,true_pos_y,'真实位置')
 hold off
 title(gca,'单帧定位效果')
 box on

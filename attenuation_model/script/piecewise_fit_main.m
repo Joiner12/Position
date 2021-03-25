@@ -9,6 +9,7 @@ clc;
 static_one_HLK_8 = get_std_dist_rssi_data('src_folder',...
     '../data'...
     ,'ap_filter',{'HLK_8'});
+
 %%
 %
 clc;
@@ -100,12 +101,12 @@ clc;
 
 % for j =1:1:length(all_rssi_mean)
 for j =1:1:8
-    cur_rssi = all_rssi_mean{j};
+    cur_rssi = all_rssi_mean_offside{j};
     len_temp = length(cur_rssi);
     dist = linspace(1,len_temp,len_temp);
     fprintf('## AP:%.0f 拟合结果\n ### 分段RSSI:%.1f\n',j,cur_rssi(dist(dist==4)))
     create_logarithmic_model_fit(dist,cur_rssi','piecewise_rssi',...
         cur_rssi(dist(dist==8)),'drawpic',false);
     fprintf('___________________\n');
-    tcf;
+%     tcf;
 end

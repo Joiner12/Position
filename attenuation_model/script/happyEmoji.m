@@ -8,7 +8,8 @@ xlim(ax,[-1,1]); ylim(ax,[-1,1])
 % text(ax, 0, 0, char(9752), 'VerticalAlignment','middle','HorizontalAlignment','center','FontSize', 200)
 text(ax, 0, 0, char([55357 56424 8205]), 'VerticalAlignment','middle','HorizontalAlignment','center','FontSize', 200)
 man_1 = char([55357 56424 8205]);
-str = {man_1,man_1,man_1,man_1};
+space_temp = sprintf('%*s',20);
+str = {man_1,space_temp,man_1,space_temp,man_1,space_temp,man_1};
 str = num2cell(str);
 th = linspace(-pi/2,pi/2,numel(str)); 
 txtHandle = text(ax,sin(th)*.8, cos(th)*.8, str, 'VerticalAlignment','middle','HorizontalAlignment','center','FontSize', 25);
