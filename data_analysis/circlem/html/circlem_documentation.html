@@ -1,0 +1,180 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>circlem documentation</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-10-15"><meta name="DC.source" content="circlem_documentation.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1><tt>circlem</tt> documentation</h1><!--introduction--><p>The <tt>circlem</tt> draws circles on maps.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Syntax</a></li><li><a href="#2">Description</a></li><li><a href="#3">Examples</a></li><li><a href="#9">Author Info</a></li></ul></div><h2>Syntax<a name="1"></a></h2><pre>circlem(lat,lon,radius)
+circlem(...,'units',LengthUnit)
+circlem(...,'PatchProperty',PatchValue)
+h = circlem(...)
+[h,circlelat,circlelon] = circlem(...)</pre><h2>Description<a name="2"></a></h2><p><tt>circlem(lat,lon,radius)</tt> draws a circle or circles of radius or radii given by <tt>radius</tt> centered at <tt>lat</tt>, <tt>lon</tt>, where <tt>radius</tt>, <tt>lat</tt>, and <tt>lon</tt> may be any combination of scalars, vectors, or MxN array. All non- scalar inputs must have matching dimensions.</p><p><tt>circlem(...,'units',LengthUnit)</tt> specifies a length unit of input radius. See <tt>validateLengthUnit</tt> for valid units. Default unit is kilometers.</p><p><tt>circlem(...,'PatchProperty',PatchValue)</tt> specifies patch properties such as edgecolor, facecolor, facealpha, linewidth, etc.</p><p><tt>h = circlem(...)</tt> returns the patch handle of plotted circle(s).</p><p><tt>[h,circlelat,circlelon] = circlem(...)</tt> also returns arrays of latitudes and longitudes corresponding to the outline of each circle drawn.  Each "circle" is in actuality a polygon made of 100 lat/lon pairs.</p><h2>Examples<a name="3"></a></h2><p>First let's initialize a map of the continental United States. We'll also label six of America's biggest and most influential cities:</p><pre class="codeinput">worldmap([25 55],[-130 -65])
+cla
+load <span class="string">coast</span>
+patchm(lat,long,.8*[1 1 1])
+
+places = {<span class="string">'chicago'</span>;<span class="string">'ny'</span>;<span class="string">'austin'</span>;<span class="string">'dc'</span>;<span class="string">'la'</span>;<span class="string">'powhatan'</span>};
+lats = [41.88 40.71 30.27 38.91 34.05 37.54];
+lons = [-87.63 -74.00 -97.74 -77.04 -118.24 -77.92];
+
+textm(lats,lons,places,<span class="string">'vert'</span>,<span class="string">'middle'</span>,<span class="keyword">...</span>
+    <span class="string">'horiz'</span>,<span class="string">'center'</span>,<span class="string">'color'</span>,<span class="string">'b'</span>)
+</pre><img vspace="5" hspace="5" src="circlem_documentation_01.png" alt=""> <p>Draw a big red circle around Chicago.  We'll give the circle a 500 kilometer radius:</p><pre class="codeinput">h = circlem(lats(1),lons(1),500,<span class="string">'facecolor'</span>,<span class="string">'red'</span>);
+</pre><img vspace="5" hspace="5" src="circlem_documentation_02.png" alt=""> <p>That's nice. Now let's delete that and draw circles of 200 km radius around all of our cities:</p><pre class="codeinput">delete(h)
+h = circlem(lats,lons,200);
+</pre><img vspace="5" hspace="5" src="circlem_documentation_03.png" alt=""> <p>Alternatively, all the circles can be different sizes:</p><pre class="codeinput">delete(h)
+h = circlem(lats,lons,[100 200 500 350 800 60]);
+</pre><img vspace="5" hspace="5" src="circlem_documentation_04.png" alt=""> <p>Or perhaps you want a bunch of concentric magenta circles around Austin:</p><pre class="codeinput">delete(h)
+h = circlem(lats(3),lons(3),50:50:700,<span class="string">'edgecolor'</span>,<span class="string">'m'</span>);
+</pre><img vspace="5" hspace="5" src="circlem_documentation_05.png" alt=""> <p>To get a fuzzy-edged semitransparent circle, stack several concentric circles and declare a face alpha value. Here I'm the <a href="http://www.mathworks.com/matlabcentral/fileexchange/46872-intuitive-rgb-color-values-from-xkcd/content//demo/html/rgb_demo.html"><tt>rgb</tt></a> function to get RGB values of bright orange:</p><pre class="codeinput">delete(h)
+h = circlem(lats(4),lons(4),50:20:700,<span class="string">'edgecolor'</span>,<span class="string">'none'</span>,<span class="string">'facecolor'</span>,rgb(<span class="string">'bright orange'</span>),<span class="string">'facealpha'</span>,.05);
+</pre><img vspace="5" hspace="5" src="circlem_documentation_06.png" alt=""> <h2>Author Info<a name="9"></a></h2><p>This function was written by <a href="http://www.chadagreene.com">Chad A. Greene</a> of the University of Texas Institute for Geophysics (<a href="http://www.ig.utexas.edu/people/students/cgreene/">UTIG</a>) on October 14, 2014.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% |circlem| documentation
+% The |circlem| draws circles on maps. 
+% 
+%% Syntax
+% 
+%  circlem(lat,lon,radius)
+%  circlem(...,'units',LengthUnit)
+%  circlem(...,'PatchProperty',PatchValue)
+%  h = circlem(...)
+%  [h,circlelat,circlelon] = circlem(...)
+% 
+%% Description 
+%
+% |circlem(lat,lon,radius)| draws a circle or circles of radius or radii
+% given by |radius| centered at |lat|, |lon|, where |radius|, |lat|, and
+% |lon| may be any combination of scalars, vectors, or MxN array. All non-
+% scalar inputs must have matching dimensions. 
+% 
+% |circlem(...,'units',LengthUnit)| specifies a length unit of input
+% radius. See |validateLengthUnit| for valid units. Default unit is
+% kilometers. 
+% 
+% |circlem(...,'PatchProperty',PatchValue)| specifies patch properties such
+% as edgecolor, facecolor, facealpha, linewidth, etc. 
+% 
+% |h = circlem(...)| returns the patch handle of plotted circle(s). 
+%  
+% |[h,circlelat,circlelon] = circlem(...)| also returns arrays of latitudes 
+% and longitudes corresponding to the outline of each circle drawn.  Each
+% "circle" is in actuality a polygon made of 100 lat/lon pairs.
+% 
+%% Examples 
+% First let's initialize a map of the continental United States. We'll also
+% label six of America's biggest and most influential cities: 
+
+worldmap([25 55],[-130 -65])
+cla
+load coast
+patchm(lat,long,.8*[1 1 1])
+
+places = {'chicago';'ny';'austin';'dc';'la';'powhatan'}; 
+lats = [41.88 40.71 30.27 38.91 34.05 37.54];
+lons = [-87.63 -74.00 -97.74 -77.04 -118.24 -77.92];
+
+textm(lats,lons,places,'vert','middle',...
+    'horiz','center','color','b') 
+
+%% 
+% Draw a big red circle around Chicago.  We'll give the circle a 500 kilometer radius: 
+
+h = circlem(lats(1),lons(1),500,'facecolor','red');
+
+%% 
+% That's nice. Now let's delete that and draw circles of 200 km radius
+% around all of our cities: 
+
+delete(h)
+h = circlem(lats,lons,200);
+
+%%
+% Alternatively, all the circles can be different sizes: 
+
+delete(h)
+h = circlem(lats,lons,[100 200 500 350 800 60]);
+
+%% 
+% Or perhaps you want a bunch of concentric magenta circles around Austin: 
+
+delete(h) 
+h = circlem(lats(3),lons(3),50:50:700,'edgecolor','m');
+
+%%
+% To get a fuzzy-edged semitransparent circle, stack several concentric
+% circles and declare a face alpha value. Here I'm the
+% <http://www.mathworks.com/matlabcentral/fileexchange/46872-intuitive-rgb-color-values-from-xkcd/content//demo/html/rgb_demo.html
+% |rgb|> function to get RGB values of bright orange:
+
+delete(h) 
+h = circlem(lats(4),lons(4),50:20:700,'edgecolor','none','facecolor',rgb('bright orange'),'facealpha',.05);
+
+%% Author Info
+% This function was written by <http://www.chadagreene.com Chad A. Greene> of the 
+% University of Texas Institute for Geophysics (<http://www.ig.utexas.edu/people/students/cgreene/ UTIG>)
+% on October 14, 2014.  
+
+##### SOURCE END #####
+--></body></html>
