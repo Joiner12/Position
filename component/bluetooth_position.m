@@ -94,7 +94,7 @@ for i = 1:frame_num
     tcf('Positining');
     figure('name','Positining','Color','w');
     draw_positioning_state(gca,cur_ap,'estimated_positon',[pos_res.lat,pos_res.lon]);
-%     pause()
+    %     pause()
     if final_flag
         if isempty(pos_res)
             %当前帧未定位出结果

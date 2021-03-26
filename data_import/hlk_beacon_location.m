@@ -12,7 +12,7 @@ function beacon = hlk_beacon_location()
 %           beacon(i).x：UTM:x
 %           beacon(i).y：UTM:y
 
-    beacon = [];
+    beacon = zeros(0);
     ap_num = 8; %ap个数
     ap_name = 'onepos_HLK_'; %ap统一名称标记
 
