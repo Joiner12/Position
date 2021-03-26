@@ -3,18 +3,18 @@ clc;
 tcf('GMap');
 figure('Name','GMap','Color','w');
 % rectangle
-rectangle('Position',[0,0,16,8],'FaceColor',[0 .5 .5],'EdgeColor','b',...
-    'LineWidth',3,'Curvature',.05)
+hold on
+rectangle('Position',[0,0,16,8],'FaceColor','none','EdgeColor','r',...
+    'LineWidth',2,'LineStyle','-')
 % access points
 ap = [1,1;8,1;15,1;15,4;15,7;8,7;1,7;1,4];
-hold on
+plot(ap(:,1),ap(:,2))
 scatter(ap(:,1),ap(:,2),'r*','LineWidth',1)
-hold on
 for c_i = 1:1:length(ap)
-circles(ap(c_i,1),ap(c_i,2),randi(4),'edgecolor',rand(1,3),...
-    'facecolor','none','linewidth',2,'linestyle','-.');
-hold on
+circles(ap(c_i,1),ap(c_i,2),rand()*2,...
+    'facecolor','none','linewidth',1,'linestyle','-');
 end
 plot(randi(15),randi(7),'>','MarkerSize',10)
 set(get(gca, 'Title'), 'String', 'BLE Position Map');
-axis equal off
+hold off
+axis('equal');grid('minor');box('on');

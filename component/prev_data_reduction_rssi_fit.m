@@ -1,18 +1,18 @@
 function ap = prev_data_reduction_rssi_fit(ap, type, param)
-%功能：拟合各个ap的rssi
+%功能：对各个ap的rssi信息进行滤波(前置滤波器)
 %定义：ap = prev_data_reduction_rssi_fit(ap, type, param)
 %参数： 
-%    ap：待拟合的所有ap数据
-%    type：拟合方式，支持形式如下
-%          'mean'：取当前帧所有rssi的均值
-%          'max'：取当前帧所有rssi的最大值
-%          'scope_mean'：依据范围限定，过滤当前帧的所有rssi,取过滤后rssi的均值
+%    ap：待滤波所有ap数据
+%    type：滤波方式，支持形式如下
+%          'mean'：取当前帧所有rssi的均值——均值滤波
+%          'max'：取当前帧所有rssi的最大值——最值滤波
+%          'scope_mean'：依据范围限定，过滤当前帧的所有rssi,取过滤后rssi的均值———范围滤波
 %    param：各个模式的参数,具体如下
 %          'mean'：[]
 %          'scope_mean'：param.scope_mean.rssi_range：允许的rssi范围最大值
 %                        param.scope_mean.ratio_thr：不可过滤的比例阈值(0~1)
 %输出：
-%    ap：拟合后的ap数据
+%    ap：滤波后的ap数据
 
     switch type
         case 'mean'
@@ -46,6 +46,6 @@ function ap = prev_data_reduction_rssi_fit(ap, type, param)
                 ap(i).rssi = max(ap(i).recv_rssi);
             end
         otherwise
-            error('选择的拟合方式错误,没有%s的拟合方式', type);
+            error('选择的滤波方式错误,没有%s的滤波方式', type);
     end
 end

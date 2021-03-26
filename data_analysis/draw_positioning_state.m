@@ -66,6 +66,7 @@ plot(cur_axes,beacon_x_d,beacon_y_d,'g^');
 text(cur_axes,beacon_x_d,beacon_y_d,labels)
 
 %% circle
+hold on
 for ii = 1:1:length(cur_ap)
     ap_temp = cur_ap(ii);
     cur_color = rand(1,3);
@@ -73,7 +74,6 @@ for ii = 1:1:length(cur_ap)
     index_temp = int8(str2double(index_temp));
     circles(beacon_x_d(index_temp),beacon_y_d(index_temp),ap_temp.dist,...
         'facecolor','none','edgecolor',cur_color)
-    hold on
     line([beacon_x_d(index_temp),beacon_x_d(index_temp)+cos(15*ii)*ap_temp.dist],...
         [beacon_y_d(index_temp),beacon_y_d(index_temp)+sin(15*ii)*ap_temp.dist],...
         'Color',cur_color)
@@ -88,12 +88,17 @@ if any(strcmp(varargin,'estimated_positon'))
         'MarkerSize',10,'Color','r');
     text(cur_axes,est_pos_x,est_pos_y,'定位位置')
 end
-hold on
-[true_pos_x,true_pos_y,~] = latlon_to_xy(30.54798217,104.05861620);
-true_pos_x = true_pos_x - min_xy(1);
-true_pos_y = true_pos_y - min_xy(2);
-plot(true_pos_x,true_pos_y,'b*')
-text(cur_axes,true_pos_x,true_pos_y,'真实位置')
+
+if true
+    [true_pos_x,true_pos_y,~] = latlon_to_xy(30.54798217,104.05861620);
+    true_pos_x = true_pos_x - min_xy(1);
+    true_pos_y = true_pos_y - min_xy(2);
+    plot(cur_axes,true_pos_x,true_pos_y,'b*')
+    text(cur_axes,true_pos_x,true_pos_y,'真实位置')
+    circles(true_pos_x,true_pos_y,5,...
+        'facecolor',[174, 206, 187]./255,'edgecolor','none','facealpha',0.5)
+end
+
 hold off
 title(gca,'单帧定位效果')
 box on
