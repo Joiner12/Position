@@ -10,8 +10,7 @@ static_one_HLK_8 = get_std_dist_rssi_data('src_folder',...
     '../data'...
     ,'ap_filter',{'HLK_8'});
 
-%%
-%
+%% 拟合结果检验
 clc;
 % AP_1 =  struct('Name','onepos_HLK_1',...
 %     'param_less_rssi',[-31.03,2.424],...
@@ -36,8 +35,6 @@ for i = 1:1:length(all_apinfo)
         mp_l(1),mp_l(2),...
         piecewise_rssi,rssi_test,10)
 end
-
-
 %%
 all_rssi_mean = cell(0);
 for i=1:1:8
@@ -49,10 +46,6 @@ for i=1:1:8
     all_rssi_mean{i,1} = rssi_temp;
 end
 
-%% save data
-clearvars -except std_rssi_one* m_RSSI_HLK_* all_rssi_mean AP_* static_one* all_apinfo all_static_oneHLK
-% save('std_rssi_onepos','std_rssi_one*','m_RSSI_HLK_*',...
-%     'all_rssi_mean','AP_*','static_one*')
 %% figure - 1
 clc;
 tcf('ss');
@@ -101,12 +94,12 @@ clc;
 
 % for j =1:1:length(all_rssi_mean)
 for j =1:1:8
-    cur_rssi = all_rssi_mean_offside{j};
+    cur_rssi = all_rssi_mean_offset{j};
     len_temp = length(cur_rssi);
     dist = linspace(1,len_temp,len_temp);
     fprintf('## AP:%.0f 拟合结果\n ### 分段RSSI:%.1f\n',j,cur_rssi(dist(dist==4)))
     create_logarithmic_model_fit(dist,cur_rssi','piecewise_rssi',...
-        cur_rssi(dist(dist==8)),'drawpic',false);
+        cur_rssi(dist(dist==5)),'drawpic',false);
     fprintf('___________________\n');
 %     tcf;
 end
