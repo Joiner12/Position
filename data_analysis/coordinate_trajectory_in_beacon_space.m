@@ -193,7 +193,8 @@ function coordinate_trajectory_in_beacon_space(env_feat, ...
         x = env_lon{i};
         y = env_lat{i};
         
-        plot(x, y, 'k-');
+        geoplot(y,x,'k-')
+        % plot(x, y, 'k-');
         hold on;
     end
     
@@ -201,7 +202,7 @@ function coordinate_trajectory_in_beacon_space(env_feat, ...
     x = beacon_lon;
     y = beacon_lat;
     
-    handle_beacon = plot(x, y, 'bs', ...
+    handle_beacon = geoplot(y,x , 'bs', ...
                          'LineWidth', 2,...
                          'MarkerSize', 5,...
                          'MarkerEdgeColor', 'b');
@@ -214,7 +215,7 @@ function coordinate_trajectory_in_beacon_space(env_feat, ...
     x = track_lon;
     y = track_lat;
     
-    handle_track = plot(x, y, plot_linespec);
+    handle_track = geoplot( y,x, plot_linespec);
     legend(handle_track, '轨迹');
     hold on;
     
@@ -229,14 +230,14 @@ function coordinate_trajectory_in_beacon_space(env_feat, ...
                     x = true_var_lon;
                     y = true_var_lat;
 
-                    handle_true_pos = plot(x, y, plot_linespec);
+                    handle_true_pos = geoplot(y,x, plot_linespec);
                     legend(handle_true_pos, '真实位置');
                     hold on;
                 case 'filter_point'
                     x = filter_lon;
                     y = filter_lat;
 
-                    handle_filter_pos = plot(x, y, 'cx');
+                    handle_filter_pos = geoplot(y,x , 'cx');
                     legend(handle_filter_pos, '被过滤的位置');
                     hold on;
                 otherwise
@@ -263,7 +264,8 @@ function coordinate_trajectory_in_beacon_space(env_feat, ...
     end
     
     title('信标空间内的坐标轨迹');
-    xlabel('纬度：lat');
-    ylabel('经度：lon');
-    axis auto;
+    geobasemap bluegreen
+%     xlabel('纬度：lat');
+%     ylabel('经度：lon');
+%     axis auto;
 end

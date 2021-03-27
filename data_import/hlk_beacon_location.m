@@ -9,8 +9,10 @@ function beacon = hlk_beacon_location()
 %           beacon(i).id：信标ID号
 %           beacon(i).lat：信标纬度
 %           beacon(i).lon：信标经度
+%           beacon(i).x：UTM:x
+%           beacon(i).y：UTM:y
 
-    beacon = [];
+    beacon = zeros(0);
     ap_num = 8; %ap个数
     ap_name = 'onepos_HLK_'; %ap统一名称标记
 
@@ -27,5 +29,8 @@ function beacon = hlk_beacon_location()
         beacon(i).id = i;
         beacon(i).lat = ap_lat(i);
         beacon(i).lon = ap_lon(i);
+        [x,y,~]  = latlon_to_xy(ap_lat(i), ap_lon(i));
+        beacon(i).x = x;
+        beacon(i).y = y;
     end
 end

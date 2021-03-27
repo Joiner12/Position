@@ -12,7 +12,7 @@ addpath('data_import', 'component', 'data_analysis');
 rssi_reference = -50.06763; 
 
 %经纬度无效值
-null_val = -10000; 
+null_val = -10000;
 
 %轨迹图绘制方式,支持如下方式：
 %'splashes'：绘制散点图
@@ -54,21 +54,13 @@ end
 
 disp('定位处理结束');
 
-%% 定位结果分析
-%绘制轨迹及误差图
-draw_trajectory_and_error_diagram(position, ...
-                                  null_val, ...
-                                  env_feat, ...
-                                  beacon, ...
-                                  draw_type, ...
-                                  'filter_point', ...
-                                  filter_points);
+%% 整体定位结果分析
+% 绘制轨迹及误差图
 
-%绘制第1个文件第139帧数据中,点位与加收到的信标的计算距离和真实距离的分析图
-%draw_point_to_beacon_dist_analysis_chart(position{1}.true_pos(139), debug{1}.ap_final_dist_calc{139}, beacon);
-
-%绘制第1个文件第139帧数据中,点位与加收到的信标的计算距离反推(标准对数模型)后的rssi分析图
-%drwa_point_to_beacon_log_rssi_analysis(position{1}.true_pos(139), debug{1}.ap_final_dist_calc{139}, debug{1}.config.dist_calc_param.logarithmic.loss_coef, beacon);
-
-%绘制第1个文件第139帧数据中,依据计算的距离在信标空间绘制距离范围图
-%draw_dist_area_in_beacon_space(env_feat, beacon, debug{1}.ap_final_dist_calc{139}, 'true_value', position{1}.true_pos(139), 'calc_value', position{i}.pos_res{139});
+% draw_trajectory_and_error_diagram(position, ...
+%                                   null_val, ...
+%                                   env_feat, ...
+%                                   beacon, ...
+%                                   draw_type, ...
+%                                   'filter_point', ...
+%                                   filter_points);

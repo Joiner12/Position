@@ -117,17 +117,33 @@ label_mark_lat.FontSize = 14;
 label_mark_lat.FontWeight = 'bold';
 label_mark_lat.FontColor = [0.9412 0.9412 0.9412];
 label_mark_lat.Position = [203 160 34 22];
-label_mark_lat.Text = '经度';
+label_mark_lat.Text = '纬度';
 
 % Create Tab2
 Tab2 = uitab(TabGroup);
 Tab2.Title = 'Tab2';
+% Create ThefeatureiscomingsoonLabel
+ThefeatureiscomingsoonLabel = uilabel(Tab2);
+ThefeatureiscomingsoonLabel.FontName = 'Calibri';
+ThefeatureiscomingsoonLabel.FontSize = 18;
+ThefeatureiscomingsoonLabel.FontWeight = 'bold';
+ThefeatureiscomingsoonLabel.FontColor = [0.4706 0.6706 0.1882];
+ThefeatureiscomingsoonLabel.Position = [31 40 600 24];
+ThefeatureiscomingsoonLabel.Text = strcat('When you ',char([55357 56384]),...
+    ' the abyss, the abyss ', char([55357 56384]), ' you...');
+
+% Create Label_3
+Label_3 = uilabel(Tab2);
+Label_3.HorizontalAlignment = 'center';
+Label_3.FontSize = 200;
+Label_3.Position = [178 107 283 266];
+Label_3.Text = char([55358 56611]);
 
 %% =======================用户数据========================= %%
 userdata = struct('src_file','' ... % 源数据文件
     ,'tar_folder','' ...            % 转换后存储路径
-    ,'lat',0.0 ...                  % 经值
-    ,'lon',0.0);                    % 纬度
+    ,'lat',0.0 ...                  % 纬度
+    ,'lon',0.0);                    % 经度
 
 %% =======================嵌套回调========================= %%
 % ===================button_select_file_callback====================== %
@@ -208,8 +224,8 @@ userdata = struct('src_file','' ... % 源数据文件
     function add_lat_lon_labels_ui(~,~)
         % userdata = struct('src_file','' ... % 源数据文件
         %     ,'tar_folder','' ...            % 转换后存储路径
-        %     ,'lat',0.0 ...                  % 经值
-        %     ,'lon',0.0);                    % 纬度
+        %     ,'lat',0.0 ...                  % 纬度
+        %     ,'lon',0.0);                    % 经度
         lat = userdata.lat;
         lon = userdata.lon;
         originfile = userdata.src_file;
@@ -236,7 +252,7 @@ userdata = struct('src_file','' ... % 源数据文件
                 target_file = fullfile(targetfolder,tar_file_name);
                 
                 add_label_to_file(lat,lon,originfile,target_file);
-                fprintf('源文件:\n%s\n保存路径:\n%s\n位置标签:\n经度:%0.7f\n纬度:%.7f\n',...
+                fprintf('源文件:\n%s\n保存路径:\n%s\n位置标签:\n纬度:%0.7f\n经度:%.7f\n',...
                     originfile,targetfolder,lat,lon);
                 uiwait(msgbox('标注完成','Success','modal'));
             case 'No'

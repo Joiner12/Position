@@ -1,11 +1,11 @@
-function analysis_fit_model_piecewise(A1,b1,A2,b2,piecewise_rssi,rssi,true_dist,varargin)
+function analysis_fit_model_piecewise(Am,bm,Al,bl,piecewise_rssi,rssi,true_dist,varargin)
 % 功能:分析**分段拟合**模型拟合结果 A-10*b*lg(d) = rssi
-% 定义: analysis_fit_model_piecewise(A1,b1,A2,b2,piecewise_rssi,rssi,true_dist,varargin)
+% 定义: analysis_fit_model_piecewise(Am,bm,Al,bl,piecewise_rssi,rssi,true_dist,varargin)
 % 输入:
-%       A1:模型-1参考RSSI值(dB)
-%       b1:模型-1衰减系数
-%       A2:....
-%       b2:....
+%       Am:模型-1参考RSSI值(dB) rssi >= piecewise_rssi
+%       bm:模型-1衰减系数
+%       Al:....                rssi < piecewise_rssi
+%       bl:....
 %       piecewise_rssi:分段点RSSI值(dB)
 %       true_dist:真实距离
 %       varargin:保留参数
@@ -35,8 +35,8 @@ function analysis_fit_model_piecewise(A1,b1,A2,b2,piecewise_rssi,rssi,true_dist,
 %{
   rssi_less = rssi(rssi < piecewise_rssi);
 rssi_more = rssi(rssi >= piecewise_rssi);
-dist_calc_less = calculate_distance_based_on_rssi(struct('A',A1,'n',b1),rssi_less); % 通过rssi计算出的距离
-dist_calc_more = calculate_distance_based_on_rssi(struct('A',A2,'n',b2),rssi_more); % 通过rssi计算出的距离
+dist_calc_less = calculate_distance_based_on_rssi(struct('A',Am,'n',bm),rssi_less); % 通过rssi计算出的距离
+dist_calc_more = calculate_distance_based_on_rssi(struct('A',Al,'n',bl),rssi_more); % 通过rssi计算出的距离
 
 %
 dist_calc_less = reshape(dist_calc_less,[1,length(dist_calc_less)]);
@@ -51,9 +51,9 @@ dist_calc = zeros(0);
 for i =1:1:len_rssi
     cur_rssi = rssi(i);
     if cur_rssi >= piecewise_rssi
-        dist_calc(i) = calculate_distance_based_on_rssi(struct('A',A1,'n',b1),cur_rssi); % 通过rssi计算出的距离
+        dist_calc(i) = calculate_distance_based_on_rssi(struct('A',Am,'n',bm),cur_rssi); % 通过rssi计算出的距离
     else
-        dist_calc(i) = calculate_distance_based_on_rssi(struct('A',A2,'n',b2),cur_rssi); % 通过rssi计算出的距离
+        dist_calc(i) = calculate_distance_based_on_rssi(struct('A',Al,'n',bl),cur_rssi); % 通过rssi计算出的距离
     end
 end
 
@@ -62,7 +62,7 @@ ser_rssi = linspace(1,len_rssi,len_rssi);
 [m_val,v_val,~,~] = get_rssi_statistics(rssi);
 % 绘图
 tcf('NN');
-figure('Name','NN','Color','w');
+figure('Color','w');
 subplot(221)
 scatter_py(ser_rssi,rssi);
 set(get(gca, 'Title'), 'String', 'RSSI分布情况');
@@ -95,9 +95,9 @@ grid on
 set(get(gca, 'Title'), 'String', '模型解算与真实距离偏差');
 
 subplot(224)
-model_str = sprintf('$$d(rssi) = %.4f - \\frac{rssi}{10*%.4f}$$',A1,b1);
+model_str = sprintf('$$d(rssi) = %.4f - \\frac{rssi}{10*%.4f}$$',Am,bm);
 h=text(0,0.5,model_str);
-model_str = sprintf('$$d(rssi) = %.4f - \\frac{rssi}{10*%.4f}$$',A2,b2);
+model_str = sprintf('$$d(rssi) = %.4f - \\frac{rssi}{10*%.4f}$$',Al,bl);
 h1=text(0,1,model_str);
 set(h,'Interpreter','latex');
 set(h1,'Interpreter','latex');
