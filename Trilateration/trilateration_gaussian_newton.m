@@ -16,7 +16,7 @@ function pos_est = trilateration_gaussian_newton(cur_ap,varargin)
 
 
 %%
-ap_num = length(ap); % 接入点个数
+ap_num = length(cur_ap); % 接入点个数
 centroid = zeros(1,2);
 lat = zeros(ap_num, 1);
 lon = zeros(ap_num, 1);
@@ -24,9 +24,9 @@ x = zeros(ap_num, 1);
 y = zeros(ap_num, 1);
 dist = zeros(ap_num, 1);
 for i = 1:ap_num
-    lat(i) = ap(i).lat;
-    lon(i) = ap(i).lon;
-    [x(i), y(i), ~] = latlon_to_xy(lat(i), lon(i));
+    lat(i) = cur_ap(i).lat;
+    lon(i) = cur_ap(i).lon;
+    [x(i), y(i), lam] = latlon_to_xy(lat(i), lon(i));
     dist(i) = ap(i).dist;
 end
 %% access point
@@ -36,8 +36,12 @@ if ap_num <= 1  %接入点信息少于一个，输出为空位置。
 elseif isequal(ap_num,2) % 两个接入点,质心作为输出。
     centroid = [mean(x),mean(y)];
     pos_est = centroid;
-else
-    
-    
+else % >= 三个接入点
+    x = reshape(x,[length(x),1]);
+    y = reshape(y,[length(y),1]);
+    ap_xy = [x,y];
+    pos_est = trilateration_calc( ap_xy,dist);
 end
+%% xy转latitude longitude
+[pos_res.lat, pos_res.lon] = xy_to_latlon(pos_est(1), pos_est(2), lam);
 end

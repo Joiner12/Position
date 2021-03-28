@@ -16,5 +16,8 @@ trilateration_schematic_diagram(x_t,y_t,r_t,x_ans(1),x_ans(2));
 %% 
 clc;
 b=trilateration_calc([x_t',y_t'],r_t')
-%% 
+%
 trilateration_schematic_diagram(x_t,y_t,r_t,b(1),b(2));
+%% 
+a = [1 2;3 4;5 6]
+1./sqrt(a(:,1).^2 + a(:,2).^2)
