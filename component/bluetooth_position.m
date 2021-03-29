@@ -12,16 +12,16 @@ function [position, debug_param] = bluetooth_position(data)
 %               debug_param.config：各个构件参数
 
 %% 系统初始化
-frame_num = length(data);  %总帧数
+frame_num = length(data); %总帧数
 position = cell(1, frame_num); %初始化每帧定位结果为空
-continue_valid_frame_num = 0;  %连续有效的帧数
-continue_invalid_frame_num = 0;%连续无效的帧数
-ap_buf = [];  %初始化不同ap数据的缓存
+continue_valid_frame_num = 0; %连续有效的帧数
+continue_invalid_frame_num = 0; %连续无效的帧数
+ap_buf = []; %初始化不同ap数据的缓存
 prev_ap = []; %初始化上一帧的ap数据
-scope_prev_pos = [];       %范围滤波上一帧结果
+scope_prev_pos = []; %范围滤波上一帧结果
 jump_smooth_prev_pos = []; %跳点范围滤波上一帧结果
-invalid_situation_pos = [];%无效情况下最终输出的定位结果
-config = sys_config();     %设置各个构件参数
+invalid_situation_pos = []; %无效情况下最终输出的定位结果
+config = sys_config(); %设置各个构件参数
 pos_queue = queue_init(config.jump_smooth_filter_param.smooth_len); %初始化坐标缓存队列
 
 %仅用于debug
@@ -43,28 +43,32 @@ for i = 1:frame_num
     cur_ap = prev_data_reduction_invalid_coordinate_del(cur_ap);
     
     %整合相同的ap数据
-    cur_ap = prev_data_redcution_integrate_same_ap(cur_ap,...
+    cur_ap = prev_data_redcution_integrate_same_ap(cur_ap, ...
         config.integrate_same_ap_param);
     
     %拟合各个ap的rssi
-    cur_ap = prev_data_reduction_rssi_fit(cur_ap,...
-        config.rssi_fit_type,...
+    cur_ap = prev_data_reduction_rssi_fit(cur_ap, ...
+        config.rssi_fit_type, ...
         config.rssi_fit_param);
     
     if rssi_fit_flag
         %rssi滤波（后续只会用到卡尔曼滤波后结果rssi_kf，高斯及平滑结果仅用于数据分析）
-        [cur_ap, ap_buf] = prev_rssi_filter(cur_ap,...
-            ap_buf,...
+        [cur_ap, ap_buf] = prev_rssi_filter(cur_ap, ...
+            ap_buf, ...
             config.rssi_filter_param);
         
         for j = 1:length(cur_ap)
             cur_ap(j).rssi = cur_ap(j).rssi_kf;
         end
+        
     else
+        
         for j = 1:length(cur_ap)
             cur_ap(j).rssi_kf = cur_ap(j).rssi;
         end
+        
     end
+    
     %dbscan聚类法的ap选择器
     %         cur_ap = prev_dbscan_ap_selector(cur_ap,...
     %                                          prev_ap,...
@@ -73,8 +77,8 @@ for i = 1:frame_num
     %        prev_ap = cur_ap;
     
     %计算离各个ap的距离
-    cur_ap = prev_dist_calc(cur_ap,...
-        config.dist_calc_type,...
+    cur_ap = prev_dist_calc(cur_ap, ...
+        config.dist_calc_type, ...
         config.dist_calc_param);
     
     %         cur_ap = prev_dist_subsection_log_calc(cur_ap, config.subsection_dist_calc_param);
@@ -88,14 +92,20 @@ for i = 1:frame_num
     %高斯牛顿迭代最小二乘算法（加权质心结果为初始点）
     %         pos_res = location_gauss_newton_least_squares_wma(cur_ap,...
     %                                                           config.newtongaussls_param);
+    if false
+        [pos_res, debug_param] = location_least_squares(cur_ap, debug_param);
+    else
+        [pos_res, ~] = trilateration_gaussian_newton(cur_ap);
+    end
     
-    [pos_res, debug_param] = location_least_squares(cur_ap, debug_param);
-    
-    tcf('Positining');
+    tcf('Positining'); % todo:异常点处理
     figure('name','Positining','Color','w');
-    draw_positioning_state(gca,cur_ap,'estimated_positon',[pos_res.lat,pos_res.lon]);
-    %     pause()
+    [true_pos_x,true_pos_y,~] = latlon_to_xy(30.54798217,104.05861620);
+    draw_positioning_state(gca,cur_ap,'estimated_positon',[pos_res.lat,pos_res.lon],...
+        'true_pos',[true_pos_x,true_pos_y]);
+    
     if final_flag
+        
         if isempty(pos_res)
             %当前帧未定位出结果
             continue_invalid_frame_num = continue_invalid_frame_num + 1;
@@ -123,6 +133,7 @@ for i = 1:frame_num
                 %历史数据还有效,利用上次计算的初始定位结果进行后续定位处理
                 pos_res = pos_res_prev;
             end
+            
         else
             %当前帧成功定位出结果,保存当前结果作为初始定位的历史数据
             pos_res_prev = pos_res;
@@ -130,8 +141,8 @@ for i = 1:frame_num
         
         %% 定位后处理
         %范围滤波
-        pos_res = final_scope_filter(pos_res,...
-            scope_prev_pos,...
+        pos_res = final_scope_filter(pos_res, ...
+            scope_prev_pos, ...
             config.scope_filter_param);
         
         scope_prev_pos = pos_res;
@@ -139,22 +150,25 @@ for i = 1:frame_num
         %跳点平滑滤波
         continue_valid_frame_num = continue_valid_frame_num + 1;
         config.jump_smooth_filter_param.frame_num = continue_valid_frame_num;
-        [pos_res, pos_queue, jump_num] = final_jump_smooth_filter(pos_res,...
-            jump_smooth_prev_pos,...
-            pos_queue,...
+        [pos_res, pos_queue, jump_num] = final_jump_smooth_filter(pos_res, ...
+            jump_smooth_prev_pos, ...
+            pos_queue, ...
             config.jump_smooth_filter_param);
         
         config.jump_smooth_filter_param.jump_num = jump_num;
         jump_smooth_prev_pos = pos_res;
         invalid_situation_pos = pos_res;
     else
+        
         if isempty(pos_res)
             pos_res = pos_res_prev;
         else
             pos_res_prev = pos_res;
         end
+        
     end
     
     position{i} = pos_res;
 end
+
 end

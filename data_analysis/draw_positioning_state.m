@@ -89,8 +89,9 @@ if any(strcmp(varargin,'estimated_positon'))
     text(cur_axes,est_pos_x,est_pos_y,'定位位置')
 end
 
-if true
-    [true_pos_x,true_pos_y,~] = latlon_to_xy(30.54798217,104.05861620);
+% 'true_pos':真实位置(latitude,longitude)|(x,y)
+if any(strcmp(varargin,'true_pos'))
+    [true_pos_x,true_pos_y,~] = varargin{find(any(strcmp(varargin,'true_pos')))+1};
     true_pos_x = true_pos_x - min_xy(1);
     true_pos_y = true_pos_y - min_xy(2);
     plot(cur_axes,true_pos_x,true_pos_y,'b*')
