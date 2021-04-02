@@ -22,6 +22,7 @@ function draw_positioning_state(cur_axes, cur_ap, varargin)
 
     basemap = tencent_lib_environment();
     min_xy = [2^31, 2^31];
+    hold on
 
     for i = 1:1:length(basemap)
         item_x = zeros(0);
@@ -49,7 +50,6 @@ function draw_positioning_state(cur_axes, cur_ap, varargin)
         end
 
         line(cur_axes, item_x, item_y) % 绘制
-        hold on
     end
 
     %% beacon
@@ -75,8 +75,6 @@ function draw_positioning_state(cur_axes, cur_ap, varargin)
 
     if true
         %% circle
-        hold on
-
         for ii = 1:1:length(cur_ap)
             ap_temp = cur_ap(ii);
             cur_color = rand(1, 3);
@@ -102,7 +100,9 @@ function draw_positioning_state(cur_axes, cur_ap, varargin)
 
         % 'true_pos':真实位置(latitude,longitude)|(x,y)
         if any(strcmp(varargin, 'true_pos'))
-            [true_pos_x, true_pos_y, ~] = varargin{find(any(strcmp(varargin, 'true_pos'))) + 1};
+            vartemp = varargin{find(any(strcmp(varargin, 'true_pos'))) + 1};
+            true_pos_x = vartemp(1);
+            true_pos_y = vartemp(2);
             true_pos_x = true_pos_x - min_xy(1);
             true_pos_y = true_pos_y - min_xy(2);
             plot(cur_axes, true_pos_x, true_pos_y, 'b*')
