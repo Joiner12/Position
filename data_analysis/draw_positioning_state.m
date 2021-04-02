@@ -89,7 +89,7 @@ function draw_positioning_state(cur_axes, cur_ap, varargin)
 
         % 定位结果
         if any(strcmp(varargin, 'estimated_positon'))
-            est_pos = varargin{find(any(strcmp(varargin, 'estimated_positon'))) + 1};
+            est_pos = varargin{find(strcmp(varargin, 'estimated_positon')) + 1};
             [est_pos_x, est_pos_y, ~] = latlon_to_xy(est_pos(1), est_pos(2));
             est_pos_x = est_pos_x - min_xy(1);
             est_pos_y = est_pos_y - min_xy(2);
@@ -100,9 +100,8 @@ function draw_positioning_state(cur_axes, cur_ap, varargin)
 
         % 'true_pos':真实位置(latitude,longitude)|(x,y)
         if any(strcmp(varargin, 'true_pos'))
-            vartemp = varargin{find(any(strcmp(varargin, 'true_pos'))) + 1};
-            true_pos_x = vartemp(1);
-            true_pos_y = vartemp(2);
+            vartemp = varargin{find(strcmp(varargin, 'true_pos')) + 1};
+            [true_pos_x, true_pos_y, ~] = latlon_to_xy(vartemp(1), vartemp(2));
             true_pos_x = true_pos_x - min_xy(1);
             true_pos_y = true_pos_y - min_xy(2);
             plot(cur_axes, true_pos_x, true_pos_y, 'b*')

@@ -20,7 +20,7 @@ null_val = -10000;
 % draw_type = 'trajectory'; 
 draw_type = 'splashes'; 
 
-%% 数据初始化
+% 数据初始化
 %读取待定位数据
 files_data = data_import();
 

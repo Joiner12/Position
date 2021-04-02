@@ -123,16 +123,18 @@ if figure_flag
     end
 
     % draw figure
-    x = zeros(0);        
+    x = zeros(0);
     y = zeros(0);
+
     for j = 1:1:size(valid_rssi, 1)
-        x = [x,linspace(1, 8, 8) + (j - 1) * 5];
+        x = [x, linspace(1, 8, 8) + (j - 1) * 5];
 
         for k = 1:1:size(valid_rssi, 2)
             y((j - 1) * 8 + k) = length(valid_rssi{j, k});
         end
+
     end
-    
+
     bar(y)
     box on
 end
