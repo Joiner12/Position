@@ -1,4 +1,4 @@
-function pos_est = trilateration_gaussian_newton(cur_ap,varargin)
+function [pos_est,lam] = trilateration_gaussian_newton(cur_ap,varargin)
 % 功能：使用高斯-牛顿法解算三边定位
 % 定义：pos_est = trilateration_gaussian_newton(cur_ap,varargin)
 % 输入:
@@ -11,33 +11,43 @@ function pos_est = trilateration_gaussian_newton(cur_ap,varargin)
 %       'onepos_HLK_4'    '1c:06:00:3c:d6:40'    30.548    104.06    [1×2 double]       -50.068        -60.5     -60.5     12.929
 %       'onepos_HLK_1'    'a0:04:00:3c:d6:40'    30.548    104.06    [       -74]       -50.068          -74       -74      59.25
 % 输出:
-%       none
+%       pos_est:估计位置
+%       struct('lat',value,'lon','value','x',value,'y',value)
+%       lam:时区
 % varargin(key:value)
 
 
 %%
-ap_num = length(ap); % 接入点个数
+ap_num = length(cur_ap); % 接入点个数
 centroid = zeros(1,2);
 lat = zeros(ap_num, 1);
 lon = zeros(ap_num, 1);
 x = zeros(ap_num, 1);
 y = zeros(ap_num, 1);
 dist = zeros(ap_num, 1);
+pos_est = struct();
+lam = 0;
 for i = 1:ap_num
-    lat(i) = ap(i).lat;
-    lon(i) = ap(i).lon;
-    [x(i), y(i), ~] = latlon_to_xy(lat(i), lon(i));
-    dist(i) = ap(i).dist;
+    lat(i) = cur_ap(i).lat;
+    lon(i) = cur_ap(i).lon;
+    [x(i), y(i), lam] = latlon_to_xy(lat(i), lon(i));
+    dist(i) = cur_ap(i).dist;
 end
 %% access point
 if ap_num <= 1  %接入点信息少于一个，输出为空位置。
-    pos_est = zeros(1,2);
+    pos_est_xy = zeros(1,2);
     
 elseif isequal(ap_num,2) % 两个接入点,质心作为输出。
     centroid = [mean(x),mean(y)];
-    pos_est = centroid;
-else
-    
-    
+    pos_est_xy = centroid;
+else % >= 三个接入点
+    x = reshape(x,[length(x),1]);
+    y = reshape(y,[length(y),1]);
+    ap_xy = [x,y];
+    pos_est_xy = trilateration_calc(ap_xy,dist);
 end
+%% xy转latitude longitude
+[pos_est.lat, pos_est.lon] = xy_to_latlon(pos_est_xy(1), pos_est_xy(2), lam);
+pos_est.x = pos_est_xy(1);
+pos_est.y = pos_est_xy(2);
 end

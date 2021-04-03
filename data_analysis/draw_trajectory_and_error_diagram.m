@@ -52,7 +52,7 @@ function draw_trajectory_and_error_diagram(position, ...
 %                             track_position(1)为第一个点的位置,track_position(2)
 %                             为第二个点的位置,以此类推
 %可变参数：
-%    成组传入,组数和各组顺序不做限制,但各组内数据格式必须严格遵从[type, param]
+%    成组传入,组数和各组顺序不做限制,但各组内数据格式必须严格遵从[key, value]
 %    格式,现支持的各组功能如下：
 %    第一组：
 %          格式：'filter_point', filter_points

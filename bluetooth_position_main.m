@@ -20,7 +20,7 @@ null_val = -10000;
 % draw_type = 'trajectory'; 
 draw_type = 'splashes'; 
 
-%% 数据初始化
+% 数据初始化
 %读取待定位数据
 files_data = data_import();
 
@@ -56,7 +56,7 @@ disp('定位处理结束');
 
 %% 整体定位结果分析
 % 绘制轨迹及误差图
-
+position_error_statistics(position{1,1}.pos_res,  position{1,1}.true_pos);
 % draw_trajectory_and_error_diagram(position, ...
 %                                   null_val, ...
 %                                   env_feat, ...

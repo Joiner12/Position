@@ -34,7 +34,6 @@ octave-workspace
 重构总结.docx
 
 # data
-*.mat
 data_analysis/数据格式样例-蓝牙_10
 data_analysis/数据格式样例-蓝牙_5
 data_analysis/数据格式样例-蓝牙_15.txt

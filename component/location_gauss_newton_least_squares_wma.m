@@ -73,12 +73,12 @@ function pos_res = location_gauss_newton_least_squares_wma(ap, param)
             type3_w.x = init_pos.x + delta_xy(1);
             type3_w.y = init_pos.y + delta_xy(2);
 
-            error = sum(matrix_b);
+            residuals = sum(matrix_b);
 
-            if abs(error) < iterative_thr
+            if abs(residuals) < iterative_thr
                 %误差小于门限停止迭代
                 break;
-            elseif abs(error) > iterative_thr * 10
+            elseif abs(residuals) > iterative_thr * 10
                 %误差大于10倍门限，认为发散，使用质心位置
                 type3_w = centre_pos;
             else

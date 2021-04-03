@@ -1,0 +1,6 @@
+  HEAD         NAME                MAC        RSSI      LAT                  LON            
+$APMSG onepos_HLK_2         e1:04:00:3c:d6:40 -61  30.5479558           104.0585699         
+$APMSG onepos_HLK_6         c2:04:00:3c:d6:40 -71  30.5479562           104.0587338         
+$APMSG onepos_HLK_4         1c:06:00:3c:d6:40 -61  30.5480384           104.0586489         
+$APMSG onepos_HLK_1         a0:04:00:3c:d6:40 -74  30.5478867           104.0585689         
+$APMSG onepos_HLK_4         1c:06:00:3c:d6:40 -60  30.5480384           104.0586489     
