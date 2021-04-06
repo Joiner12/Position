@@ -43,19 +43,18 @@ function [position, debug_param] = bluetooth_position(data)
 
         %剔除经纬度数据无效的ap数据
         cur_ap = prev_data_reduction_invalid_coordinate_del(cur_ap);
-        
+
         %整合相同的ap数据
         cur_ap = prev_data_redcution_integrate_same_ap(cur_ap, ...
             config.integrate_same_ap_param);
 
-       
         %拟合各个ap的rssi
         cur_ap = prev_data_reduction_rssi_fit(cur_ap, ...
             config.rssi_fit_type, ...
             config.rssi_fit_param);
-        %  ap selector 
-       % [trilateration_ap,ap_selector] = pre_statistics_ap_selector(cur_ap,ap_selector);
-        
+        %  ap selector
+        % [trilateration_ap,ap_selector] = pre_statistics_ap_selector(cur_ap,ap_selector);
+
         if rssi_fit_flag || true
             %rssi滤波（后续只会用到卡尔曼滤波后结果rssi_kf，高斯及平滑结果仅用于数据分析）
             [cur_ap, ap_buf] = prev_rssi_filter(cur_ap, ...
@@ -80,22 +79,25 @@ function [position, debug_param] = bluetooth_position(data)
         %                                          config.dbscan_selector_param);
         %
         %        prev_ap = cur_ap;
+        % ap选择器
+        if isequal(i, 10)
+            debugline = 1;
+        end
+
+        [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_ap, ap_selector);
 
         %计算离各个ap的距离
         cur_ap = prev_dist_calc(cur_ap, ...
             config.dist_calc_type, ...
             config.dist_calc_param);
-        
-        % debug
-        save('D:\Code\BlueTooth\pos_bluetooth_matlab\data_analysis\cur_frame.mat',...
-            'cur_ap');
+
         %         cur_ap = prev_dist_subsection_log_calc(cur_ap, config.subsection_dist_calc_param);
 
         %距离三角补偿
         %        cur_ap = prev_dist_triangle_compensate(cur_ap, config.dist_triangle_compensate_meter);
 
         debug_param.ap_final_dist_calc{i} = cur_ap;
-       
+
         %% 定位
         %高斯牛顿迭代最小二乘算法（加权质心结果为初始点）
         %         pos_res = location_gauss_newton_least_squares_wma(cur_ap,...
@@ -106,10 +108,13 @@ function [position, debug_param] = bluetooth_position(data)
             [pos_res, ~] = trilateration_gaussian_newton(cur_ap);
         end
 
-        tcf('Positining'); % todo:异常点处理
-        figure('name', 'Positining', 'Color', 'w');
-        draw_positioning_state(gca, cur_ap, 'estimated_positon', [pos_res.lat, pos_res.lon], ...
-            'true_pos', [30.54798217, 104.05861620]);
+        % figure
+        if false
+            tcf('Positining'); % todo:异常点处理
+            figure('name', 'Positining', 'Color', 'w');
+            draw_positioning_state(gca, cur_ap, 'estimated_positon', [pos_res.lat, pos_res.lon], ...
+                'true_pos', [30.54798217, 104.05861620]);
+        end
 
         if final_flag
 
