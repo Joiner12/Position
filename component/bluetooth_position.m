@@ -80,16 +80,21 @@ function [position, debug_param] = bluetooth_position(data)
         %
         %        prev_ap = cur_ap;
         % ap选择器
-        if isequal(i, 10)
-            debugline = 1;
-        end
 
         [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_ap, ap_selector);
 
         %计算离各个ap的距离
-        cur_ap = prev_dist_calc(cur_ap, ...
-            config.dist_calc_type, ...
-            config.dist_calc_param);
+        if false
+            cur_ap = prev_dist_calc(cur_ap, ...
+                config.dist_calc_type, ...
+                config.dist_calc_param);
+
+        else
+            cur_ap = prev_dist_calc(trilateration_ap, ...
+                config.dist_calc_type, ...
+                config.dist_calc_param);
+
+        end
 
         %         cur_ap = prev_dist_subsection_log_calc(cur_ap, config.subsection_dist_calc_param);
 
@@ -109,7 +114,7 @@ function [position, debug_param] = bluetooth_position(data)
         end
 
         % figure
-        if false
+        if true
             tcf('Positining'); % todo:异常点处理
             figure('name', 'Positining', 'Color', 'w');
             draw_positioning_state(gca, cur_ap, 'estimated_positon', [pos_res.lat, pos_res.lon], ...
