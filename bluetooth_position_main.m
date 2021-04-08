@@ -1,11 +1,3 @@
-%% 清空工作环境
-close all;
-clc;
-clear;
-
-%% 添加工作路径
-addpath('data_import', 'component', 'data_analysis');
-
 %% 控制参数配置
 %1米处rssi值
 % rssi_reference = -61.48; 
