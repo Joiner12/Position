@@ -12,8 +12,6 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
     %       ap_selector: ap_selector数据，用以保存历史数据
 
     %%
-    trilateration_ap = struct();
-
     for i = 1:1:length(cur_frame)
         rows = size(ap_selector, 1);
 
@@ -148,7 +146,7 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             trilateration_ap(valid_ap_cnt).rssi_reference = trilat_table.RSSI_REF(table_index);
             % 选择活跃度最大的三个ap的RSSI的均值作为定位选择输出
             % trilateration_ap(valid_ap_cnt).rssi = trilat_table.rssi(table_index);
-            rssi_temp = trilat_table.RECVRSSI(table_index);
+            rssi_temp = trilat_table.RECVRSSI(table_index, :);
             rssi_temp = rssi_temp(rssi_temp ~= 0);
             trilateration_ap(valid_ap_cnt).rssi = mean(rssi_temp);
             trilateration_ap(valid_ap_cnt).rssi_wma = trilat_table.RSSI(table_index);
@@ -157,6 +155,7 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             trilateration_ap(valid_ap_cnt).dist = 0; % with a hammer dist
             valid_ap_cnt = valid_ap_cnt + 1;
         end
-
         debug_line = 1;
     end
+
+end
