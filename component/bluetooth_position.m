@@ -114,7 +114,7 @@ function [position, debug_param] = bluetooth_position(data)
         end
 
         % figure
-        if true
+        if false
             tcf('Positining'); % todo:异常点处理
             figure('name', 'Positining', 'Color', 'w');
             draw_positioning_state(gca, cur_ap, 'estimated_positon', [pos_res.lat, pos_res.lon], ...
