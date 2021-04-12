@@ -33,7 +33,7 @@ function [position, debug_param] = bluetooth_position(data)
     debug_param.config = config;
 
     %% apselector
-    ap_selector = init_ap_selector(10);
+    ap_selector = init_ap_selector(20);
     %% 逐帧处理
     for i = 1:frame_num
         %% 定位前预处理
