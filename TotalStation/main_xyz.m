@@ -1,18 +1,19 @@
+%{
+    Êı¾İËµÃ÷:
+    ./data_llh.dat ¾­Î³¸ßÊı¾İ
+    ./data_xyz.dat Ä«¿¨ÍĞÍ¶Ó°Êı¾İ(¾­Î³¸ß×ª»»Êı¾İ)
+%}
 clc
-clear all
-close all
-
-fid = fopen('20210331.dat');
+fid = fopen('data_llh.dat');
 tline = fgetl(fid);
 
-%%
-figure
-set(gcf, 'position', get(0,'ScreenSize'));
+tcf('°Ğµã·Ö²¼');
+figure('name','°Ğµã·Ö²¼');
 set(gca,'YDir','reverse');
 set(gca,'XDir','reverse');
 ylabel('north direction (m)')
 xlabel('east direction (m)')
-title('é¶ç‚¹åˆ†å¸ƒ')
+title('°Ğµã·Ö²¼')
 text_padding = -0.55;
 axis equal
 grid on
@@ -75,14 +76,14 @@ end
 fclose(fid);
 
 
-%% å¯è§†åŒ–
-figure
-set(gcf, 'position', get(0,'ScreenSize'));
+%% ¿ÉÊÓÍ¼
+tcf('°Ğµã·Ö²¼-1')
+figure('name','°Ğµã·Ö²¼-1');
 set(gca,'YDir','reverse');
 set(gca,'XDir','reverse');
 ylabel('north direction (m)')
 xlabel('east direction (m)')
-title('é¶ç‚¹åˆ†å¸ƒ')
+title('°Ğµã·Ö²¼')
 hold on
 plot(anchor_loc(:, 1), anchor_loc(:, 2), '*k')
 hold on
