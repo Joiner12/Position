@@ -4,7 +4,7 @@
     ./data_xyz.dat 墨卡托投影数据(经纬高转换数据)
 %}
 clc
-fid = fopen('data_llh.dat');
+fid = fopen('data_xyz.dat');
 tline = fgetl(fid);
 
 tcf('靶点分布');
@@ -13,9 +13,8 @@ set(gca,'YDir','reverse');
 set(gca,'XDir','reverse');
 ylabel('north direction (m)')
 xlabel('east direction (m)')
-title('靶点分布')
+title('靶点分布-XYZ')
 text_padding = -0.55;
-axis equal
 grid on
 
 wifi_loc = [];
@@ -83,8 +82,11 @@ set(gca,'YDir','reverse');
 set(gca,'XDir','reverse');
 ylabel('north direction (m)')
 xlabel('east direction (m)')
-title('靶点分布')
+title('靶点分布-XYZ')
+grid on
 hold on
+box on
+axis equal
 plot(anchor_loc(:, 1), anchor_loc(:, 2), '*k')
 hold on
 plot(wifi_loc(:, 1), wifi_loc(:, 2), '+r')
