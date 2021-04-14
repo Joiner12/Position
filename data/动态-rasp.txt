@@ -1008,4 +1008,3 @@
 09:34:40:751518, onepos_HLK_2, 40:d6:3c:00:04:e1, -59
 09:34:40:879754, onepos_HLK_1, 40:d6:3c:00:04:a0, -58
 09:34:40:885353, onepos_HLK_2, 40:d6:3c:00:04:e1, -60
-corvin@raspberrypi:~/Desktop/blescanner $ 
