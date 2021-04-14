@@ -23,22 +23,61 @@ function status = modify_geoinfo(varargin)
     TotalStationData = table(name, lat, lon);
     TotalStationData.Properties.VariableNames = {'name', 'lat', 'lon'};
 
-    %% getfile
+    %% fgetl
     [file, path] = uigetfile('../*.*', 'MultiSelect', 'off');
 
     if isequal(file, 0)
         disp('selected Cancel');
         status = 0;
+        return;
     else
         disp(['selected ', fullfile(path, file)]);
     end
 
+    % write to file
+    modified_detail = cell(0);
+    line_cnt = 1;
+    fileId = fopen(fullfile(path, file), 'r');
+
+    while ~feof(fileId)
+        str_temp = fgetl(fileId);
+
+        if contains(str_temp, '$APMSG')
+            split_temp = strsplit(str_temp, ' ');
+            ap_name = split_temp{2};
+            index_logical = strcmp(["onepos_HLK_1", "onepos_HLK_3", ...
+                                    "onepos_HLK_7", "onepos_HLK_8"], ap_name);
+
+            if any(index_logical)
+                index = find(index_logical);
+                lat = TotalStationData.lat(index);
+                lon = TotalStationData.lon(index);
+
+                strf_out = sprintf('%s %*s %s %*s %s %*s %s %*s %0.12f %*s %0.12f\n', ...
+                    split_temp{1}, 1, split_temp{2}, 9, ...
+                    split_temp{3}, 1, split_temp{4}, 2, ...
+                    lat, 9, lon);
+            end
+
+        else
+            strf_out = str_temp;
+        end
+
+        modified_detail{line_cnt} = strf_out;
+        line_cnt = line_cnt + 1;
+    end
+
+    fclose(fileId);
+    %% fwrite
+    modified_detail = reshape(modified_detail, [length(modified_detail), 1]);
     [~, nametemp, ext] = fileparts(file);
     file_name = fullfile(path, strcat(nametemp, '-m.', ext));
-    
+    fileId_o = fopen(file_name, 'w');
 
-    %% write to file
-    fileId = fopen(file_name);
-    fclose(fileId);
+    for i = 1:1:length(modified_detail)
+        cur_line = modified_detail{i, :};
+        fprintf(fileId_o, '%s\n', cur_line);
+    end
 
+    fclose(fileId_o);
 end
