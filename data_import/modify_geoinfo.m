@@ -30,17 +30,20 @@ function status = modify_geoinfo(varargin)
         disp('selected Cancel');
         status = 0;
         return;
-    else
-        disp(['selected ', fullfile(path, file)]);
     end
 
     % write to file
     modified_detail = cell(0);
     line_cnt = 1;
     fileId = fopen(fullfile(path, file), 'r');
+    frame_cnt = 0;
 
     while ~feof(fileId)
         str_temp = fgetl(fileId);
+
+        if contains(str_temp, '----')
+            frame_cnt = frame_cnt + 1;
+        end
 
         if contains(str_temp, '$APMSG')
             split_temp = strsplit(str_temp, ' ');
@@ -53,10 +56,12 @@ function status = modify_geoinfo(varargin)
                 lat = TotalStationData.lat(index);
                 lon = TotalStationData.lon(index);
 
-                strf_out = sprintf('%s %*s %s %*s %s %*s %s %*s %0.12f %*s %0.12f\n', ...
-                    split_temp{1}, 1, split_temp{2}, 9, ...
-                    split_temp{3}, 1, split_temp{4}, 2, ...
-                    lat, 9, lon);
+                strf_out = sprintf("%s%*s%s%*s%s%*s%s%*s%.12f%*s%.12f\n", ...
+                    split_temp{1}, 1, '', split_temp{2}, 9, '', ...
+                    split_temp{3}, 1, '', split_temp{4}, 2, '', ...
+                    lat, 6, '', lon);
+            else
+                strf_out = sprintf(' \n');
             end
 
         else
@@ -65,6 +70,11 @@ function status = modify_geoinfo(varargin)
 
         modified_detail{line_cnt} = strf_out;
         line_cnt = line_cnt + 1;
+
+        if contains(str_temp, '----')
+            frame_cnt = frame_cnt + 1;
+        end
+
     end
 
     fclose(fileId);
@@ -80,4 +90,7 @@ function status = modify_geoinfo(varargin)
     end
 
     fclose(fileId_o);
+    fprintf('สýพÝึก:%0.0f\n', frame_cnt);
+    fprintf('%s\nกý\n%s\n', fullfile(path, file), file_name);
+
 end

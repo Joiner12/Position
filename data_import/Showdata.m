@@ -42,16 +42,3 @@ for k = 1:1:30 %length(rssi)
     pause(0.5)
 end
 
-%%
-str_temp = '$APMSG onepos_HLK_3         1d:06:00:3c:d6:40 -62  30.5480210           104.0585709';
-split_temp = strsplit(str_temp, ' ')
-
-if ~isempty(split_temp) && contains(split_temp{1}, '$APMSG')
-    ap_name = split_temp{2};
-    index_logical = strcmp(["onepos_HLK_1", "onepos_HLK_3", ...
-            "onepos_HLK_7", "onepos_HLK_8"],ap_name);
-    if any(index_logical)
-        find(index_logical)
-    end
-    
-end
