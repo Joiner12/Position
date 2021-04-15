@@ -42,3 +42,15 @@ for k = 1:1:30 %length(rssi)
     pause(0.5)
 end
 
+%% 
+cnt_j = 0;
+
+while true
+    cnt_j = cnt_j + 1;
+
+    if ~isequal(mod(cnt_j, 5), 0)
+        continue;
+    end
+
+    disp(cnt_j)
+end

@@ -16,9 +16,9 @@ function status = modify_geoinfo(varargin)
     name = ["onepos_HLK_1", "onepos_HLK_3", ...
             "onepos_HLK_7", "onepos_HLK_8"];
     name = name';
-    lat = [30.325287460597, 30.325237242973, 30.325236181531, 30.325284586259];
+    lat = [30.5479562, 30.5479558, 30.5480210, 30.5480286];
     lat = lat';
-    lon = [104.033140627770, 104.033135912516, 104.033084300271, 104.033084380912];
+    lon = [104.0587338, 104.0585699, 104.0585709, 104.0587327];
     lon = lon';
     TotalStationData = table(name, lat, lon);
     TotalStationData.Properties.VariableNames = {'name', 'lat', 'lon'};
@@ -81,7 +81,7 @@ function status = modify_geoinfo(varargin)
     %% fwrite
     modified_detail = reshape(modified_detail, [length(modified_detail), 1]);
     [~, nametemp, ext] = fileparts(file);
-    file_name = fullfile(path, strcat(nametemp, '-m.', ext));
+    file_name = fullfile(path, strcat(nametemp, '-m', ext));
     fileId_o = fopen(file_name, 'w');
 
     for i = 1:1:length(modified_detail)

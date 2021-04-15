@@ -25,7 +25,13 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             ap_selector.NAME(rows + 1) = name;
             pre_rssi_temp = ap_selector.RECVRSSI(rows + 1, :);
             recv_rssi_len = length(cur_frame_piece.recv_rssi);
-            ap_selector.RECVRSSI(rows + 1, :) = [cur_frame_piece.recv_rssi, pre_rssi_temp(1:end - recv_rssi_len)];
+
+            if recv_rssi_len > length(ap_selector.RECVRSSI(rows + 1, :)) - 1
+                ap_selector.RECVRSSI(rows + 1, :) = cur_frame_piece.recv_rssi(1:length(ap_selector.RECVRSSI(rows + 1, :)));
+            else
+                ap_selector.RECVRSSI(rows + 1, :) = [cur_frame_piece.recv_rssi, pre_rssi_temp(1:end - recv_rssi_len)];
+            end
+
             ap_selector.LAT(rows + 1) = cur_frame_piece.lat;
             ap_selector.LON(rows + 1) = cur_frame_piece.lon;
             ap_selector.MAC(rows + 1) = cur_frame_piece.mac;
@@ -36,7 +42,13 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             ap_selector.NAME(index) = name;
             pre_rssi_temp = ap_selector.RECVRSSI(index, :);
             recv_rssi_len = length(cur_frame_piece.recv_rssi);
-            ap_selector.RECVRSSI(index, :) = [cur_frame_piece.recv_rssi, pre_rssi_temp(1:end - recv_rssi_len)];
+
+            if recv_rssi_len > length(ap_selector.RECVRSSI(index, :)) - 1
+                ap_selector.RECVRSSI(index, :) = cur_frame_piece.recv_rssi(1:length(ap_selector.RECVRSSI(index, :)));
+            else
+                ap_selector.RECVRSSI(index, :) = [cur_frame_piece.recv_rssi, pre_rssi_temp(1:end - recv_rssi_len)];
+            end
+
             ap_selector.LAT(index) = cur_frame_piece.lat;
             ap_selector.LON(index) = cur_frame_piece.lon;
             ap_selector.MAC(index) = cur_frame_piece.mac;
@@ -155,6 +167,7 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             trilateration_ap(valid_ap_cnt).dist = 0; % with a hammer dist
             valid_ap_cnt = valid_ap_cnt + 1;
         end
+
         debug_line = 1;
     end
 

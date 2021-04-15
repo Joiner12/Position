@@ -55,7 +55,7 @@ function [position, debug_param] = bluetooth_position(data)
         %  ap selector
         % [trilateration_ap,ap_selector] = pre_statistics_ap_selector(cur_ap,ap_selector);
 
-        if rssi_fit_flag || true
+        if rssi_fit_flag
             %rssi滤波（后续只会用到卡尔曼滤波后结果rssi_kf，高斯及平滑结果仅用于数据分析）
             [cur_ap, ap_buf] = prev_rssi_filter(cur_ap, ...
                 ap_buf, ...
@@ -114,11 +114,17 @@ function [position, debug_param] = bluetooth_position(data)
         end
 
         % figure
-        if false
+        if true
             tcf('Positining'); % todo:异常点处理
             figure('name', 'Positining', 'Color', 'w');
-            draw_positioning_state(gca, cur_ap, 'estimated_positon', [pos_res.lat, pos_res.lon], ...
-                'true_pos', [30.54798217, 104.05861620]);
+
+            if false
+                draw_positioning_state(gca, cur_ap, 'estimated_positon', [pos_res.lat, pos_res.lon], ...
+                    'true_pos', [30.54798217, 104.05861620]);
+            else
+                draw_positioning_state(gca, cur_ap, 'estimated_positon', [pos_res.lat, pos_res.lon]);
+            end
+
         end
 
         if final_flag
