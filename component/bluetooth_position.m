@@ -34,6 +34,7 @@ function [position, debug_param] = bluetooth_position(data)
 
     %% apselector
     ap_selector = init_ap_selector(20);
+    est_pos = cell(0);
     %% 逐帧处理
     for i = 1:frame_num
         %% 定位前预处理

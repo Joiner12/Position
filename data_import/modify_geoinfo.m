@@ -16,9 +16,9 @@ function status = modify_geoinfo(varargin)
     name = ["onepos_HLK_1", "onepos_HLK_3", ...
             "onepos_HLK_7", "onepos_HLK_8"];
     name = name';
-    lat = [30.5479562, 30.5479558, 30.5480210, 30.5480286];
+    lat = [30.5480384, 30.5478864, 30.5478867, 30.5480210];
     lat = lat';
-    lon = [104.0587338, 104.0585699, 104.0585709, 104.0587327];
+    lon = [104.0586489, 104.0586441, 104.0585689, 104.0585709];
     lon = lon';
     TotalStationData = table(name, lat, lon);
     TotalStationData.Properties.VariableNames = {'name', 'lat', 'lon'};
@@ -56,10 +56,10 @@ function status = modify_geoinfo(varargin)
                 lat = TotalStationData.lat(index);
                 lon = TotalStationData.lon(index);
 
-                strf_out = sprintf("%s%*s%s%*s%s%*s%s%*s%.12f%*s%.12f\n", ...
+                strf_out = sprintf("%s%*s%s%*s%s%*s%s%*s%.7f%*s%.7f\n", ...
                     split_temp{1}, 1, '', split_temp{2}, 9, '', ...
                     split_temp{3}, 1, '', split_temp{4}, 2, '', ...
-                    lat, 6, '', lon);
+                    lat, 11, '', lon);
             else
                 strf_out = sprintf(' \n');
             end

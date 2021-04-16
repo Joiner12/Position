@@ -36,7 +36,6 @@ file_num = length(files_data);
 position = cell(file_num, 1);
 filter_points = cell(file_num, 1);
 debug = cell(file_num, 1);
-
 %逐个文件处理
 for i = 1:file_num
    [position{i}.pos_res, debug{i}] = bluetooth_position(file_ap_msg{i});

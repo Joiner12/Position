@@ -71,7 +71,7 @@ function draw_positioning_state(cur_axes, cur_ap, varargin)
     beacon_x_d = beacon_x - min_xy(1);
     beacon_y_d = beacon_y - min_xy(2);
     plot(cur_axes, beacon_x_d, beacon_y_d, 'g^');
-    text(cur_axes, beacon_x_d, beacon_y_d, labels)
+    % text(cur_axes, beacon_x_d, beacon_y_d, labels)
 
     if true
         %% circle
@@ -81,8 +81,6 @@ function draw_positioning_state(cur_axes, cur_ap, varargin)
             [c_x, c_y, ~] = latlon_to_xy(ap_temp.lat, ap_temp.lon);
             c_x = c_x - min_xy(1);
             c_y = c_y - min_xy(2);
-            index_temp = strrep(ap_temp.name, 'onepos_HLK_', '');
-            index_temp = int8(str2double(index_temp));
             circles(c_x, c_y, ap_temp.dist, ...
                 'facecolor', 'none', 'edgecolor', cur_color)
             line([c_x, c_x + cos(15 * ii) * ap_temp.dist], ...
@@ -111,6 +109,13 @@ function draw_positioning_state(cur_axes, cur_ap, varargin)
             text(cur_axes, true_pos_x, true_pos_y, 'ÕæÊµÎ»ÖÃ')
             circles(true_pos_x, true_pos_y, 5, ...
                 'facecolor', [174, 206, 187] ./ 255, 'edgecolor', 'none', 'facealpha', 0.5)
+        end
+
+        % '¶¯Ì¬¹ì¼£'£º¶¯Ì¬¹ì¼£Í¼
+        if any(strcmp(varargin, 'path'))
+            ref_lat = 30.548034128;
+            ref_lon = 104.058653621;
+            
         end
 
     end
