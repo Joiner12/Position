@@ -31,10 +31,10 @@ function [position, debug_param] = bluetooth_position(data)
     debug_param.centroid = [];
     debug_param.frame_id = 0;
     debug_param.config = config;
-
     %% apselector
-    ap_selector = init_ap_selector(20);
+    ap_selector = init_ap_selector(10);
     est_pos = cell(0);
+    gif_cnt = 1;
     %% 逐帧处理
     for i = 1:frame_num
         %% 定位前预处理
@@ -114,18 +114,28 @@ function [position, debug_param] = bluetooth_position(data)
             [pos_res, ~] = trilateration_gaussian_newton(cur_ap);
         end
 
+        est_pos = [est_pos; pos_res];
         % figure
-        if true
+        if false
             tcf('Positining'); % todo:异常点处理
             figure('name', 'Positining', 'Color', 'w');
 
-            if false
-                draw_positioning_state(gca, cur_ap, 'estimated_positon', [pos_res.lat, pos_res.lon], ...
-                    'true_pos', [30.54798217, 104.05861620]);
+            % draw_positioning_state(gca,'static', cur_ap, 'estimated_positon', [pos_res.lat, pos_res.lon], ...
+                %     'true_pos', [30.54798217, 104.05861620]);
+            draw_positioning_state(gca, 'static', cur_ap, 'estimated_positon', [pos_res.lat, pos_res.lon]);
+            %% 生成gif
+            frame = getframe(gcf);
+            imind = frame2im(frame);
+            [imind, cm] = rgb2ind(imind, 256);
+            
+            if gif_cnt == 1
+                imwrite(imind, cm, 'D:\Code\BlueTooth\pos_bluetooth_matlab\test.gif', ...
+                    'gif', 'Loopcount', inf, 'DelayTime',0.5);
             else
-                draw_positioning_state(gca, cur_ap, 'estimated_positon', [pos_res.lat, pos_res.lon]);
+                imwrite(imind, cm, 'D:\Code\BlueTooth\pos_bluetooth_matlab\test.gif', ...
+                    'gif', 'WriteMode', 'append', 'DelayTime', 0.5);
             end
-
+            gif_cnt = gif_cnt +1;
         end
 
         if final_flag
@@ -195,4 +205,5 @@ function [position, debug_param] = bluetooth_position(data)
         position{i} = pos_res;
     end
 
+    debug_param.dynamic = est_pos;
 end
