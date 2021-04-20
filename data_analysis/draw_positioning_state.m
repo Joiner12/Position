@@ -136,7 +136,7 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
                 cur_dmx = dynamic_data{k}.x - min_xy(1);
                 cur_dmy = dynamic_data{k}.y - min_xy(2);
                 addpoints(hd, cur_dmx, cur_dmy);
-                pause(0.2);
+                pause(0.05);
 
                 if strcmpi(get(gcf, 'CurrentCharacter'), char(27))
                     disp('ªÊÕº÷’÷π');

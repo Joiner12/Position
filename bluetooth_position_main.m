@@ -58,3 +58,4 @@ disp('定位处理结束');
 %                                   filter_points);
 figure('name','dynamic','color','w');
 draw_positioning_state(gca, 'dynamic', debug{1,1}.dynamic)
+disp('绘图完成')

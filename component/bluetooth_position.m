@@ -117,6 +117,7 @@ function [position, debug_param] = bluetooth_position(data)
         est_pos = [est_pos; pos_res];
         % figure
         if false
+            pause(1);
             tcf('Positining'); % todo:异常点处理
             figure('name', 'Positining', 'Color', 'w');
 
@@ -124,17 +125,20 @@ function [position, debug_param] = bluetooth_position(data)
                 %     'true_pos', [30.54798217, 104.05861620]);
             draw_positioning_state(gca, 'static', cur_ap, 'estimated_positon', [pos_res.lat, pos_res.lon]);
             %% 生成gif
-            frame = getframe(gcf);
+            if false
+                frame = getframe(gcf);
             imind = frame2im(frame);
             [imind, cm] = rgb2ind(imind, 256);
-            
+
             if gif_cnt == 1
                 imwrite(imind, cm, 'D:\Code\BlueTooth\pos_bluetooth_matlab\test.gif', ...
-                    'gif', 'Loopcount', inf, 'DelayTime',0.5);
+                    'gif', 'Loopcount', inf, 'DelayTime', 0.5);
             else
                 imwrite(imind, cm, 'D:\Code\BlueTooth\pos_bluetooth_matlab\test.gif', ...
                     'gif', 'WriteMode', 'append', 'DelayTime', 0.5);
             end
+            end
+
             gif_cnt = gif_cnt +1;
         end
 
