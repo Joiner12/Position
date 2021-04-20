@@ -1,10 +1,12 @@
-function draw_positioning_state(cur_axes, cur_ap, varargin)
+function draw_positioning_state(cur_axes, drawmode, data, varargin)
     % 功能:
     %       绘制三边定位过程图
     % 定义:
     %       function draw_positioning_state(cur_ap,varargin)
     % 输入:
-    %       cur_ap:接入点信息([struct,struct,struct])
+    %       drawmode：绘图类型('dynamic'|'static')
+    %       选择'static',绘图数据为：
+    %       cur_ap，接入点信息([struct,struct,struct])
     %       name                 mac                  lat       lon       recv_rssi      rssi_reference    rssi     rssi_kf     dist
     %       ______________    ___________________    ______    ______    ____________    ______________    _____    _______    ______
 
@@ -12,6 +14,9 @@ function draw_positioning_state(cur_axes, cur_ap, varargin)
     %       'onepos_HLK_6'    'c2:04:00:3c:d6:40'    30.548    104.06    [       -71]       -50.068          -71       -71     16.089
     %       'onepos_HLK_4'    '1c:06:00:3c:d6:40'    30.548    104.06    [1×2 double]       -50.068        -60.5     -60.5     12.929
     %       'onepos_HLK_1'    'a0:04:00:3c:d6:40'    30.548    104.06    [       -74]       -50.068          -74       -74      59.25
+    %       varargin
+    %       选择'dynamic'，绘图数据为：
+    %       dynamic_data(struct{lat,lon,x,y})
     % 输出:
     %       none
     % varargin(key:value):
@@ -71,52 +76,76 @@ function draw_positioning_state(cur_axes, cur_ap, varargin)
     beacon_x_d = beacon_x - min_xy(1);
     beacon_y_d = beacon_y - min_xy(2);
     plot(cur_axes, beacon_x_d, beacon_y_d, 'g^');
-    text(cur_axes, beacon_x_d, beacon_y_d, labels)
+    % text(cur_axes, beacon_x_d, beacon_y_d, labels)
 
-    if true
-        %% circle
-        for ii = 1:1:length(cur_ap)
-            ap_temp = cur_ap(ii);
-            cur_color = rand(1, 3);
-            index_temp = strrep(ap_temp.name, 'onepos_HLK_', '');
-            index_temp = int8(str2double(index_temp));
-            circles(beacon_x_d(index_temp), beacon_y_d(index_temp), ap_temp.dist, ...
-                'facecolor', 'none', 'edgecolor', cur_color)
-            line([beacon_x_d(index_temp), beacon_x_d(index_temp) + cos(15 * ii) * ap_temp.dist], ...
-                [beacon_y_d(index_temp), beacon_y_d(index_temp) + sin(15 * ii) * ap_temp.dist], ...
-                'Color', cur_color)
-        end
-
-        % 定位结果
-        if any(strcmp(varargin, 'estimated_positon'))
-            est_pos = varargin{find(strcmp(varargin, 'estimated_positon')) + 1};
-            [est_pos_x, est_pos_y, ~] = latlon_to_xy(est_pos(1), est_pos(2));
-            est_pos_x = est_pos_x - min_xy(1);
-            est_pos_y = est_pos_y - min_xy(2);
-            plot(cur_axes, est_pos_x, est_pos_y, 'Marker', '*', ...
-                'MarkerSize', 10, 'Color', 'r');
-            text(cur_axes, est_pos_x, est_pos_y, '定位位置')
-        end
-
-        % 'true_pos':真实位置(latitude,longitude)|(x,y)
-        if any(strcmp(varargin, 'true_pos'))
-            vartemp = varargin{find(strcmp(varargin, 'true_pos')) + 1};
-            [true_pos_x, true_pos_y, ~] = latlon_to_xy(vartemp(1), vartemp(2));
-            true_pos_x = true_pos_x - min_xy(1);
-            true_pos_y = true_pos_y - min_xy(2);
-            plot(cur_axes, true_pos_x, true_pos_y, 'b*')
-            text(cur_axes, true_pos_x, true_pos_y, '真实位置')
-            circles(true_pos_x, true_pos_y, 5, ...
-                'facecolor', [174, 206, 187] ./ 255, 'edgecolor', 'none', 'facealpha', 0.5)
-        end
-
-    end
-
-    hold off
-    title(gca, '单帧定位效果')
+    title(gca, '定位效果')
     box on
     axis equal
     grid on
     set(get(gca, 'XLabel'), 'String', '笛卡尔坐标系-x/m');
     set(get(gca, 'YLabel'), 'String', '笛卡尔坐标系-y/m');
+    % 定位结果
+    if any(strcmp(varargin, 'estimated_positon'))
+        est_pos = varargin{find(strcmp(varargin, 'estimated_positon')) + 1};
+        [est_pos_x, est_pos_y, ~] = latlon_to_xy(est_pos(1), est_pos(2));
+        est_pos_x = est_pos_x - min_xy(1);
+        est_pos_y = est_pos_y - min_xy(2);
+        plot(cur_axes, est_pos_x, est_pos_y, 'Marker', '*', ...
+            'MarkerSize', 10, 'Color', 'r');
+        text(cur_axes, est_pos_x, est_pos_y, '定位位置')
+    end
+
+    % 'true_pos':真实位置(latitude,longitude)|(x,y)
+    if any(strcmp(varargin, 'true_pos'))
+        vartemp = varargin{find(strcmp(varargin, 'true_pos')) + 1};
+        [true_pos_x, true_pos_y, ~] = latlon_to_xy(vartemp(1), vartemp(2));
+        true_pos_x = true_pos_x - min_xy(1);
+        true_pos_y = true_pos_y - min_xy(2);
+        plot(cur_axes, true_pos_x, true_pos_y, 'b*')
+        text(cur_axes, true_pos_x, true_pos_y, '真实位置')
+        circles(true_pos_x, true_pos_y, 5, ...
+            'facecolor', [174, 206, 187] ./ 255, 'edgecolor', 'none', 'facealpha', 0.5)
+
+    end
+
+    %% 绘制动|静图
+    switch drawmode
+        case 'static'
+            %% circle access point
+            cur_ap = data;
+
+            for ii = 1:1:length(cur_ap)
+                ap_temp = cur_ap(ii);
+                cur_color = rand(1, 3);
+                [c_x, c_y, ~] = latlon_to_xy(ap_temp.lat, ap_temp.lon);
+                c_x = c_x - min_xy(1);
+                c_y = c_y - min_xy(2);
+                circles(c_x, c_y, ap_temp.dist, ...
+                    'facecolor', 'none', 'edgecolor', cur_color)
+                line([c_x, c_x + cos(15 * ii) * ap_temp.dist], ...
+                    [c_y, c_y + sin(15 * ii) * ap_temp.dist], ...
+                    'Color', cur_color)
+            end
+
+        case 'dynamic'
+            % '动态轨迹'：动态轨迹图
+            dynamic_data = data;
+            hd = animatedline('color', [86, 141, 223] ./ 255, 'marker', '*', 'linestyle', 'none');
+
+            for k = 1:1:length(dynamic_data)
+                cur_dmx = dynamic_data{k}.x - min_xy(1);
+                cur_dmy = dynamic_data{k}.y - min_xy(2);
+                addpoints(hd, cur_dmx, cur_dmy);
+                pause(0.05);
+
+                if strcmpi(get(gcf, 'CurrentCharacter'), char(27))
+                    disp('绘图终止');
+                    break;
+                end
+
+            end
+
+    end
+
+    hold off
 end

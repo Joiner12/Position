@@ -14,7 +14,6 @@ function [x, y, lam0] = latlon_to_xy(lat, lon)
     earth_short_axis = 6356752.314; %地球短轴
     utm_scale_factor = 0.9996;      %横轴墨卡托到UTM的比例系数
     north_factor = 500000.0;        %北半球比例因子
-    
     Zonenum = fix(lon / 6) + 31;
     lam0 = (Zonenum-1) * 6 - 180 + 3;
     lam0 = lam0 * pi / 180;

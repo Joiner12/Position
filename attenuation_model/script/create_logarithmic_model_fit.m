@@ -21,13 +21,13 @@ function [fitresult, gof] = create_logarithmic_model_fit (dist, rssi,varargin)
 
 %% 参数设置
 rssi_fluctuation = 5;
-if isempty(any(strcmpi(varargin,'rssi_fluctuation')))
+if any(strcmpi(varargin,'rssi_fluctuation'))
     rssi_fluctuation = varargin{find(strcmpi(varargin,'rssi_fluctuation'))+1};
 end
 
 %% 绘图选项
 draw_pic = true;
-if isempty(any(strcmpi(varargin,'drawpic')))
+if any(strcmpi(varargin,'drawpic'))
     draw_pic = varargin{find(strcmpi(varargin,'drawpic'))+1};
 end
 

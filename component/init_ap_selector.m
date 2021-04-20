@@ -18,4 +18,5 @@ function ap_selector = init_ap_selector(scope, varargin)
     ap_selector.LON = 0;
     ap_selector.RSSI = 0;
     ap_selector.RSSI_REF = 0;
+    ap_selector.ACTIVTION = 0; % ¼¤»î¶È
 end

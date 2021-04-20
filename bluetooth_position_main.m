@@ -1,11 +1,3 @@
-%% 清空工作环境
-close all;
-clc;
-clear;
-
-%% 添加工作路径
-addpath('data_import', 'component', 'data_analysis');
-
 %% 控制参数配置
 %1米处rssi值
 % rssi_reference = -61.48; 
@@ -44,7 +36,6 @@ file_num = length(files_data);
 position = cell(file_num, 1);
 filter_points = cell(file_num, 1);
 debug = cell(file_num, 1);
-
 %逐个文件处理
 for i = 1:file_num
    [position{i}.pos_res, debug{i}] = bluetooth_position(file_ap_msg{i});
@@ -56,7 +47,8 @@ disp('定位处理结束');
 
 %% 整体定位结果分析
 % 绘制轨迹及误差图
-position_error_statistics(position{1,1}.pos_res,  position{1,1}.true_pos);
+%% 
+% position_error_statistics(position{1,1}.pos_res,  position{1,1}.true_pos);
 % draw_trajectory_and_error_diagram(position, ...
 %                                   null_val, ...
 %                                   env_feat, ...
@@ -64,3 +56,6 @@ position_error_statistics(position{1,1}.pos_res,  position{1,1}.true_pos);
 %                                   draw_type, ...
 %                                   'filter_point', ...
 %                                   filter_points);
+figure('name','dynamic','color','w');
+draw_positioning_state(gca, 'dynamic', debug{1,1}.dynamic)
+disp('绘图完成')

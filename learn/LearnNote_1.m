@@ -13,3 +13,10 @@ tb_1.name{1}
 tb_examp.MAC = strings([5,1])
 tb_examp.NAME = strings([5,1])
 
+%% 
+clc;
+a = cell(0);
+for k=1:1:3
+    a = [a;k]
+end
+
