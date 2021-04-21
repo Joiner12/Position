@@ -53,8 +53,7 @@ function status = modify_geoinfo(varargin)
         if contains(str_temp, '$APMSG')
             split_temp = strsplit(str_temp, ' ');
             ap_name = split_temp{2};
-            index_logical = strcmp(["onepos_HLK_1", "onepos_HLK_3", ...
-                                    "onepos_HLK_7", "onepos_HLK_8"], ap_name);
+            index_logical = strcmp(name, ap_name);
 
             if any(index_logical)
                 index = find(index_logical);
