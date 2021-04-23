@@ -121,8 +121,15 @@ function distance = calc_distance_based_on_rssi_piecewise(ap, varargin)
 
     end
 
-    dist = calculate_distance_based_on_rssi_piecewise(...
-        cur_param.param_less_rssi, cur_param.param_more_rssi, ...
-        ap_rssi, cur_param.piecewise_rssi);
+    if false
+        dist = calculate_distance_based_on_rssi_piecewise(...
+            cur_param.param_less_rssi, cur_param.param_more_rssi, ...
+            ap_rssi, cur_param.piecewise_rssi);
+    else
+        A = -51.46;
+        b = 2.149
+        dist = calculate_distance_based_on_rssi(A, b, rssi, varargin)
+    end
+
     distance = dist;
 end
