@@ -97,3 +97,5 @@ legend({'oneposHLK-1', 'oneposHLK-2', 'oneposHLK-3', ...
 title('统计均值不同AP对比')
 
 clearvars pd k j cur_ap gauss_data ans f1
+
+
