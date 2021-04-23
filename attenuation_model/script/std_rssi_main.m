@@ -59,19 +59,30 @@ get_rssi_statistics(rssi_A3, 'showfigure')
 get_rssi_statistics(rssi_A7, 'showfigure')
 get_rssi_statistics(rssi_A8, 'showfigure')
 
-%% 
+%%
 clc;
 tcf('face');
 % clarify filter
-windowSize = 100; 
-b = (1/windowSize)*ones(1,windowSize);
+windowSize = 100;
+b = (1 / windowSize) * ones(1, windowSize);
 a = 1;
-rssi_A1_f = filter(b,a,rssi_A1);
-figure('name','face')
+rssi_A1_f = filter(b, a, rssi_A1);
+figure('name', 'face')
 plot(rssi_A1)
 hold on
 plot(rssi_A1_f)
-legend({'a','f'})
+legend({'a', 'f'})
 
+%%
 
+%% 只是用前半段较为符合对数模型的数据拟合
+clc;
+part_rssi = ap_rssi_mean_specdist;
+part_rssi = part_rssi(1:18) - 15;
+% create_logarithmic_model_fit(linspace(1, 18, 18), part_rssi)
 
+a = -51.46;
+b = 2.149;
+
+analysis_fit_model_normal(a, b, part_rssi, 10);
+clearvars part_rssi a b
