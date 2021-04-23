@@ -48,3 +48,14 @@ ${z_k = H_kx_k + v_k}$
 - ${v_k}$ ：观测噪声，假定：均值为零，协方差矩阵为$R_k$ 的多元独立正态分布，记作：${v_k,N(0,R_k) ,R_k = cov(v_k)}$  。
 
 `todo`
+
+![kalman-filtering-1](img/kalman-filtering-1.png)
+
+![kalman-filtering-2](img/kalman-filtering-2.png)
+
+![kalman-filtering-3](img/kalman-filtering-3.png)
+
+![kalman-filtering-4](img/kalman-filtering-4.png)
+
+
+

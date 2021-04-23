@@ -1,15 +1,21 @@
 %%
 % system
+try
+    load('D:\Code\BlueTooth\pos_bluetooth_matlab\data_analysis\kalman_filtering.mat');
+catch
+    %
+end
+
 disp('linear system')
 F = 1;
 B = 1;
 H = 1;
-Q = 1;
-R = 100;
-
+Q = .1;
+R = 10;
+I = eye(size(F));
 % recursive procedure
 for ap_k = 1:1:4
-    rssi_kf = ap_all(4).rssi;
+    rssi_kf = ap_all(ap_k).rssi;
     X_pre = zeros(0);
     P_pre = zeros(0);
     Xkf = zeros(0);
@@ -58,8 +64,12 @@ for ap_k = 1:1:4
 
     pause(0.2);
 
-    filename = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc', ...
+    filename = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img', ...
         sprintf('kalman-filtering-%s.png', num2str(ap_k)));
     imwrite(frame2im(getframe(gcf)), filename);
 
 end
+
+%% 
+pd = fitdist(ap_all(1).rssi,'Normal')
+mean(ap_all(1).rssi)
