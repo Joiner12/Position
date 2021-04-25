@@ -4,7 +4,7 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
     % 定义:
     %       function draw_positioning_state(cur_ap,varargin)
     % 输入:
-    %       drawmode：绘图类型('dynamic'|'static')
+    %       drawmode：绘图类型('dynamic_point'|'static'|'dynamic_line')
     %       选择'static',绘图数据为：
     %       cur_ap，接入点信息([struct,struct,struct])
     %       name                 mac                  lat       lon       recv_rssi      rssi_reference    rssi     rssi_kf     dist
@@ -127,7 +127,7 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
                     'Color', cur_color)
             end
 
-        case 'dynamic'
+        case 'dynamic_point'
             % '动态轨迹'：动态轨迹图
             dynamic_data = data;
             hd = animatedline('color', [86, 141, 223] ./ 255, 'marker', '*', 'linestyle', 'none');
@@ -136,7 +136,7 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
                 cur_dmx = dynamic_data{k}.x - min_xy(1);
                 cur_dmy = dynamic_data{k}.y - min_xy(2);
                 addpoints(hd, cur_dmx, cur_dmy);
-                pause(0.5);
+                pause(0.1);
 
                 if strcmpi(get(gcf, 'CurrentCharacter'), char(27))
                     disp('绘图终止');
@@ -144,6 +144,54 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
                 end
 
             end
+
+        case 'dynamic_line'
+            %% 对轨迹进行kalman滤波
+            kf_data = data;
+            X_state = cell(0);
+
+            for j = 1:1:length(kf_data)
+
+                if isequal(j, 1)
+                    kf_params = kf_init(kf_data{j}.x - min_xy(1), kf_data{j}.y - min_xy(2), 0, 0);
+                else
+                    kf_params = kf_update(kf_params, ...
+                        [kf_data{j}.x - min_xy(1); kf_data{j}.y - min_xy(2)]);
+                end
+
+                X_state{j} = kf_params.x;
+            end
+
+            hd = animatedline('color', [86, 141, 223] ./ 255, 'marker', '*', 'linestyle', '-');
+
+            for k = 1:1:length(X_state)
+                temp = X_state{k};
+                cur_dmx = temp(1);
+                cur_dmy = temp(2);
+                addpoints(hd, cur_dmx, cur_dmy);
+                pause(0.1);
+
+                if strcmpi(get(gcf, 'CurrentCharacter'), char(27))
+                    disp('绘图终止');
+                    break;
+                end
+
+            end
+
+            % dynamic_data = data;
+
+            % for k = 1:1:length(dynamic_data)
+            %     cur_dmx = dynamic_data{k}.x - min_xy(1);
+            %     cur_dmy = dynamic_data{k}.y - min_xy(2);
+            %     addpoints(hd, cur_dmx, cur_dmy);
+            %     pause(0.1);
+
+            %     if strcmpi(get(gcf, 'CurrentCharacter'), char(27))
+            %         disp('绘图终止');
+            %         break;
+            %     end
+
+            % end
 
     end
 

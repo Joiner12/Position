@@ -57,23 +57,7 @@ disp('定位处理结束');
 %                                   'filter_point', ...
     %                                   filter_points);
 tcf('dynamic')
-figure('name', 'dynamic', 'color', 'w');
-draw_positioning_state(gca, 'dynamic', debug{1, 1}.dynamic)
+f1 = figure('name', 'dynamic', 'color', 'w');
+draw_positioning_state(gca, 'dynamic_line', debug{1, 1}.dynamic)
 disp('绘图完成')
-
-%% write file to markdown file
-% ![location-19](img/location-18.png)
-% D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\定位误差分析.md
-clc;
-fileId = fopen('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\定位误差分析.md', 'w');
-% <img src="img/location-14.png" alt="location-14" style="zoom:150%;" />
-for k = 1:1:44
-    fprintf(fileId, 'location error analysis-%s\n', num2str(k));
-    % fprintf(fileId, sprintf('![location-%s](img/location-%s.png)\n\n', num2str(k), num2str(k)));
-    fprintf(fileId, '%s\n', ...
-        sprintf('<img src="img/location-%s.png" alt="location-%s" style="zoom:150%%;" />\n\n', ...
-        num2str(k), num2str(k)));
-end
-
-winopen('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc');
-fclose(fileId);
+figure2img(f1, 'D:\Code\BlueTooth\pos_bluetooth_matlab\动态定位效果-2.png')
