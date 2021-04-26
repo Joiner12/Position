@@ -162,8 +162,11 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
                 X_state{j} = kf_params.x;
             end
 
+            rectangle('Position', [0.8, 9, 16.5, 3],...
+                'edgecolor', 'g', 'curvature', 0.1);
+            line([1,16],[11,11],'Color','r')
             hd = animatedline('color', [86, 141, 223] ./ 255, 'marker', '*', 'linestyle', '-');
-
+            
             for k = 1:1:length(X_state)
                 temp = X_state{k};
                 cur_dmx = temp(1);
@@ -177,21 +180,6 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
                 end
 
             end
-
-            % dynamic_data = data;
-
-            % for k = 1:1:length(dynamic_data)
-            %     cur_dmx = dynamic_data{k}.x - min_xy(1);
-            %     cur_dmy = dynamic_data{k}.y - min_xy(2);
-            %     addpoints(hd, cur_dmx, cur_dmy);
-            %     pause(0.1);
-
-            %     if strcmpi(get(gcf, 'CurrentCharacter'), char(27))
-            %         disp('ªÊÕº÷’÷π');
-            %         break;
-            %     end
-
-            % end
 
     end
 

@@ -4,6 +4,7 @@ try
     load(['D:\Code\BlueTooth\pos_bluetooth_matlab\',...
         'attenuation_model\data\std_diss_splicing.mat']);
 catch
+    disp('nothing got')
 end
 
 %% ÖÐÖµÂË²¨

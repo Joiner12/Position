@@ -72,17 +72,3 @@ plot(rssi_A1)
 hold on
 plot(rssi_A1_f)
 legend({'a', 'f'})
-
-%%
-
-%% 只是用前半段较为符合对数模型的数据拟合
-clc;
-part_rssi = ap_rssi_mean_specdist;
-part_rssi = part_rssi(1:18) - 15;
-% create_logarithmic_model_fit(linspace(1, 18, 18), part_rssi)
-
-a = -51.46;
-b = 2.149;
-
-analysis_fit_model_normal(a, b, part_rssi, 10);
-clearvars part_rssi a b

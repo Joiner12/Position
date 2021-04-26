@@ -62,26 +62,22 @@ function [fitresult, gof] = create_logarithmic_model_fit (dist, rssi, varargin)
         xlabel rssi
         ylabel dist
         grid on
-        set(get(gca, 'Title'), 'String', '拟合结果');
+        set(get(gca, 'Title'), 'String', '拟合结果-1');
         % 拟合模型下，不同距离下，相同RSSI波动对距离结果估计的影响
         subplot(2, 1, 2)
         rssi_c = linspace(min(min(rssi) - 2, -90), max(rssi) + 5, 50);
-        rssi_c_plus_5db = rssi_c + rssi_fluctuation;
-        rssi_c_dec_5db = rssi_c - rssi_fluctuation;
-        dist_plus = power(10, (fcof(1) - rssi_c_plus_5db) / 10 / fcof(2));
-        dist_dec = power(10, (fcof(1) - rssi_c_dec_5db) / 10 / fcof(2));
         dist_c = power(10, (fcof(1) - rssi_c) / 10 / fcof(2));
-        plot_py(rssi_c, dist_c);
-        hold on
-        plot_py(rssi_c, dist_c, 'Marker', '*');
-        hold on
-        plot_py(rssi_c, dist_c, 'Marker', '*');
+        plot(rssi_c, dist_c, 'marker','*','Color','r');
+        % 1m处拟合结果
+        ref_rssi = rssi_c(abs(dist_c - 1) - min(abs(dist_c - 1)) == 0);
+        text_rssi = rssi_c(int8(length(rssi_c) / 2));
+        text_dist = (max(dist_c) - min(dist_c)) / 2;
+        text(text_rssi, text_dist, sprintf('dist:1m,rssi:%.1f', ref_rssi), ...
+            'FontSize', 14, 'Color', [229, 197, 47] ./ 255);
         set(get(gca, 'XLabel'), 'String', 'rssi/dB');
         set(get(gca, 'YLabel'), 'String', 'dist/m');
-        legend({'拟合曲线', 'rssi增加10', 'rssi减少10'});
         grid on
-        temp = sprintf('不同距离相同RSSI波动%.0fdB下距离误差', 10);
-        set(get(gca, 'Title'), 'String', temp);
+        set(get(gca, 'Title'), 'String', '拟合结果-1');
     else
         % 分段拟合
         piecewise_rssi = varargin{find(strcmpi(varargin, 'piecewise_rssi')) + 1};

@@ -45,6 +45,7 @@ legend(legds)
 
 subplot(212)
 legds = zeros(0);
+
 for k = 1:1:length(all_rssi_mean)
     rssi_temp = all_rssi_mean{k};
     plot(rssi_temp(9:18), 'marker', mark_symbol(k))
@@ -55,5 +56,28 @@ end
 plot_py(linspace(1, 10, 10), ap_rssi_mean_specdist(9:18))
 legds = [legds, 'more'];
 legend(legds)
-%% 
+%%
 clearvars temp j k ap_rssi_specdist ki legds rssi_temp x
+
+%% fit model
+clc;
+part_rssi = ap_rssi_mean_specdist;
+delta_env = -13; %
+part_rssi = part_rssi(1:18) + delta_env;
+%
+handle_mode = 'check_model'; % 'fit_model'| 'check_model'
+
+switch handle_mode
+    case 'fit_model'
+        create_logarithmic_model_fit(linspace(1, 18, 18), part_rssi)
+
+    case 'check_model'
+        a = -52;
+        b = 2.5;
+        analysis_fit_model_normal(a, b, part_rssi, 10);
+
+    otherwise
+        disp('no such selection')
+end
+
+clearvars part_rssi a
