@@ -45,19 +45,25 @@ end
 
 disp('定位处理结束');
 
-%% 整体定位结果分析
-% 绘制轨迹及误差图
-%%
-% position_error_statistics(position{1,1}.pos_res,  position{1,1}.true_pos);
-% draw_trajectory_and_error_diagram(position, ...
-%                                   null_val, ...
-%                                   env_feat, ...
-%                                   beacon, ...
-%                                   draw_type, ...
-%                                   'filter_point', ...
-    %                                   filter_points);
-tcf('dynamic')
-f1 = figure('name', 'dynamic', 'color', 'w');
-draw_positioning_state(gca, 'dynamic_line', debug{1, 1}.dynamic)
-disp('绘图完成')
-figure2img(f1, 'D:\Code\BlueTooth\pos_bluetooth_matlab\动态定位效果-2.png')
+%% 静态分析
+if true
+    position_error_statistics(position{1, 1}.pos_res, position{1, 1}.true_pos);
+    draw_trajectory_and_error_diagram(position, ...
+        null_val, ...
+        env_feat, ...
+        beacon, ...
+        draw_type, ...
+        'filter_point', ...
+        filter_points);
+
+end
+
+%% 动态分析
+if false
+    tcf('dynamic')
+    f1 = figure('name', 'dynamic', 'color', 'w');
+    draw_positioning_state(gca, 'dynamic_line', debug{1, 1}.dynamic)
+    disp('绘图完成')
+    figure2img(f1, 'D:\Code\BlueTooth\pos_bluetooth_matlab\动态定位效果-2.png')
+
+end
