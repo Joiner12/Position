@@ -57,34 +57,6 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
         end
 
     end
-
-    %% 激活度
-    ap_names = strings(0);
-
-    for j = 1:1:length(cur_frame)
-        cur_frame_piece = cur_frame(j);
-        name = string(cur_frame_piece.name);
-        ap_names(j) = name;
-    end
-
-    for k = 1:1:size(ap_selector, 1)
-        cur_selector_name = ap_selector.NAME(k);
-        cmp_temp = strcmp(ap_names, cur_selector_name);
-
-        if any(cmp_temp)
-            ap_selector.ACTIVTION(k) = ap_selector.ACTIVTION(k) + length(find(cmp_temp));
-        else
-
-            if ap_selector.ACTIVTION(k) > 0
-                ap_selector.ACTIVTION(k) = ap_selector.ACTIVTION(k) - 1;
-            end
-
-            pre_rssi_temp = ap_selector.RECVRSSI(k, :);
-            ap_selector.RECVRSSI(k, :) = [0, pre_rssi_temp(1:end - 1)];
-        end
-
-    end
-
     %% 根据apselector信息选择定位点
     %{
     ap selector 选择依据：

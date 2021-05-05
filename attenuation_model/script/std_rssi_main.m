@@ -59,19 +59,16 @@ get_rssi_statistics(rssi_A3, 'showfigure')
 get_rssi_statistics(rssi_A7, 'showfigure')
 get_rssi_statistics(rssi_A8, 'showfigure')
 
-%% 
+%%
 clc;
 tcf('face');
 % clarify filter
-windowSize = 100; 
-b = (1/windowSize)*ones(1,windowSize);
+windowSize = 100;
+b = (1 / windowSize) * ones(1, windowSize);
 a = 1;
-rssi_A1_f = filter(b,a,rssi_A1);
-figure('name','face')
+rssi_A1_f = filter(b, a, rssi_A1);
+figure('name', 'face')
 plot(rssi_A1)
 hold on
 plot(rssi_A1_f)
-legend({'a','f'})
-
-
-
+legend({'a', 'f'})

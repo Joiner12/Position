@@ -14,11 +14,16 @@ function status = modify_geoinfo(varargin)
 
     %% È«Õ¾ÒÇÊý¾Ý ..//TotalStation//*
     name = ["onepos_HLK_1", "onepos_HLK_3", ...
-            "onepos_HLK_7", "onepos_HLK_8"];
+            "onepos_HLK_7", "onepos_HLK_8", ...
+            "onepos_HLK_5", "onepos_HLK_2"];
     name = name';
-    lat = [30.5480384, 30.5478864, 30.5478867, 30.5480210];
+    lat = [30.5480384, 30.5478864, ...
+            30.5478867, 30.5480210, ...
+            30.5478838, 30.5480286];
     lat = lat';
-    lon = [104.0586489, 104.0586441, 104.0585689, 104.0585709];
+    lon = [104.0586489, 104.0586441, ...
+            104.0585689, 104.0585709, ...
+            104.0587162, 104.0587327];
     lon = lon';
     TotalStationData = table(name, lat, lon);
     TotalStationData.Properties.VariableNames = {'name', 'lat', 'lon'};
@@ -48,8 +53,7 @@ function status = modify_geoinfo(varargin)
         if contains(str_temp, '$APMSG')
             split_temp = strsplit(str_temp, ' ');
             ap_name = split_temp{2};
-            index_logical = strcmp(["onepos_HLK_1", "onepos_HLK_3", ...
-                                    "onepos_HLK_7", "onepos_HLK_8"], ap_name);
+            index_logical = strcmp(name, ap_name);
 
             if any(index_logical)
                 index = find(index_logical);

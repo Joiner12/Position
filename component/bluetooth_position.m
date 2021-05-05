@@ -117,7 +117,6 @@ function [position, debug_param] = bluetooth_position(data)
         est_pos = [est_pos; pos_res];
         % figure
         if false
-            pause(1);
             tcf('Positining'); % todo:异常点处理
             figure('name', 'Positining', 'Color', 'w');
 
@@ -127,16 +126,26 @@ function [position, debug_param] = bluetooth_position(data)
             %% 生成gif
             if false
                 frame = getframe(gcf);
-            imind = frame2im(frame);
-            [imind, cm] = rgb2ind(imind, 256);
+                imind = frame2im(frame);
+                [imind, cm] = rgb2ind(imind, 256);
 
-            if gif_cnt == 1
-                imwrite(imind, cm, 'D:\Code\BlueTooth\pos_bluetooth_matlab\test.gif', ...
-                    'gif', 'Loopcount', inf, 'DelayTime', 0.5);
-            else
-                imwrite(imind, cm, 'D:\Code\BlueTooth\pos_bluetooth_matlab\test.gif', ...
-                    'gif', 'WriteMode', 'append', 'DelayTime', 0.5);
+                if gif_cnt == 1
+                    imwrite(imind, cm, 'D:\Code\BlueTooth\pos_bluetooth_matlab\test.gif', ...
+                        'gif', 'Loopcount', inf, 'DelayTime', 0.5);
+                else
+                    imwrite(imind, cm, 'D:\Code\BlueTooth\pos_bluetooth_matlab\test.gif', ...
+                        'gif', 'WriteMode', 'append', 'DelayTime', 0.5);
+                end
+
             end
+
+            %% save png files
+            if false
+                pause(0.1);
+                png_file = strcat('location-temp', num2str(gif_cnt), '.png');
+                png_file = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\', png_file);
+                imwrite(frame2im(getframe(gcf)), png_file);
+                fprintf('save figure as png file:%s\n', png_file);
             end
 
             gif_cnt = gif_cnt +1;
