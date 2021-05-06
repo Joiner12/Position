@@ -4,10 +4,13 @@ classdef trilateration
         x_tr = zeros(0);
         y_tr = zeros(0);
         d_tr = zeros(0);
-        est_pos = [NaN, NaN];
-        est_pos_nlf = est_pos;
         algo_tr = '';
         est_algo = {'GN', 'N', 'GD', 'LM', 'OLS'};
+    end
+
+    properties (SetAccess = public)
+        est_pos = struct('x', NaN, 'y', NaN);
+        est_pos_nlf = struct('x', NaN, 'y', NaN);
     end
 
     % 功能：
@@ -36,23 +39,6 @@ classdef trilateration
                 obj.algo_tr = algo;
             end
 
-            disp('constructor')
-            % est_algo = {'GN', 'N', 'GD', 'LM'};
-            switch obj.algo_tr
-                case 'N'
-
-                case 'GN'
-                    obj.trilater_gn();
-                case 'GD'
-
-                case 'LM'
-
-                case 'OLS'
-                    obj.trilater_ols()
-                otherwise
-                    disp('are u serious?')
-            end
-
         end
 
     end
@@ -61,7 +47,8 @@ classdef trilateration
     methods (Access = public)
 
         function obj = trilater_gn(obj)
-            obj.est_pos = [1, 1];
+            obj.est_pos.x = 1;
+            obj.est_pos.y = 1;
             disp('gauss newton')
         end
 
@@ -79,8 +66,9 @@ classdef trilateration
             b = [X(1).^2 - X(3).^2 + Y(1).^2 - Y(3).^2 + D(3).^2 - D(1).^2; ...
                     X(2).^2 - X(3).^2 + Y(2).^2 - Y(3).^2 + D(3).^2 - D(2).^2];
 
-            est_b = A' * b / (A' * A);
-            obj.est_pos = est_b;
+            est_b = inv(A' * A) * A' * b;
+            obj.est_pos.x = est_b(1);
+            obj.est_pos.y = est_b(2);
         end
 
     end
@@ -95,23 +83,15 @@ classdef trilateration
     end
 
     %% 加权非线性拟合(matlab inline)
-    methods (Access = private)
+    methods (Access = public)
 
         function [obj] = nlfit_inline(obj)
             X = obj.x_tr;
             Y = obj.y_tr;
             D = obj.d_tr;
             pos_est_xy = trilateration_calc([X, Y], D);
-            obj.est_pos_nlf = pos_est_xy;
-        end
-
-    end
-
-    %% 获取matlab非线性拟合结果
-    methods (Access = public)
-
-        function est_pos_out = getEstPosNlf(obj)
-            est_pos_out = obj.est_pos_nlf;
+            obj.est_pos_nlf.x = pos_est_xy(1);
+            obj.est_pos_nlf.y = pos_est_xy(2);
         end
 
     end
