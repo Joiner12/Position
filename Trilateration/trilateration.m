@@ -73,11 +73,20 @@ classdef trilateration
 
     end
 
-    %% 获取定位结果
+    %% 梯度下降法(gradient descent)
     methods (Access = public)
 
-        function est_pos = getEstPos(obj)
-            est_pos = obj.est_pos;
+        function est_pos = trilater_gd(obj)
+            % 偏导函数
+            % 权系数
+            w = [1, 1, 1];
+            X = obj.x_tr;
+            Y = obj.y_tr;
+            D = obj.d_tr;
+            J_x = @(xi, yi, wi) sqrt((x - xi(1))^2 + (y - yi(1))^2) - ri(1);
+            J_y = @(x, y) sqrt((x - xi(2))^2 + (y - yi(2))^2) - ri(2);
+            r3 = @(x, y) sqrt((x - xi(3))^2 + (y - yi(3))^2) - ri(3);
+
         end
 
     end
