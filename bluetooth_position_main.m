@@ -59,7 +59,7 @@ if true
 end
 
 %% ¶¯Ì¬·ÖÎö
-if false
+if true
     tcf('dynamic')
     f1 = figure('name', 'dynamic', 'color', 'w');
     draw_positioning_state(gca, 'dynamic_line', debug{1, 1}.dynamic)

@@ -111,12 +111,12 @@ function [position, debug_param] = bluetooth_position(data)
         if false
             [pos_res, debug_param] = location_least_squares(cur_ap, debug_param);
         else
-            [pos_res, ~] = trilateration_gaussian_newton(cur_ap);
+            [pos_res, ~] = trilateration_calc(cur_ap);
         end
 
         est_pos = [est_pos; pos_res];
         % figure
-        if false
+        if true
             tcf('Positining'); % todo:异常点处理
             figure('name', 'Positining', 'Color', 'w');
 
