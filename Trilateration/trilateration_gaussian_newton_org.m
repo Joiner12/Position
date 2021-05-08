@@ -1,4 +1,4 @@
-function [pos_est,lam] = trilateration_gaussian_newton(cur_ap,varargin)
+function [pos_est,lam] = trilateration_gaussian_newton_org(cur_ap,varargin)
 % 功能：使用高斯-牛顿法解算三边定位
 % 定义：pos_est = trilateration_gaussian_newton(cur_ap,varargin)
 % 输入:

@@ -1,4 +1,4 @@
-function [b] = trilateration_calc(X, d, varargin)
+function [b] = trilateration_calc_org(X, d, varargin)
     % 功能:
     %       Estimates the actual position based on previously estimated distances      
     % 定义:
