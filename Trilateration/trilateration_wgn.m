@@ -1,6 +1,6 @@
-function [est_pos_gn, procss] = trilateration_gn(x_tr, y_tr, d_tr, varargin)
+function [est_pos_wgn, procss] = trilateration_wgn(x_tr, y_tr, d_tr, varargin)
     % 功能:
-    %       高斯牛顿法(Gauss-Newton)
+    %       加权高斯-牛顿(Weighted Gauss-Newton)
     % 定义:
     %       [est_pos_gn, procss] = trilateration_gn(x_tr, y_tr, d_tr, varargin)
     % 参数:
@@ -32,15 +32,19 @@ function [est_pos_gn, procss] = trilateration_gn(x_tr, y_tr, d_tr, varargin)
     x0 = [mean(X), mean(Y)];
     loop_cnt = 0; % 限制搜索次数
     procss = cell(0);
+    % 权重系数
+    if true
+        w = (D').^2;
+    else
+        w = (D').^2 ./ norm(D);
+    end
+
+    w = diag(w);
 
     while true
         A = Dr(x0);
-        %{
-        inv(A) * b = A \ b;
-        b * inv(A) = b / A;
-        %}
-        % v0 = inv(A' * A) * A' * r(x0));
-        v0 = (A' * A) \ (- A' * r(x0));
+        % v0 = -1 * inv(A' * w * A) * A' * w * r(x0);
+        v0 = (A' * w * A) \ (- A' * w * r(x0));
         x1 = x0 + v0';
         loop_cnt = loop_cnt + 1;
 
@@ -52,5 +56,5 @@ function [est_pos_gn, procss] = trilateration_gn(x_tr, y_tr, d_tr, varargin)
         x0 = x1;
     end
 
-    est_pos_gn = x1;
+    est_pos_wgn = x1;
 end
