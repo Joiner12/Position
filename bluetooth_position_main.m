@@ -64,6 +64,5 @@ if true
     f1 = figure('name', 'dynamic', 'color', 'w');
     draw_positioning_state(gca, 'dynamic_line', debug{1, 1}.dynamic)
     disp('绘图完成')
-    figure2img(f1, 'D:\Code\BlueTooth\pos_bluetooth_matlab\动态定位效果-2.png')
-
+    % figure2img(f1, 'D:\Code\BlueTooth\pos_bluetooth_matlab\动态定位效果-2.png')
 end

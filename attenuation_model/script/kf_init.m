@@ -33,7 +33,7 @@ function kf_params = kf_init(Px, Py, Vx, Vy, varargin)
     比如，假设认为运动目标在y轴上的速度可能不匀速，那么可以把这个对角矩阵的最后一个值调大。
     有时希望出来的轨迹更平滑，可以把这个调更小
     %}
-    kf_params.Q = diag(ones(4, 1) * 0.001);
+    kf_params.Q = diag(ones(4, 1) * 0.01);
 
     % 观测矩阵H
     kf_params.H = eye(2, 4);
