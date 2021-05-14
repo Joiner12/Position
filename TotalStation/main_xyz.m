@@ -116,5 +116,8 @@ nbt = table(["nt1", "nt2", "nt3", "nt4", "nt5", "nt6"]', ...
 %%
 [x_1, y_1, ~] = latlon_to_xy(nbt.lat(1), nbt.lon(1));
 [x_2, y_2, ~] = latlon_to_xy(nbt.lat(2), nbt.lon(2));
-[x_4, y_4, ~] = latlon_to_xy(nbt.lat(2), nbt.lon(2));
-norm([x_4 - x_1, y_4 - y_1])
+[x_3, y_3, ~] = latlon_to_xy(nbt.lat(3), nbt.lon(3));
+[x_4, y_4, ~] = latlon_to_xy(nbt.lat(4), nbt.lon(4));
+[x_5, y_5, ~] = latlon_to_xy(nbt.lat(5), nbt.lon(5));
+[x_6, y_6, ~] = latlon_to_xy(nbt.lat(6), nbt.lon(6));
+norm([x_1 - x_6, y_1 - y_6])
