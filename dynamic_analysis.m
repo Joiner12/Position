@@ -1,73 +1,20 @@
 %% 动态分析
-if false
-    [file, path] = uigetfile('./data/*.*', 'Multiselect', 'off');
-    filename = fullfile(path, file);
-else
-    % filename = 'D:\Code\BlueTooth\pos_bluetooth_matlab\data\动态2021-04-20-m-apfilter.txt';
-    filename = 'D:\Code\BlueTooth\pos_bluetooth_matlab\data\动态2021-04-20-m.txt';
-end
+overview_origin_rssi_trends();
+draw_base_map()
 
-fileId = fopen(filename, 'r');
-src_line = cell(0);
+%% 
+a = [ 0.35165951,0.91719366,0.38044585,0.53079755;
+		0.83082863,0.28583902,0.56782164,0.77916723;
+		0.58526409,0.75720023,0.07585429,0.93401068;
+		0.54972361,0.75372909,0.05395012,0.12990621 ];
 
-while ~feof(fileId)
-    src_line = [src_line; fgetl(fileId)];
-end
+fprintf('\n');
+det(a);
+disp('A:')
+disp(a)
+disp('inv(A):')
+disp(inv(a))
 
-fclose(fileId);
-fprintf('原始数据读取完成:%s\n', filename);
-
-%%
-ap_all = struct('name', '', 'rssi', [], 'counter', 0);
-stored_ap_name = cell(0);
-stored_ap_cnt = 0;
-
-for k = 1:1:length(src_line)
-    piece_str = string(src_line{k});
-
-    if isequal(k, 90)
-        d_line = 1;
-    end
-
-    if contains(piece_str, 'APMSG')
-        exp_1 = '\s*';
-        piece_o = regexp(piece_str, exp_1, 'split');
-        name_temp = piece_o{2};
-        rssi_temp = str2num(piece_o{4});
-
-        if ~strcmpi(name_temp, "onepos_HLK_1") &&~strcmpi(name_temp, "onepos_HLK_3")
-
-            if any(strcmp(stored_ap_name, name_temp))
-                index = find(strcmp(stored_ap_name, name_temp));
-                % -
-                rssi_temp_ap = ap_all(index).rssi;
-                ap_all(index).rssi = [rssi_temp_ap; rssi_temp];
-                ap_all(index).counter = ap_all(index).counter + 1;
-            else
-                % 初始化新的ap结构体
-                stored_ap_name = [stored_ap_name, name_temp];
-                stored_ap_cnt = stored_ap_cnt + 1;
-                ap_all(stored_ap_cnt).name = name_temp;
-                ap_all(stored_ap_cnt).rssi = rssi_temp;
-                ap_all(stored_ap_cnt).counter = 1;
-            end
-
-        end
-
-    end
-
-end
-
-fprintf('数据读取完成\n');
-%%
-tcf('ap-statistics');
-figure('name', 'ap-statistics');
-hold on
-
-for k = 1:1:length(ap_all)
-    rssi_s = ap_all(k).rssi;
-    plot(rssi_s, 'linestyle', '-.', 'marker', '*')
-end
-
-legend(stored_ap_name')
-
+%% 
+a = [0,1,3;3,0,9;7,8,0]
+det(a)

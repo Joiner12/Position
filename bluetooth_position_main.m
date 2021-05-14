@@ -1,32 +1,16 @@
 %% 控制参数配置
-%1米处rssi值
-% rssi_reference = -61.48;
-rssi_reference = -50.06763;
-
+clc;
 %经纬度无效值
 null_val = -10000;
 
-%轨迹图绘制方式,支持如下方式：
-%'splashes'：绘制散点图
-%'trajectory'：绘制轨迹图
-% draw_type = 'trajectory';
-draw_type = 'splashes';
-
-% 数据初始化
 %读取待定位数据
 files_data = data_import();
 
 %初始化1米处rssi值（实际工程中由蓝牙信标广播出来）
-files_data = init_rssi_reference(files_data, rssi_reference);
+files_data = init_rssi_reference(files_data, -50.06763);
 
 %提取各文件的信标数据及真值
 [file_ap_msg, files_true_pos] = extract_files_apmsg_truepos(files_data, null_val);
-
-%获取环境特征
-env_feat = tencent_lib_environment();
-
-%获取信标信息
-beacon = hlk_beacon_location();
 
 disp('数据初始化成功');
 
@@ -47,6 +31,13 @@ disp('定位处理结束');
 
 %% 静态分析
 if true
+    
+    draw_type = 'splashes';
+    %获取环境特征
+    env_feat = tencent_lib_environment();
+
+    %获取信标信息
+    beacon = hlk_beacon_location();
     position_error_statistics(position{1, 1}.pos_res, position{1, 1}.true_pos);
     draw_trajectory_and_error_diagram(position, ...
         null_val, ...

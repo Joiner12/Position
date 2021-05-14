@@ -84,35 +84,16 @@ function [position, debug_param] = bluetooth_position(data)
 
         [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_ap, ap_selector);
 
-        %计算离各个ap的距离
-        if false
-            cur_ap = prev_dist_calc(cur_ap, ...
-                config.dist_calc_type, ...
-                config.dist_calc_param);
-
-        else
-            cur_ap = prev_dist_calc(trilateration_ap, ...
-                config.dist_calc_type, ...
-                config.dist_calc_param);
-
-        end
+        cur_ap = prev_dist_calc(trilateration_ap, ...
+            config.dist_calc_type, ...
+            config.dist_calc_param);
 
         %         cur_ap = prev_dist_subsection_log_calc(cur_ap, config.subsection_dist_calc_param);
-
-        %距离三角补偿
-        %        cur_ap = prev_dist_triangle_compensate(cur_ap, config.dist_triangle_compensate_meter);
 
         debug_param.ap_final_dist_calc{i} = cur_ap;
 
         %% 定位
-        %高斯牛顿迭代最小二乘算法（加权质心结果为初始点）
-        %         pos_res = location_gauss_newton_least_squares_wma(cur_ap,...
-        %                                                           config.newtongaussls_param);
-        if false
-            [pos_res, debug_param] = location_least_squares(cur_ap, debug_param);
-        else
-            [pos_res, ~] = trilateration_calc(cur_ap);
-        end
+        [pos_res, ~] = trilateration_calc(cur_ap);
 
         est_pos = [est_pos; pos_res];
         % figure
