@@ -31,11 +31,12 @@ function [position, debug_param] = bluetooth_position(data)
     debug_param.centroid = [];
     debug_param.frame_id = 0;
     debug_param.config = config;
-    %% apselector
+    %% apselector 初始化
     ap_selector = init_ap_selector(10);
     est_pos = cell(0);
     gif_cnt = 1;
-    %% 逐帧处理
+    
+    % 逐帧处理
     for i = 1:frame_num
         %% 定位前预处理
         debug_param.frame_id = i;
@@ -49,12 +50,10 @@ function [position, debug_param] = bluetooth_position(data)
         cur_ap = prev_data_redcution_integrate_same_ap(cur_ap, ...
             config.integrate_same_ap_param);
 
-        %拟合各个ap的rssi
+        % 对ap接收到的rssi进行初步处理
         cur_ap = prev_data_reduction_rssi_fit(cur_ap, ...
             config.rssi_fit_type, ...
             config.rssi_fit_param);
-        %  ap selector
-        % [trilateration_ap,ap_selector] = pre_statistics_ap_selector(cur_ap,ap_selector);
 
         if rssi_fit_flag
             %rssi滤波（后续只会用到卡尔曼滤波后结果rssi_kf，高斯及平滑结果仅用于数据分析）
@@ -74,25 +73,16 @@ function [position, debug_param] = bluetooth_position(data)
 
         end
 
-        %dbscan聚类法的ap选择器
-        %         cur_ap = prev_dbscan_ap_selector(cur_ap,...
-        %                                          prev_ap,...
-        %                                          config.dbscan_selector_param);
-        %
-        %        prev_ap = cur_ap;
-        % ap选择器
-
         [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_ap, ap_selector);
 
+        %% 对数模型:RSSI转换为距离
         cur_ap = prev_dist_calc(trilateration_ap, ...
             config.dist_calc_type, ...
             config.dist_calc_param);
-
-        %         cur_ap = prev_dist_subsection_log_calc(cur_ap, config.subsection_dist_calc_param);
-
+        
         debug_param.ap_final_dist_calc{i} = cur_ap;
 
-        %% 定位
+        %% 三边定位
         [pos_res, ~] = trilateration_calc(cur_ap);
 
         est_pos = [est_pos; pos_res];
