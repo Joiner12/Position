@@ -1,9 +1,10 @@
 %% 控制参数配置
 clc;
-%经纬度无效值
+% 经纬度无效值
 null_val = -10000;
-
-%读取待定位数据
+% 根据全站仪修改ap经纬度信息
+modify_geoinfo();
+% 读取待定位数据
 files_data = data_import();
 
 %初始化1米处rssi值（实际工程中由蓝牙信标广播出来）
@@ -31,7 +32,7 @@ disp('定位处理结束');
 
 %% 静态分析
 if true
-    
+
     draw_type = 'splashes';
     %获取环境特征
     env_feat = tencent_lib_environment();

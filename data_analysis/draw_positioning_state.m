@@ -67,7 +67,7 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
         beacon_x(k) = beacon(k).x;
         beacon_y(k) = beacon(k).y;
         name_temp = beacon(k).name;
-        labels{k} = strcat('anchor-', strrep(name_temp, 'onepos_HLK_', ''));
+        labels{k} = strcat('', strrep(name_temp, 'onepos_HLK_', ''));
     end
 
     beacon_x = reshape(beacon_x, [1, length(beacon_x)]);
@@ -76,7 +76,7 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
     beacon_x_d = beacon_x - min_xy(1);
     beacon_y_d = beacon_y - min_xy(2);
     plot(cur_axes, beacon_x_d, beacon_y_d, 'g^');
-    % text(cur_axes, beacon_x_d, beacon_y_d, labels)
+    text(cur_axes, beacon_x_d, beacon_y_d, labels)
 
     title(gca, '定位效果')
     box on
