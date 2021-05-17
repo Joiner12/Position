@@ -26,7 +26,6 @@ function [position, debug_param] = bluetooth_position(data)
 
     %仅用于debug
     rssi_fit_flag = 0;
-    final_flag = 0;
     debug_param.ap_final_dist_calc = cell(frame_num, 1);
     debug_param.centroid = [];
     debug_param.frame_id = 0;
@@ -35,7 +34,7 @@ function [position, debug_param] = bluetooth_position(data)
     ap_selector = init_ap_selector(10);
     est_pos = cell(0);
     gif_cnt = 1;
-    
+
     % 逐帧处理
     for i = 1:frame_num
         %% 定位前预处理
@@ -50,7 +49,7 @@ function [position, debug_param] = bluetooth_position(data)
         cur_ap = prev_data_redcution_integrate_same_ap(cur_ap, ...
             config.integrate_same_ap_param);
 
-        % 对ap接收到的rssi进行初步处理
+        % 对ap接收到的原始RSSI进行滤波处理——滑动滤波
         cur_ap = prev_data_reduction_rssi_fit(cur_ap, ...
             config.rssi_fit_type, ...
             config.rssi_fit_param);
@@ -79,7 +78,7 @@ function [position, debug_param] = bluetooth_position(data)
         cur_ap = prev_dist_calc(trilateration_ap, ...
             config.dist_calc_type, ...
             config.dist_calc_param);
-        
+
         debug_param.ap_final_dist_calc{i} = cur_ap;
 
         %% 三边定位
@@ -111,7 +110,7 @@ function [position, debug_param] = bluetooth_position(data)
             end
 
             %% save png files
-            if true
+            if false
                 pause(0.1);
                 png_file = strcat('location-temp', num2str(gif_cnt), '.png');
                 png_file = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\', png_file);
@@ -120,6 +119,11 @@ function [position, debug_param] = bluetooth_position(data)
             end
 
             gif_cnt = gif_cnt +1;
+
+            if gif_cnt > 100
+                sdsf = 1;
+            end
+
         end
 
         if final_flag
@@ -158,7 +162,7 @@ function [position, debug_param] = bluetooth_position(data)
             end
 
             %% 定位后处理
-            %范围滤波
+            % 范围滤波
             pos_res = final_scope_filter(pos_res, ...
                 scope_prev_pos, ...
                 config.scope_filter_param);

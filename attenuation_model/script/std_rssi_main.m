@@ -72,3 +72,14 @@ plot(rssi_A1)
 hold on
 plot(rssi_A1_f)
 legend({'a', 'f'})
+
+%%
+clc;
+A = -49.5;
+b = 2.2;
+envf = 0;
+rssi = linspace(-85, -50, 100);
+d = 10.^((A - rssi + envf) / 10 / b);
+tcf('dodo');
+figure('name', 'dodo')
+plot(rssi, d)

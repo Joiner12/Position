@@ -30,8 +30,8 @@ end
 
 disp('定位处理结束');
 
-%% 静态分析
-if true
+% 静态分析
+if false
 
     draw_type = 'splashes';
     %获取环境特征

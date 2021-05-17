@@ -57,6 +57,7 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
         end
 
     end
+
     %% 根据apselector信息选择定位点
     %{
     ap selector 选择依据：
@@ -93,15 +94,16 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
     end
 
     % 重排序 & 避免使用去重复
-    [~, sort_act_rssi] = maxk(act_rssi, 5);
-    [~, sort_meanval_rssi] = maxk(meanval_rssi, 5);
-    [~, sort_var_rssi] = mink(var_rssi, 5);
+    % 此处存在问题,act_rssi完全相等时,maxk不能达到正确排序的目的；
+    [sort_act_rssi, sort_act_rssi_index] = maxk(act_rssi, 5);
+    [~, sort_meanval_rssi_index] = maxk(meanval_rssi, 5);
+    [~, sort_var_rssi_index] = mink(var_rssi, 5);
 
     % 特征值
-    for j = 1:1:length(sort_act_rssi)
-        trilat_table.CHARAC_ACT(sort_act_rssi(j)) = length(sort_act_rssi) + 1 - j;
-        trilat_table.CHARAC_MEAN(sort_meanval_rssi(j)) = length(sort_meanval_rssi) + 1 - j;
-        trilat_table.CHARAC_VAR(sort_var_rssi(j)) = length(sort_var_rssi) + 1 - j;
+    for j = 1:1:length(sort_act_rssi_index)
+        trilat_table.CHARAC_ACT(sort_act_rssi_index(j)) = int8(sort_act_rssi(j) / 2);
+        trilat_table.CHARAC_MEAN(sort_meanval_rssi_index(j)) = length(sort_meanval_rssi_index) + 1 - j;
+        trilat_table.CHARAC_VAR(sort_var_rssi_index(j)) = length(sort_var_rssi_index) + 1 - j;
     end
 
     % 神经元
