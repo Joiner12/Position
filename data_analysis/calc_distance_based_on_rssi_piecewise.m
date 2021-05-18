@@ -131,7 +131,7 @@ function distance = calc_distance_based_on_rssi_piecewise(ap, varargin)
             A = -51.49;
             b = 2.2;
         else
-            A = -49.5;
+            A = -45.5;
             b = 2.2;
         end
 

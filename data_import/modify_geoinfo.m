@@ -1,4 +1,4 @@
-function status = modify_geoinfo(varargin)
+function [status, filename] = modify_geoinfo(varargin)
     % 功能:
     %       根据函数内部(全站仪)数据对原始蓝牙数据的地理坐标进行修改，需要在定位功能前使用该函数，
     %       因为：
@@ -10,7 +10,7 @@ function status = modify_geoinfo(varargin)
     %       varargin:{key:value}
     % 输出:
     %       stauts，状态参数。
-    %
+    %       filename,文件绝对路径
 
     %% 全站仪数据 ..//TotalStation//*
     if true
@@ -40,6 +40,7 @@ function status = modify_geoinfo(varargin)
                 104.058567643123, 104.058567183453];
     end
 
+    filename = ''; % 初始输出文件路径
     lon = lon';
     TotalStationData = table(name, lat, lon);
     TotalStationData.Properties.VariableNames = {'name', 'lat', 'lon'};
@@ -110,6 +111,8 @@ function status = modify_geoinfo(varargin)
     end
 
     fclose(fileId_o);
+    filename = file_name;
+    status = 1;
     fprintf('数据帧:%0.0f\n', frame_cnt);
     fprintf('%s\n↓\n%s\n', fullfile(path, file), file_name);
 

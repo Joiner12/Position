@@ -15,17 +15,5 @@ disp(a)
 disp('inv(A):')
 disp(inv(a))
 
-
 %% 
-clc;
-for k =1:1:141
-    fprintf('location error analysis-%.0f\n',k);
-    fprintf('<img src="img/location-temp%.0f.png" alt="location-5" style="zoom:150%%;" />\r\n\n',k);
-end
-
-
-
-
-
-
-
+[x,y,lam]=latlon_to_xy(30.54785,104.05855)

@@ -14,15 +14,9 @@ function [position, debug_param] = bluetooth_position(data)
     %% 系统初始化
     frame_num = length(data); %总帧数
     position = cell(1, frame_num); %初始化每帧定位结果为空
-    continue_valid_frame_num = 0; %连续有效的帧数
-    continue_invalid_frame_num = 0; %连续无效的帧数
-    ap_buf = []; %初始化不同ap数据的缓存
-    prev_ap = []; %初始化上一帧的ap数据
-    scope_prev_pos = []; %范围滤波上一帧结果
-    jump_smooth_prev_pos = []; %跳点范围滤波上一帧结果
-    invalid_situation_pos = []; %无效情况下最终输出的定位结果
+    scope_prev_pos = struct(); %范围滤波上一帧结果
+    pos_res_prev = struct(); % 上一帧定位结果
     config = sys_config(); %设置各个构件参数
-    pos_queue = queue_init(config.jump_smooth_filter_param.smooth_len); %初始化坐标缓存队列
 
     %仅用于debug
     rssi_fit_flag = 0;
@@ -31,8 +25,7 @@ function [position, debug_param] = bluetooth_position(data)
     debug_param.frame_id = 0;
     debug_param.config = config;
     %% apselector 初始化
-    ap_selector = init_ap_selector(10);
-    est_pos = cell(0);
+    ap_selector = init_ap_selector(20);
     gif_cnt = 1;
 
     % 逐帧处理
@@ -81,11 +74,89 @@ function [position, debug_param] = bluetooth_position(data)
 
         debug_param.ap_final_dist_calc{i} = cur_ap;
 
-        %% 三边定位
+        %% 三边定位,pos_res = [x,y]
         [pos_res, ~] = trilateration_calc(cur_ap);
 
-        est_pos = [est_pos; pos_res];
-        % figure
+        % if final_flag
+
+        %     if isempty(pos_res)
+        %         %当前帧未定位出结果
+        %         continue_invalid_frame_num = continue_invalid_frame_num + 1;
+
+        %         if continue_invalid_frame_num >= config.history_valid_frame_num
+        %             %无效帧数达到允许上限,认为历史数据已经无效,清空历史数据,恢复到
+        %             %初始定位的状态,直接输出上一次最终结果
+        %             %
+        %             %注意：ap数据缓存ap_buf可以不清空，因为prev_rssi_filter函数设置的
+        %             %      缓存ap有效上限ap_buffer_valid_frame_num小于无效帧数上限
+        %             %      history_valid_frame_num,同时当前算法仅在不存在有效数据时
+        %             %      出现未定位出结果的情况,因此还未达到清空历史数据条件的
+        %             %      时候,ap数据缓存已经全部重置,其实此时不需要重复清空ap数据缓存
+        %             continue_valid_frame_num = 0;
+        %             config.jump_smooth_filter_param.jump_num = 0;
+        %             ap_buf = [];
+        %             prev_ap = [];
+        %             scope_prev_pos = [];
+        %             jump_smooth_prev_pos = [];
+        %             pos_queue = queue_clear(pos_queue);
+        %             position{i} = invalid_situation_pos;
+
+        %             % continue;
+        %         else
+        %             %历史数据还有效,利用上次计算的初始定位结果进行后续定位处理
+        %             pos_res = pos_res_prev;
+        %         end
+
+        %     else
+        %         %当前帧成功定位出结果,保存当前结果作为初始定位的历史数据
+        %         pos_res_prev = pos_res;
+        %     end
+
+        %     %% 定位后处理
+        %     % 范围滤波
+        %     pos_res = final_scope_filter(pos_res, ...
+        %         scope_prev_pos, ...
+        %         config.scope_filter_param);
+
+        %     scope_prev_pos = pos_res;
+
+        %     %跳点平滑滤波
+        %     continue_valid_frame_num = continue_valid_frame_num + 1;
+        %     config.jump_smooth_filter_param.frame_num = continue_valid_frame_num;
+        %     [pos_res, pos_queue, jump_num] = final_jump_smooth_filter(pos_res, ...
+        %         jump_smooth_prev_pos, ...
+        %         pos_queue, ...
+        %         config.jump_smooth_filter_param);
+
+        %     config.jump_smooth_filter_param.jump_num = jump_num;
+        %     jump_smooth_prev_pos = pos_res;
+        %     invalid_situation_pos = pos_res;
+        % else
+
+        %     if isempty(pos_res)
+        %         pos_res = pos_res_prev;
+        %     else
+        %         pos_res_prev = pos_res;
+        %     end
+
+        % end
+
+        %% 定位后处理-范围滤波
+        pos_res = final_scope_filter(pos_res, ...
+            scope_prev_pos, ...
+            config.scope_filter_param);
+
+        scope_prev_pos = pos_res;
+
+        if isempty(fieldnames(pos_res))
+            pos_res = pos_res_prev;
+        else
+            pos_res_prev = pos_res;
+        end
+
+        position{i} = pos_res_prev;
+
+        %% figure
         if true
             tcf('Positining'); % todo:异常点处理
             figure('name', 'Positining', 'Color', 'w');
@@ -110,7 +181,7 @@ function [position, debug_param] = bluetooth_position(data)
             end
 
             %% save png files
-            if false
+            if true
                 pause(0.1);
                 png_file = strcat('location-temp', num2str(gif_cnt), '.png');
                 png_file = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\', png_file);
@@ -120,78 +191,13 @@ function [position, debug_param] = bluetooth_position(data)
 
             gif_cnt = gif_cnt +1;
 
-            if gif_cnt > 100
-                sdsf = 1;
+            if (gif_cnt >= 47 && gif_cnt <= 50) || (gif_cnt >= 65 && gif_cnt <= 70)
+                debug_line = 1;
             end
 
+            fprintf('cnt = %.0f\n', gif_cnt);
         end
 
-        if final_flag
-
-            if isempty(pos_res)
-                %当前帧未定位出结果
-                continue_invalid_frame_num = continue_invalid_frame_num + 1;
-
-                if continue_invalid_frame_num >= config.history_valid_frame_num
-                    %无效帧数达到允许上限,认为历史数据已经无效,清空历史数据,恢复到
-                    %初始定位的状态,直接输出上一次最终结果
-                    %
-                    %注意：ap数据缓存ap_buf可以不清空，因为prev_rssi_filter函数设置的
-                    %      缓存ap有效上限ap_buffer_valid_frame_num小于无效帧数上限
-                    %      history_valid_frame_num,同时当前算法仅在不存在有效数据时
-                    %      出现未定位出结果的情况,因此还未达到清空历史数据条件的
-                    %      时候,ap数据缓存已经全部重置,其实此时不需要重复清空ap数据缓存
-                    continue_valid_frame_num = 0;
-                    config.jump_smooth_filter_param.jump_num = 0;
-                    ap_buf = [];
-                    prev_ap = [];
-                    scope_prev_pos = [];
-                    jump_smooth_prev_pos = [];
-                    pos_queue = queue_clear(pos_queue);
-                    position{i} = invalid_situation_pos;
-
-                    % continue;
-                else
-                    %历史数据还有效,利用上次计算的初始定位结果进行后续定位处理
-                    pos_res = pos_res_prev;
-                end
-
-            else
-                %当前帧成功定位出结果,保存当前结果作为初始定位的历史数据
-                pos_res_prev = pos_res;
-            end
-
-            %% 定位后处理
-            % 范围滤波
-            pos_res = final_scope_filter(pos_res, ...
-                scope_prev_pos, ...
-                config.scope_filter_param);
-
-            scope_prev_pos = pos_res;
-
-            %跳点平滑滤波
-            continue_valid_frame_num = continue_valid_frame_num + 1;
-            config.jump_smooth_filter_param.frame_num = continue_valid_frame_num;
-            [pos_res, pos_queue, jump_num] = final_jump_smooth_filter(pos_res, ...
-                jump_smooth_prev_pos, ...
-                pos_queue, ...
-                config.jump_smooth_filter_param);
-
-            config.jump_smooth_filter_param.jump_num = jump_num;
-            jump_smooth_prev_pos = pos_res;
-            invalid_situation_pos = pos_res;
-        else
-
-            if isempty(pos_res)
-                pos_res = pos_res_prev;
-            else
-                pos_res_prev = pos_res;
-            end
-
-        end
-
-        position{i} = pos_res;
     end
 
-    debug_param.dynamic = est_pos;
 end

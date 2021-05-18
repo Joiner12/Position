@@ -163,9 +163,10 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
                 X_state{j} = kf_params.x;
             end
 
-            rectangle('Position', [0.8, 9, 16.5, 3], ...
+            rectangle('Position', [0.8, 8, 30, 5], ...
                 'edgecolor', 'g', 'curvature', 0.1);
-            line([1, 16], [11, 11], 'Color', 'r')
+            line([1, 30], [11, 11], 'Color', 'r', 'LineWidth', 1.8)
+            line([30, 30], [11, 5], 'Color', 'r', 'LineWidth', 1.8)
             hd = animatedline('color', [86, 141, 223] ./ 255, 'marker', '*', 'linestyle', '-');
 
             for k = 1:1:length(X_state)

@@ -44,7 +44,12 @@ function [est_pos_wgn, procss] = trilateration_wgn(x_tr, y_tr, d_tr, varargin)
     while true
         A = Dr(x0);
         % v0 = -1 * inv(A' * w * A) * A' * w * r(x0);
-        v0 = (A' * w * A) \ (- A' * w * r(x0));
+        % v0 = (A' * w * A) \ (- A' * w * r(x0));
+        %{
+        error:矩阵接近奇异值，或者缩放错误。结果可能不准确 ...
+            使用M - P广义逆的方法解决;
+        %}
+        v0 = pinv(- A' * w * A) * (A' * w * r(x0));
         x1 = x0 + v0';
         loop_cnt = loop_cnt + 1;
 
