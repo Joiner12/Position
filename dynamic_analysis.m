@@ -14,6 +14,3 @@ disp('A:')
 disp(a)
 disp('inv(A):')
 disp(inv(a))
-
-%% 
-[x,y,lam]=latlon_to_xy(30.54785,104.05855)

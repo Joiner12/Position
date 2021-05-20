@@ -22,5 +22,18 @@ figure('name', 'meshZ1');
 proc_gdm = cell2mat(proc_gd);
 plot(proc_gdm(1:2:end), proc_gdm(2:2:end), 'marker', '*')
 
-%%
-[x_index, y_index] = find((z_r == min(min(z_r))))
+%% compare code -c
+clc;
+c1 = [1, 1, 2];
+c2 = [5, 1, 2.5];
+c3 = [4, 3, 2];
+[est_pos, ~] = trilateration_wgn([c1(1), c2(1), c3(1)], [c1(2), c2(2), c3(2)], [c1(3), c2(3), c3(3)]);
+est_pos_wgn = est_pos;
+tcf('wgn');
+figure('name', 'wgn');
+hold on
+circles(c1(1), c1(2), c1(3), 'facecolor', 'none', 'edgecolor', 'c')
+circles(c2(1), c2(2), c2(3), 'facecolor', 'none', 'edgecolor', 'c')
+circles(c3(1), c3(2), c3(3), 'facecolor', 'none', 'edgecolor', 'c')
+plot(est_pos_wgn(1), est_pos_wgn(2), 'r*')
+axis equal
