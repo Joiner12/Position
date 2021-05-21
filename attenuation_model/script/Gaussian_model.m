@@ -6,15 +6,38 @@ std_rssi_dist_HLKALL = {std_rssi_one_HLK_1; std_rssi_one_HLK_2; ...
                         std_rssi_one_HLK_5; std_rssi_one_HLK_6; ...
                         std_rssi_one_HLK_7; std_rssi_one_HLK_8};
 
-for k = 1:1:length(std_rssi_one_HLK_2)
-    rssi = std_rssi_one_HLK_2{k}.RSSI;
-    pd = fitdist(rssi, 'Normal')
-    std_rssi_one_HLK_2{k}.gaussian_fit = pd;
-    disp(pd.mu);
-    disp(mean(rssi));
+for i = 1:1:8
+    temp_std = std_rssi_dist_HLKALL{i};
+
+    for k = 1:1:length(temp_std)
+        rssi = temp_std{k}.RSSI;
+        pd = fitdist(rssi, 'Normal')
+        temp_std{k}.gaussian_fit = pd;
+        temp_std{k}.mean_val = mean(rssi);
+        temp_std{k}.gaussian_filter_val = like_gaussian_filter(rssi, 1, 'mean')
+        disp(pd.mu);
+        disp(mean(rssi));
+        % kalman filter
+        for j = 1:1:length(rssi)
+
+            if isequal(j, 1)
+
+            else
+
+            end
+
+        end
+
+    end
+
+    std_rssi_dist_HLKALL{i} = temp_std;
 end
 
-clearvars pd k j cur_ap gauss_data ans
+for k = 1:1:8
+    eval(['std_rssi_one_HLK_', num2str(k), '=std_rssi_dist_HLKALL{', num2str(k), '}']);
+end
+
+clearvars pd k j cur_ap gauss_data ans temp_std i
 
 %% 对比高斯分布均值和统计均值
 clc;
@@ -97,5 +120,22 @@ legend({'oneposHLK-1', 'oneposHLK-2', 'oneposHLK-3', ...
 title('统计均值不同AP对比')
 
 clearvars pd k j cur_ap gauss_data ans f1
+%% 高斯滤波对比均值滤波
+clc;
+disp('高斯滤波对比均值滤波');
+tcf('danwo');
+figure('name', 'danwo');
+hold on
+temp_data_1 = zeros(0);
+temp_data_2 = zeros(0);
+temp_hlk = std_rssi_one_HLK_8;
+for k = 1:length(temp_hlk)
+    temp_data_1(k) = temp_hlk{k}.mean_val;
+    temp_data_2(k) = temp_hlk{k}.gaussian_filter_val;
+end
 
-
+plot(linspace(1, length(temp_data_1), length(temp_data_1)), temp_data_1, 'marker', '*');
+plot(linspace(1, length(temp_data_2), length(temp_data_2)), temp_data_2, 'marker', '^');
+legend('average', 'gaussian filter value')
+xlabel('dist/m');ylabel('rssi/dbm')
+title('HKL-8')
