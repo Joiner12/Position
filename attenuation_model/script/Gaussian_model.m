@@ -121,21 +121,40 @@ title('统计均值不同AP对比')
 
 clearvars pd k j cur_ap gauss_data ans f1
 %% 高斯滤波对比均值滤波
-clc;
-disp('高斯滤波对比均值滤波');
-tcf('danwo');
-figure('name', 'danwo');
-hold on
-temp_data_1 = zeros(0);
-temp_data_2 = zeros(0);
-temp_hlk = std_rssi_one_HLK_8;
-for k = 1:length(temp_hlk)
-    temp_data_1(k) = temp_hlk{k}.mean_val;
-    temp_data_2(k) = temp_hlk{k}.gaussian_filter_val;
-end
 
-plot(linspace(1, length(temp_data_1), length(temp_data_1)), temp_data_1, 'marker', '*');
-plot(linspace(1, length(temp_data_2), length(temp_data_2)), temp_data_2, 'marker', '^');
-legend('average', 'gaussian filter value')
-xlabel('dist/m');ylabel('rssi/dbm')
-title('HKL-8')
+for kk = 1:1:1
+    clc;
+    dist_p = linspace(1, length(temp_data_1), length(temp_data_1));
+    disp('高斯滤波对比均值滤波');
+    tcf('danwo');
+    f1 = figure('name', 'danwo', 'color', 'w');
+    hold on
+    temp_data_1 = zeros(0);
+    temp_data_2 = zeros(0);
+
+    eval(['temp_hlk = std_rssi_one_HLK_', num2str(kk), ';']);
+    % temp_hlk = std_rssi_one_HLK_1;
+
+    for k = 1:length(temp_hlk)
+        temp_data_1(k) = temp_hlk{k}.mean_val;
+        temp_data_2(k) = temp_hlk{k}.gaussian_filter_val;
+    end
+
+    plot(dist_p, temp_data_1, 'marker', '*');
+    plot(dist_p, temp_data_2, 'marker', '^');
+    xlim([0, 19])
+    legend('average', 'gaussian filter value')
+    xlabel('dist/m'); ylabel('rssi/dbm')
+    title(strcat('HKL-', num2str(kk)));
+    tar_file = ...
+        strcat('D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\doc\img\Gaussian-Filter-HLK-', ...
+        num2str(kk), '.png');
+    tar_file_1 = strcat('D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\figure\gaussian-filter-HLK-', ...
+        num2str(kk), '.fig');
+
+    if false
+        saveas(f1, tar_file_1)
+        figure2img(f1, tar_file)
+    end
+
+end

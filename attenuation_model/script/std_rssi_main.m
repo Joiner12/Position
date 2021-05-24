@@ -83,3 +83,5 @@ d = 10.^((A - rssi + envf) / 10 / b);
 tcf('dodo');
 figure('name', 'dodo')
 plot(rssi, d)
+%% 
+create_model_fit_advanced(dist_p,temp_data_1)
