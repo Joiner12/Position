@@ -146,15 +146,69 @@ for kk = 1:1:1
     legend('average', 'gaussian filter value')
     xlabel('dist/m'); ylabel('rssi/dbm')
     title(strcat('HKL-', num2str(kk)));
-    tar_file = ...
-        strcat('D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\doc\img\Gaussian-Filter-HLK-', ...
-        num2str(kk), '.png');
-    tar_file_1 = strcat('D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\figure\gaussian-filter-HLK-', ...
-        num2str(kk), '.fig');
 
     if false
+        tar_file = ...
+            strcat('D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\doc\img\Gaussian-Filter-HLK-', ...
+            num2str(kk), '.png');
+        tar_file_1 = strcat('D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\figure\gaussian-filter-HLK-', ...
+            num2str(kk), '.fig');
         saveas(f1, tar_file_1)
         figure2img(f1, tar_file)
     end
 
 end
+
+%% 对数模型对比(二次)多项式拟合
+clc;
+
+if ~isfolder('./temp')
+    mkdir('temp');
+end
+
+fileID = fopen('./temp/log.md', 'w');
+slg = cell([8, 2]);
+
+for kk = 1:1:8
+    [fit_p, gof_p] = create_polynomial_model_fit(dist_p, temp_data_1);
+    [fit_log, gof_log] = create_logarithmic_model_fit(dist_p, temp_data_1);
+    fcof_log = coeffvalues(fit_log);
+    fcof_p = coeffvalues(fit_p);
+    slg{kk, 1} = gof_p;
+    slg{kk, 2} = gof_log;
+    % fy = fcof(1)+10.*fcof(2).*log10(dist);
+    rssi_c = linspace(min(min(rssi) - 2, -90), max(rssi) + 5, 50);
+    y_log = power(10, (fcof_log(1) - rssi_c) / 10 / fcof_log(2));
+    y_p = fcof_p(1) * rssi_c.^2 + fcof_p(2) * rssi_c +fcof_p(3);
+
+    tcf('log-p')
+    f1 = figure('name', 'log-p','Color','w');
+    subplot(2, 1, 1)
+    box on
+    hold on
+    p1 = plot(fit_p, temp_data_1, dist_p);
+    p1(2).Color = 'r';
+    p2 = plot(fit_log, temp_data_1, dist_p);
+    p2(2).Color = 'b';
+    legend('', 'polynomial', '', 'logarithmic')
+    set(get(gca, 'Title'), 'String', '二次多项式模型对比对数模型');
+    subplot(2, 1, 2)
+    box on
+    hold on
+    plot(rssi_c, y_p)
+    plot(rssi_c, y_log)
+    set(get(gca, 'XLabel'), 'String', 'rssi/dB');
+    set(get(gca, 'YLabel'), 'String', 'dist/m');
+    legend('polynomial', 'logarithmic')
+    % save figure
+    
+    if true
+        tar_file_png = strcat('./temp/ployfit-logafit-', num2str(kk), '.png');
+        tar_file_fig = strcat('./temp/ployfit-logafit-', num2str(kk), '.fig');
+        saveas(f1, tar_file_fig)
+        figure2img(f1, tar_file_png)
+    end
+
+end
+
+fclose(fileID);

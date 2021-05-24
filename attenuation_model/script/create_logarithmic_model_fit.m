@@ -52,32 +52,35 @@ function [fitresult, gof] = create_logarithmic_model_fit (dist, rssi, varargin)
         f_err = fy - dist;
         %% Plot fit with data.
         % tcf('fitmodel');
-        figure('Name', 'fitmodel', 'Color', 'w');
-        subplot(2, 1, 1)
-        plot(fitresult, xData, yData);
-        hold on
-        plot(rssi, fy, 'g*')
-        % errorbar(dist,fy,f_err,'*b','LineWidth',1','MarkerSize',8)
-        legend('原始数据', '拟合结果', '拟合点', 'Location', 'NorthEast');
-        xlabel rssi
-        ylabel dist
-        grid on
-        set(get(gca, 'Title'), 'String', '拟合结果-1');
-        % 拟合模型下，不同距离下，相同RSSI波动对距离结果估计的影响
-        subplot(2, 1, 2)
-        rssi_c = linspace(min(min(rssi) - 2, -90), max(rssi) + 5, 50);
-        dist_c = power(10, (fcof(1) - rssi_c) / 10 / fcof(2));
-        plot(rssi_c, dist_c, 'marker','*','Color','r');
-        % 1m处拟合结果
-        ref_rssi = rssi_c(abs(dist_c - 1) - min(abs(dist_c - 1)) == 0);
-        text_rssi = rssi_c(int8(length(rssi_c) / 2));
-        text_dist = (max(dist_c) - min(dist_c)) / 2;
-        text(text_rssi, text_dist, sprintf('dist:1m,rssi:%.1f', ref_rssi), ...
-            'FontSize', 14, 'Color', [229, 197, 47] ./ 255);
-        set(get(gca, 'XLabel'), 'String', 'rssi/dB');
-        set(get(gca, 'YLabel'), 'String', 'dist/m');
-        grid on
-        set(get(gca, 'Title'), 'String', '拟合结果-1');
+        if any(strcmpi(varargin, 'show-figure'))
+            figure('Name', 'fitmodel-log', 'Color', 'w');
+            subplot(2, 1, 1)
+            plot(fitresult, xData, yData);
+            hold on
+            plot(rssi, fy, 'g*')
+            % errorbar(dist,fy,f_err,'*b','LineWidth',1','MarkerSize',8)
+            legend('原始数据', '拟合结果', '拟合点', 'Location', 'NorthEast');
+            xlabel rssi
+            ylabel dist
+            grid on
+            set(get(gca, 'Title'), 'String', '拟合结果-1');
+            % 拟合模型下，不同距离下，相同RSSI波动对距离结果估计的影响
+            subplot(2, 1, 2)
+            rssi_c = linspace(min(min(rssi) - 2, -90), max(rssi) + 5, 50);
+            dist_c = power(10, (fcof(1) - rssi_c) / 10 / fcof(2));
+            plot(rssi_c, dist_c, 'marker', '*', 'Color', 'r');
+            % 1m处拟合结果
+            ref_rssi = rssi_c(abs(dist_c - 1) - min(abs(dist_c - 1)) == 0);
+            text_rssi = rssi_c(int8(length(rssi_c) / 2));
+            text_dist = (max(dist_c) - min(dist_c)) / 2;
+            text(text_rssi, text_dist, sprintf('dist:1m,rssi:%.1f', ref_rssi), ...
+                'FontSize', 14, 'Color', [229, 197, 47] ./ 255);
+            set(get(gca, 'XLabel'), 'String', 'rssi/dB');
+            set(get(gca, 'YLabel'), 'String', 'dist/m');
+            grid on
+            set(get(gca, 'Title'), 'String', '拟合结果-1');
+        end
+
     else
         % 分段拟合
         piecewise_rssi = varargin{find(strcmpi(varargin, 'piecewise_rssi')) + 1};
@@ -148,21 +151,7 @@ function [fitresult, gof] = create_logarithmic_model_fit (dist, rssi, varargin)
         grid on
         set(get(gca, 'Title'), 'String', '拟合分析');
         legend(temp_1, temp_2, '原始数据');
-        % fplot(fh_1,[intersection_rssi,max(xData_1)+5]);
-        % hold on
-        % fplot(fh_2,[-90,intersection_rssi])
 
-        % todo:拟合模型下，不同距离下，相同RSSI波动对距离结果估计的影响
-        %     subplot(2,1,2)
-        %     plot_py(rssi,fy_1);
-        %     hold on
-        %     plot_py(rssi,fy_2);
-        %     set(get(gca, 'XLabel'), 'String', 'rssi/dB');
-        %     set(get(gca, 'YLabel'), 'String', 'dist/m');
-        %     grid on
-        %     legend({'模型-1','模型-2'})
-        %     temp = sprintf('不同距离相同RSSI波动%.0f下距离误差',10);
-        %     set(get(gca, 'Title'), 'String', temp);
     end
 
 end % function
