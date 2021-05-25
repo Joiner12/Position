@@ -161,54 +161,187 @@ end
 
 %% 对数模型对比(二次)多项式拟合
 clc;
-
-if ~isfolder('./temp')
-    mkdir('temp');
-end
-
-fileID = fopen('./temp/log.md', 'w');
-slg = cell([8, 2]);
+slg_gof = cell([8, 4]);
+slg_fit = cell([8, 4]);
 
 for kk = 1:1:8
-    [fit_p, gof_p] = create_polynomial_model_fit(dist_p, temp_data_1);
-    [fit_log, gof_log] = create_logarithmic_model_fit(dist_p, temp_data_1);
-    fcof_log = coeffvalues(fit_log);
-    fcof_p = coeffvalues(fit_p);
-    slg{kk, 1} = gof_p;
-    slg{kk, 2} = gof_log;
-    % fy = fcof(1)+10.*fcof(2).*log10(dist);
+    eval(['temp_hlk = std_rssi_one_HLK_', num2str(kk), ';']);
+    % temp_hlk = std_rssi_one_HLK_1;
+
+    for k = 1:length(temp_hlk)
+        temp_data_1(k) = temp_hlk{k}.mean_val;
+        temp_data_2(k) = temp_hlk{k}.gaussian_filter_val;
+    end
+
+    % 均值+多项式
+    [fit_p_mean, gof_p_mean] = create_polynomial_model_fit(dist_p, temp_data_1);
+    fcof_p_mean = coeffvalues(fit_p_mean);
+    slg_fit{kk, 1} = fit_p_mean;
+    slg_gof{kk, 1} = gof_p_mean;
+    % 均值+对数
+    [fit_log_mean, gof_log_mean] = create_logarithmic_model_fit(dist_p, temp_data_1);
+    fcof_log_mean = coeffvalues(fit_log_mean);
+    slg_fit{kk, 2} = fit_log_mean;
+    slg_gof{kk, 2} = gof_log_mean;
+    % 高斯+多项式
+    [fit_p_gauss, gof_p_gauss] = create_polynomial_model_fit(dist_p, temp_data_2);
+    fcof_p_gauss = coeffvalues(fit_p_gauss);
+    slg_fit{kk, 3} = fit_p_gauss;
+    slg_gof{kk, 3} = gof_p_gauss;
+    % 高斯+对数
+    [fit_log_gauss, gof_log_gauss] = create_logarithmic_model_fit(dist_p, temp_data_2);
+    fcof_log_gauss = coeffvalues(fit_log_gauss);
+    slg_fit{kk, 4} = fit_log_gauss;
+    slg_gof{kk, 4} = gof_log_gauss;
+
     rssi_c = linspace(min(min(rssi) - 2, -90), max(rssi) + 5, 50);
-    y_log = power(10, (fcof_log(1) - rssi_c) / 10 / fcof_log(2));
-    y_p = fcof_p(1) * rssi_c.^2 + fcof_p(2) * rssi_c +fcof_p(3);
+    y_log_mean = power(10, (fcof_log_mean(1) - rssi_c) / 10 / fcof_log_mean(2));
+    y_p_mean = fcof_p_mean(1) * rssi_c.^2 + fcof_p_mean(2) * rssi_c + fcof_p_mean(3);
+    y_log_gauss = power(10, (fcof_log_gauss(1) - rssi_c) / 10 / fcof_log_gauss(2));
+    y_p_gauss = fcof_p_gauss(1) * rssi_c.^2 + fcof_p_gauss(2) * rssi_c + fcof_p_gauss(3);
 
     tcf('log-p')
-    f1 = figure('name', 'log-p','Color','w');
+    f1 = figure('name', 'log-p', 'Color', 'w');
     subplot(2, 1, 1)
     box on
     hold on
-    p1 = plot(fit_p, temp_data_1, dist_p);
-    p1(2).Color = 'r';
-    p2 = plot(fit_log, temp_data_1, dist_p);
-    p2(2).Color = 'b';
-    legend('', 'polynomial', '', 'logarithmic')
-    set(get(gca, 'Title'), 'String', '二次多项式模型对比对数模型');
+    % p1
+    p1 = plot(fit_p_mean, temp_data_1, dist_p);
+    p1(1).MarkerSize = 12;
+    p1(1).LineStyle = ':';
+    p1(1).Color = [188, 15, 213] ./ 255;
+    p1(2).Color = [226, 81, 36] ./ 255;
+    % p1(2).LineStyle = '--'; %-- :
+    p1(2).LineWidth = 1.2;
+    % p2
+    p2 = plot(fit_log_mean, temp_data_1, dist_p);
+    p2(1).MarkerSize = 1;
+    p2(1).Color = 'w';
+    p2(2).Color = [228, 207, 23] ./ 255;
+    % p2(2).LineStyle = '--';
+    p2(2).LineWidth = 1.2;
+    % p3
+    p3 = plot(fit_p_gauss, temp_data_2, dist_p);
+    p3(1).MarkerSize = 12;
+    p3(1).LineStyle = ':';
+    p3(1).Color = [9, 192, 185] ./ 255;
+    p3(2).Color = [72, 191, 21] ./ 255;
+    p3(2).LineStyle = '--';
+    p3(2).LineWidth = 1.2;
+    % p4
+    p4 = plot(fit_log_gauss, temp_data_2, dist_p);
+    p4(1).MarkerSize = 1;
+    p4(1).Color = 'w';
+    p4(2).Color = [15, 110, 213] ./ 255;
+    p4(2).LineWidth = 1.2;
+    p4(2).LineStyle = '--';
+    %
+    legend('均值', '均值-多项式拟合', ...
+        '', '均值-对数拟合', '高斯滤波值', '高斯-多项式拟合', '', '高斯-对数拟合')
+    set(get(gca, 'Title'), 'String', strcat('二次多项式模型对比对数模型 HLK-', num2str(kk)));
     subplot(2, 1, 2)
     box on
     hold on
-    plot(rssi_c, y_p)
-    plot(rssi_c, y_log)
+    plot(rssi_c, y_p_mean, 'Marker', '*', 'LineWidth', 1.2, 'MarkerSize', 4);
+    plot(rssi_c, y_log_mean, 'Marker', '*', 'LineWidth', 1.2, 'MarkerSize', 4);
+    plot(rssi_c, y_p_gauss, 'Marker', '*', 'LineWidth', 1.2, 'MarkerSize', 4);
+    plot(rssi_c, y_log_gauss, 'Marker', '*', 'LineWidth', 1.2, 'MarkerSize', 4);
+
     set(get(gca, 'XLabel'), 'String', 'rssi/dB');
     set(get(gca, 'YLabel'), 'String', 'dist/m');
-    legend('polynomial', 'logarithmic')
+    legend('均值-多项式拟合', '均值-对数拟合', '高斯-多项式拟合', '高斯-对数拟合')
     % save figure
-    
-    if true
-        tar_file_png = strcat('./temp/ployfit-logafit-', num2str(kk), '.png');
-        tar_file_fig = strcat('./temp/ployfit-logafit-', num2str(kk), '.fig');
+
+    if false
+        % D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\figure
+        % D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\script
+        % D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\doc
+        tar_file_png = strcat('./temp/ployfit-logafit-mean-gauss-', num2str(kk), '.png');
+        tar_file_fig = strcat('./temp/ployfit-logafit-mean-gauss-', num2str(kk), '.fig');
         saveas(f1, tar_file_fig)
         figure2img(f1, tar_file_png)
     end
 
 end
 
+%% write log
+clc;
+
+if ~isfolder('./temp')
+    mkdir('temp');
+end
+
+fileID = fopen('./temp/log.md', 'w');
+
+for kk = 8:8
+    % 均值+多项式
+    disp('**均值+多项式拟合模型**')
+    slg_fit{kk, 1} % = fit_p_mean;
+    disp('**均值+多项式拟合结果**')
+    slg_gof{kk, 1} % = gof_p_mean;
+    % 均值+对数
+    disp('**均值+对数拟合模型**')
+    slg_fit{kk, 2} % = fit_log_mean;
+    disp('**均值+对数拟合结果**')
+    slg_gof{kk, 2} % = gof_log_mean;
+    % 高斯+多项式
+    disp('**高斯+多项式拟合模型**')
+    slg_fit{kk, 3} % = fit_p_gauss;
+    disp('**高斯+多项式拟合结果**')
+    slg_gof{kk, 3} % = gof_p_gauss;
+    % 高斯+对数
+    disp('**高斯+对数拟合模型**')
+    slg_fit{kk, 4} % = fit_log_gauss;
+    disp('**高斯+对数拟合结果**')
+    slg_gof{kk, 4} % = gof_log_gauss;
+end
+
 fclose(fileID);
+
+%%
+clc;
+all_rssi_gauss = cell(0);
+ap_rssi_gauss_specdist = zeros(8, 18);
+ap_rssi_gauss_pp = zeros(0);
+
+for ii = 1:8
+    eval(['temp_hlk = std_rssi_one_HLK_', num2str(ii), ';']);
+    % temp_hlk = std_rssi_one_HLK_1;
+    for k = 1:length(temp_hlk)
+        temp_data_2(k) = temp_hlk{k}.gaussian_filter_val;
+    end
+
+    ap_rssi_gauss_specdist(ii, :) = temp_data_2;
+    all_rssi_gauss{ii} = temp_data_2;
+end
+
+for j = 1:18
+    ap_rssi_gauss_gauss(j) = like_gaussian_filter(ap_rssi_gauss_specdist(:, j), 1, 'mean');
+    ap_rssi_gauss_mean(j) = mean(ap_rssi_gauss_specdist(:, j));
+end
+
+% v
+clc;
+tcf('expmean');
+figure('name', 'expmean', 'color', 'w');
+legds = cell(0);
+mark_symbol = ['o', '+', '*', '.', 'x', '^', 'v', ...
+                '>', '<', 'pentagram', 'hexagram', 'square', 'diamond'];
+
+for k = 1:1:length(all_rssi_gauss)
+    rssi_temp = all_rssi_gauss{k};
+    plot(rssi_temp, 'marker', mark_symbol(k))
+    hold on
+    legds = [legds, num2str(k)];
+end
+
+plot(ap_rssi_gauss_gauss, 'LineWidth', 2, 'Marker', '.')
+hold on
+legds = [legds, 'gauss-gauss'];
+plot(ap_rssi_gauss_mean, 'LineWidth', 2, 'Marker', '+')
+hold on
+legds = [legds, 'gauss-mean'];
+plot(ap_rssi_mean_specdist, 'LineWidth', 2, 'Marker', '*')
+legds = [legds, 'mean'];
+legend(legds)
+xlim([0, 19])
