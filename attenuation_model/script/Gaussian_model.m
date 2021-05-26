@@ -345,3 +345,90 @@ plot(ap_rssi_mean_specdist, 'LineWidth', 2, 'Marker', '*')
 legds = [legds, 'mean'];
 legend(legds)
 xlim([0, 19])
+
+%% 对数模型对比(二次)多项式拟合
+clc;
+% ap_rssi_gauss_gauss
+% ap_rssi_gauss_mean
+% ap_rssi_mean_specdist
+
+% mean mean +多项式
+[fit_p_meanmean, gof_p_meanmean] = create_polynomial_model_fit(dist_p, ap_rssi_mean_specdist);
+fcof_p_meanmean = coeffvalues(fit_p_meanmean);
+% mean mean +对数
+[fit_log_meanmean, gof_log_meanmean] = create_logarithmic_model_fit(dist_p, ap_rssi_mean_specdist);
+fcof_log_meanmean = coeffvalues(fit_log_meanmean);
+% gauss mean+多项式
+[fit_p_gaussmean, gof_p_gaussmean] = create_polynomial_model_fit(dist_p, ap_rssi_gauss_mean);
+fcof_p_gaussmean = coeffvalues(fit_p_gaussmean);
+% gauss mean+对数
+[fit_log_gaussmean, gof_log_gaussmean] = create_logarithmic_model_fit(dist_p, ap_rssi_gauss_mean);
+fcof_log_gaussmean = coeffvalues(fit_log_gaussmean);
+
+% gauss gauss+多项式
+[fit_p_gaussgauss, gof_p_gaussgauss] = create_polynomial_model_fit(dist_p, ap_rssi_gauss_gauss);
+fcof_p_gaussgauss = coeffvalues(fit_p_gaussgauss);
+% gauss gauss+对数
+[fit_log_gaussgauss, gof_log_gaussgauss] = create_logarithmic_model_fit(dist_p, ap_rssi_gauss_gauss);
+fcof_log_gaussgauss = coeffvalues(fit_log_gaussgauss);
+
+rssi_c = linspace(min(min(rssi) - 2, -90), max(rssi) + 5, 50);
+y_log_meanmean = power(10, (fcof_log_meanmean(1) - rssi_c) / 10 / fcof_log_meanmean(2));
+y_p_meanmean = fcof_p_meanmean(1) * rssi_c.^2 + fcof_p_meanmean(2) * rssi_c + fcof_p_meanmean(3);
+y_log_gaussmean = power(10, (fcof_log_gaussmean(1) - rssi_c) / 10 / fcof_log_gaussmean(2));
+y_p_gaussmean = fcof_p_gaussmean(1) * rssi_c.^2 + fcof_p_gaussmean(2) * rssi_c + fcof_p_gaussmean(3);
+y_log_gaussgauss = power(10, (fcof_log_gaussgauss(1) - rssi_c) / 10 / fcof_log_gaussgauss(2));
+y_p_gaussgauss = fcof_p_gaussgauss(1) * rssi_c.^2 + fcof_p_gaussgauss(2) * rssi_c + fcof_p_gaussgauss(3);
+disp('fit finished')
+%% 
+tcf('log-p')
+f1 = figure('name', 'log-p', 'Color', 'w');
+subplot(2, 1, 1)
+box on
+hold on
+% p1
+p1 = plot(fit_p_mean, temp_data_1, dist_p);
+p1(1).MarkerSize = 12;
+p1(1).LineStyle = ':';
+p1(1).Color = [188, 15, 213] ./ 255;
+p1(2).Color = [226, 81, 36] ./ 255;
+% p1(2).LineStyle = '--'; %-- :
+p1(2).LineWidth = 1.2;
+% p2
+p2 = plot(fit_log_mean, temp_data_1, dist_p);
+p2(1).MarkerSize = 1;
+p2(1).Color = 'w';
+p2(2).Color = [228, 207, 23] ./ 255;
+% p2(2).LineStyle = '--';
+p2(2).LineWidth = 1.2;
+% p3
+p3 = plot(fit_p_gauss, temp_data_2, dist_p);
+p3(1).MarkerSize = 12;
+p3(1).LineStyle = ':';
+p3(1).Color = [9, 192, 185] ./ 255;
+p3(2).Color = [72, 191, 21] ./ 255;
+p3(2).LineStyle = '--';
+p3(2).LineWidth = 1.2;
+% p4
+p4 = plot(fit_log_gauss, temp_data_2, dist_p);
+p4(1).MarkerSize = 1;
+p4(1).Color = 'w';
+p4(2).Color = [15, 110, 213] ./ 255;
+p4(2).LineWidth = 1.2;
+p4(2).LineStyle = '--';
+%
+legend('均值', '均值-多项式拟合', ...
+    '', '均值-对数拟合', '高斯滤波值', '高斯-多项式拟合', '', '高斯-对数拟合')
+set(get(gca, 'Title'), 'String', strcat('二次多项式模型对比对数模型 HLK-', num2str(kk)));
+subplot(2, 1, 2)
+box on
+hold on
+plot(rssi_c, y_p_mean, 'Marker', '*', 'LineWidth', 1.2, 'MarkerSize', 4);
+plot(rssi_c, y_log_mean, 'Marker', '*', 'LineWidth', 1.2, 'MarkerSize', 4);
+plot(rssi_c, y_p_gauss, 'Marker', '*', 'LineWidth', 1.2, 'MarkerSize', 4);
+plot(rssi_c, y_log_gauss, 'Marker', '*', 'LineWidth', 1.2, 'MarkerSize', 4);
+
+set(get(gca, 'XLabel'), 'String', 'rssi/dB');
+set(get(gca, 'YLabel'), 'String', 'dist/m');
+legend('均值-多项式拟合', '均值-对数拟合', '高斯-多项式拟合', '高斯-对数拟合')
+% save figure
