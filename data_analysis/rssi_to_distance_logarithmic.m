@@ -1,8 +1,8 @@
-function distance = calculate_distance_based_on_rssi(A, b, rssi, varargin)
+function distance = rssi_to_distance_logarithmic(A, b, rssi, varargin)
     % 功能:
     %       根据拟合的对数路径损耗模型(Logarithmic path loss model )，计算RSSI对应的路径。
     % 定义:
-    %       function distance = calculate_distance_based_on_rssi(A,b,rssi,varargin)
+    %       function distance = rssi_to_distance_logarithmic(A, b, rssi, varargin)
     % 参数:
     %       A,距离1m时，设备接收到无线信号的RSSI值;
     %       b,衰减因子;

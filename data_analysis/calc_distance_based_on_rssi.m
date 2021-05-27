@@ -1,8 +1,8 @@
-function distance = calc_distance_based_on_rssi_piecewise(ap, varargin)
+function distance = calc_distance_based_on_rssi(ap, varargin)
     % 功能:
     %       根据AP信息查询拟合模型获取RSSI对应的距离信息
     % 定义:
-    %       distance = calc_distance_based_on_rssi_piecewise(ap,rssi,varargin)
+    %       distance = calc_distance_based_on_rssi(ap,rssi,varargin)
     % 输入:
     %       ap:ap数据，依据各个ap数据的rssi计算对应的距离
     %       varargin:保留参数
@@ -135,7 +135,7 @@ function distance = calc_distance_based_on_rssi_piecewise(ap, varargin)
             b = 2.2;
         end
 
-        dist = calculate_distance_based_on_rssi(A, b, ap_rssi);
+        dist = rssi_to_distance_logarithmic(A, b, ap_rssi);
     end
 
     distance = dist;
