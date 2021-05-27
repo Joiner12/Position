@@ -380,55 +380,81 @@ y_p_gaussmean = fcof_p_gaussmean(1) * rssi_c.^2 + fcof_p_gaussmean(2) * rssi_c +
 y_log_gaussgauss = power(10, (fcof_log_gaussgauss(1) - rssi_c) / 10 / fcof_log_gaussgauss(2));
 y_p_gaussgauss = fcof_p_gaussgauss(1) * rssi_c.^2 + fcof_p_gaussgauss(2) * rssi_c + fcof_p_gaussgauss(3);
 disp('fit finished')
-%% 
-tcf('log-p')
-f1 = figure('name', 'log-p', 'Color', 'w');
-subplot(2, 1, 1)
+%%
+tcf('log-p1')
+f1 = figure('name', 'log-p1', 'Color', 'w');
 box on
 hold on
 % p1
-p1 = plot(fit_p_mean, temp_data_1, dist_p);
+p1 = plot(fit_p_meanmean, ap_rssi_mean_specdist, dist_p);
 p1(1).MarkerSize = 12;
 p1(1).LineStyle = ':';
 p1(1).Color = [188, 15, 213] ./ 255;
-p1(2).Color = [226, 81, 36] ./ 255;
+p1(2).Color = 'r';
 % p1(2).LineStyle = '--'; %-- :
 p1(2).LineWidth = 1.2;
 % p2
-p2 = plot(fit_log_mean, temp_data_1, dist_p);
+p2 = plot(fit_log_meanmean, ap_rssi_mean_specdist, dist_p);
 p2(1).MarkerSize = 1;
 p2(1).Color = 'w';
-p2(2).Color = [228, 207, 23] ./ 255;
-% p2(2).LineStyle = '--';
+p2(2).Color = 'r';
+p2(2).LineStyle = '-.';
 p2(2).LineWidth = 1.2;
 % p3
-p3 = plot(fit_p_gauss, temp_data_2, dist_p);
+p3 = plot(fit_p_gaussmean, ap_rssi_gauss_mean, dist_p);
 p3(1).MarkerSize = 12;
 p3(1).LineStyle = ':';
 p3(1).Color = [9, 192, 185] ./ 255;
-p3(2).Color = [72, 191, 21] ./ 255;
-p3(2).LineStyle = '--';
+p3(2).Color = 'g';
 p3(2).LineWidth = 1.2;
 % p4
-p4 = plot(fit_log_gauss, temp_data_2, dist_p);
+p4 = plot(fit_log_gaussmean, ap_rssi_gauss_mean, dist_p);
 p4(1).MarkerSize = 1;
 p4(1).Color = 'w';
-p4(2).Color = [15, 110, 213] ./ 255;
+p4(2).Color = 'g';
 p4(2).LineWidth = 1.2;
-p4(2).LineStyle = '--';
+p4(2).LineStyle = '-.';
+% p5
+p5 = plot(fit_p_gaussgauss, ap_rssi_gauss_gauss, dist_p);
+p5(1).LineStyle = ':';
+p5(1).MarkerSize = 12;
+p5(1).Color = 'k';
+p5(2).Color = 'b';
+p5(2).LineWidth = 1.2;
+
+
+% p6
+p6 = plot(fit_log_gaussgauss, ap_rssi_gauss_gauss, dist_p);
+p6(1).MarkerSize = 1;
+p6(1).Color = 'w';
+p6(2).Color = 'b';
+p6(2).LineWidth = 1.2;
+p6(2).LineStyle = '-.';
 %
-legend('均值', '均值-多项式拟合', ...
-    '', '均值-对数拟合', '高斯滤波值', '高斯-多项式拟合', '', '高斯-对数拟合')
-set(get(gca, 'Title'), 'String', strcat('二次多项式模型对比对数模型 HLK-', num2str(kk)));
-subplot(2, 1, 2)
+legend('均值-均值', '均值-均值-多项式拟合', '', '均值-均值-对数拟合', ...
+    '高斯-均值', '高斯-均值-多项式拟合', '', '高斯-均值-对数拟合', ...
+    '高斯-高斯', '高斯-高斯-多项式拟合', '', '高斯-高斯-对数拟合')
+% set(get(gca, 'Title'), 'String', strcat('二次多项式模型对比对数模型 HLK-', num2str(kk)));
+tcf('log-p2')
+f2 = figure('name', 'log-p2', 'Color', 'w');
 box on
 hold on
-plot(rssi_c, y_p_mean, 'Marker', '*', 'LineWidth', 1.2, 'MarkerSize', 4);
-plot(rssi_c, y_log_mean, 'Marker', '*', 'LineWidth', 1.2, 'MarkerSize', 4);
-plot(rssi_c, y_p_gauss, 'Marker', '*', 'LineWidth', 1.2, 'MarkerSize', 4);
-plot(rssi_c, y_log_gauss, 'Marker', '*', 'LineWidth', 1.2, 'MarkerSize', 4);
+% y_log_meanmean = power(10, (fcof_log_meanmean(1) - rssi_c) / 10 / fcof_log_meanmean(2));
+% y_p_meanmean = fcof_p_meanmean(1) * rssi_c.^2 + fcof_p_meanmean(2) * rssi_c + fcof_p_meanmean(3);
+% y_log_gaussmean = power(10, (fcof_log_gaussmean(1) - rssi_c) / 10 / fcof_log_gaussmean(2));
+% y_p_gaussmean = fcof_p_gaussmean(1) * rssi_c.^2 + fcof_p_gaussmean(2) * rssi_c + fcof_p_gaussmean(3);
+% y_log_gaussgauss = power(10, (fcof_log_gaussgauss(1) - rssi_c) / 10 / fcof_log_gaussgauss(2));
+% y_p_gaussgauss = fcof_p_gaussgauss(1) * rssi_c.^2 + fcof_p_gaussgauss(2) * rssi_c + fcof_p_gaussgauss(3);
+plot(rssi_c, y_p_meanmean, 'Marker', '*', 'LineWidth', 1.2, 'MarkerSize', 4);
+plot(rssi_c, y_log_meanmean, 'Marker', '*', 'LineWidth', 1.2);
+plot(rssi_c, y_p_gaussmean, 'Marker', '*', 'LineWidth', 1.2, 'MarkerSize', 4);
+plot(rssi_c, y_log_gaussmean, 'Marker', '*', 'LineWidth', 1.2);
+plot(rssi_c, y_p_gaussgauss, 'Marker', '*', 'LineWidth', 1.2, 'MarkerSize', 4);
+plot(rssi_c, y_log_gaussgauss, 'Marker', '*', 'LineWidth', 1.2);
 
 set(get(gca, 'XLabel'), 'String', 'rssi/dB');
 set(get(gca, 'YLabel'), 'String', 'dist/m');
-legend('均值-多项式拟合', '均值-对数拟合', '高斯-多项式拟合', '高斯-对数拟合')
-% save figure
+legend('均值-均值-多项式拟合', '均值-均值-对数拟合', ...
+    '高斯-均值-多项式拟合', '高斯-均值-对数拟合', ...
+    '高斯-高斯-多项式拟合', '高斯-高斯-对数拟合')
+
