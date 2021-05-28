@@ -142,9 +142,11 @@ function [position, debug_param] = bluetooth_position(data)
         % end
 
         %% 定位后处理-范围滤波
-        pos_res = final_scope_filter(pos_res, ...
+        if false
+            pos_res = final_scope_filter(pos_res, ...
             scope_prev_pos, ...
             config.scope_filter_param);
+        end
 
         scope_prev_pos = pos_res;
 
@@ -181,7 +183,7 @@ function [position, debug_param] = bluetooth_position(data)
             end
 
             %% save png files
-            if true
+            if false
                 pause(0.1);
                 png_file = strcat('location-temp', num2str(gif_cnt), '.png');
                 png_file = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\', png_file);

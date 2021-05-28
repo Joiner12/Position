@@ -30,7 +30,7 @@ function config = sys_config()
 
     %% 计算离各个ap的距离
     %     config.dist_calc_type = 'logarithmic';  %距离计算的模式
-    config.dist_calc_type = 'piecewise_logarithm'; %距离计算的模式
+    config.dist_calc_type = 'redefined_model'; %距离计算的模式
 
     %经典距离对数模型：信号传播参考距离d0(d0=1m)后产生的路径损耗,即d0处rssi
     %     config.dist_calc_param.logarithmic.rssi_reference = -10.61;

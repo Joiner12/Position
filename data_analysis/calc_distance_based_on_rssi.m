@@ -110,32 +110,46 @@ function distance = calc_distance_based_on_rssi(ap, varargin)
     ap_rssi = ap.rssi;
     cur_param = struct();
 
-    % 查表
-    for i = 1:1:length(ap_params)
-        ap_temp = ap_params{i};
+    % 模型选择
+    model_mode = {'piecewise_logarithmic', 'ordinary_logarithmic', 'quadratic_polynomial'};
 
-        if strcmp(ap_name, ap_temp.Name)
-            cur_param = ap_temp;
-            break;
-        end
+    switch model_mode{3}
 
-    end
+        case 'ordinary_logarithmic' % 一般对数模型
 
-    if false
-        dist = calculate_distance_based_on_rssi_piecewise(...
-            cur_param.param_less_rssi, cur_param.param_more_rssi, ...
-            ap_rssi, cur_param.piecewise_rssi);
-    else
+            if false
+                A = -51.49;
+                b = 2.2;
+            else
+                A = -45.5;
+                b = 2.2;
+            end
 
-        if false
-            A = -51.49;
-            b = 2.2;
-        else
-            A = -45.5;
-            b = 2.2;
-        end
+            dist = rssi_to_distance_logarithmic(A, b, ap_rssi);
+        case 'piecewise_logarithmic' % 分段对数模型
+            % 查表
+            for i = 1:1:length(ap_params)
+                ap_temp = ap_params{i};
 
-        dist = rssi_to_distance_logarithmic(A, b, ap_rssi);
+                if strcmp(ap_name, ap_temp.Name)
+                    cur_param = ap_temp;
+                    break;
+                end
+
+            end
+
+            dist = rssi_to_distance_piecewise_logarithmic(...
+                cur_param.param_less_rssi, cur_param.param_more_rssi, ...
+                ap_rssi, cur_param.piecewise_rssi);
+        case 'quadratic_polynomial' % 多项式模型
+            % 不同处理方式下的二次项参数[a,b,c]
+            param_mean_mean = [0.02856, 2.224, 48.38];
+            param_gauss_mean = [0.02119, 1.451, 23.8];
+            param_gauss_gauss = [0.02354, 1.677, 29.87];
+
+            dist = rssi_to_distance_quadratic_polynomial(param_mean_mean(1), ...
+                param_mean_mean(2), ...
+                param_mean_mean(3), ap_rssi);
     end
 
     distance = dist;

@@ -37,11 +37,9 @@ function ap = prev_dist_calc(ap, calctype, param)
                 end
 
                 % 使用分段拟合对数模型rssi-dist转换
-            case 'piecewise_logarithm'
+            case 'redefined_model'
                 ap(i).dist = calc_distance_based_on_rssi(ap(i));
-
-            case 'quadratic_polynomial'
-                ap(i).dist = calc_distance_based_on_rssi(ap(i));
+                
             otherwise
                 error('选择的距离计算方式错误,没有%s的计算方式', type);
         end
