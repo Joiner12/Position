@@ -5,8 +5,8 @@ function rssi_kf = kalman_filter_rssi(rssi, Q, R, varargin)
     %       rssi_kf = kalman_filter_rssi(rssi, Q, R, varargin)
     % 输入:
     %       rssi,rssi数组;
-    %       Q,观测噪声协方差(矩阵);
-    %       R,过程噪声协方差(矩阵);
+    %       Q,过程噪声协方差(矩阵);
+    %       R,观测噪声协方差(矩阵);
     %       varargin,扩张参数;
     % 输出:
     %       滤波后的rssi数组;
@@ -15,7 +15,6 @@ function rssi_kf = kalman_filter_rssi(rssi, Q, R, varargin)
     A = 1; % 状态转移(矩阵)
     B = 0; % 输入(矩阵)
     H = 1; % 观测(矩阵)
-    rssi_kf = zeros(size(rssi));
     Pk_p = zeros(size(rssi)); % 后验误差协方差
     Uk = zeros(size(rssi)); % 系统输入
     Xk = zeros(size(rssi)); % 最优状态估计值
@@ -30,9 +29,9 @@ function rssi_kf = kalman_filter_rssi(rssi, Q, R, varargin)
             xk_ = A * Xk(j - 1) + B * Uk(j); % 系统状态预测值
             pk_ = A * Pk_p(j - 1) * A' + Q; % 预测协方差(矩阵)
             % K(j) = pk_ * H' * inv(H * pk_ * H' + R); % kalman增益
-            K(j) = pk_ * H' / inv(H * pk_ * H' + R); % kalman增益
+            K(j) = pk_ * H' / (H * pk_ * H' + R); % kalman增益
             Xk(j) = xk_ + K(j) * (Zk(j) - H * xk_); % 最优估计值
-            Pk_p = (eye(j) - K(j) * H) * pk_; % 更新后验误差协方差(矩阵)
+            Pk_p(j) = (eye(1) - K(j) * H) * pk_; % 更新后验误差协方差(矩阵)
         end
 
     end

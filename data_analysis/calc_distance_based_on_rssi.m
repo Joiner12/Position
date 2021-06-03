@@ -143,13 +143,13 @@ function distance = calc_distance_based_on_rssi(ap, varargin)
                 ap_rssi, cur_param.piecewise_rssi);
         case 'quadratic_polynomial' % 多项式模型
             % 不同处理方式下的二次项参数[a,b,c]
-            param_mean_mean = [0.02856, 2.224, 48.38];
-            param_gauss_mean = [0.02119, 1.451, 23.8];
-            param_gauss_gauss = [0.02354, 1.677, 29.87];
-
-            dist = rssi_to_distance_quadratic_polynomial(param_mean_mean(1), ...
-                param_mean_mean(2), ...
-                param_mean_mean(3), ap_rssi);
+            param_poly = [0.02856, 2.224, 48.38]; % param_mean_mean
+            % param_poly = [0.02119, 1.451, 23.8]; % param_gauss_mean
+            % param_poly = [0.02354, 1.677, 29.87]; % param_gauss_gauss
+            dev_factor = 7;% 环境因子dBm
+            dist = rssi_to_distance_quadratic_polynomial(param_poly(1), ...
+                param_poly(2), ...
+                param_poly(3), ap_rssi + dev_factor);
     end
 
     distance = dist;

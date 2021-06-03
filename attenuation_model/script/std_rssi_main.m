@@ -86,10 +86,10 @@ plot(rssi, d)
 
 %%
 clc;
-dev = 6;
-f1 = @(x)0.02354 * x.^2 + 1.677 * x + 29.87;
-f2 = @(x)0.02354 * (x + dev).^2 + 1.677 * (x + dev) + 29.87;
-f3 = @(x)0.02354 * x.^2 + 1.677 * x + 29.87 - dev;
+dev = 4;
+f1 = @(x)0.02856 * x.^2 + 2.224 * x + 43.38;
+f2 = @(x)0.02856 * (x + dev).^2 + 2.224 * (x + dev) + 43.38;
+f3 = @(x)0.02856 * x.^2 + 2.224 * x + 43.38 - dev;
 tcf('dev');
 figure('name', 'dev', 'color', 'white');
 rssi_x = [-80, -42];
@@ -105,72 +105,45 @@ box on
 grid minor
 
 %%
-cur_rssi = HLK_0m_75cmA7;
-rssi_kf = kalman_filter_rssi(cur_rssi, 4.5, 0);
+clc;
+
+if false
+    cur_rssi = HLK_0m_75cmA7;
+else
+    open('蓝牙设备接收信号特征-1.fig')
+    a = gca;
+    cur_rssi = a.Children.YData;
+    cur_rssi = cur_rssi(1:500);
+end
+
+R = var(cur_rssi);
+rssi_g = cur_rssi;
+
+for k = 5:length(cur_rssi)
+    rssi_g(k) = like_gaussian_filter(cur_rssi(1:k), 2, 'mean');
+end
+
+rssi_kf = kalman_filter_rssi(cur_rssi, 0.01, R);
+rssi_gk = kalman_filter_rssi(rssi_g, 0.01, var(rssi_g));
 tcf('kalman');
 figure('name', 'kalman', 'color', 'white')
 hold on
-plot(cur_rssi)
-plot(rssi_kf)
-plot(ones(size(rssi_kf)) * mean(rssi_kf))
+plot(cur_rssi, 'LineWidth', 1.5)
+plot(rssi_kf, 'LineWidth', 1.5)
+plot(ones(size(rssi_kf)) * mean(cur_rssi), 'LineWidth', 1.5)
+plot(rssi_gk, 'LineWidth', 1.5)
+legend('origin', 'kalman', 'mean', 'gauss-kalman')
+box on
+title('kalman filter .vs. gauss kalman filter')
+set(get(gca, 'XLabel'), 'String', '采样序列');
+set(get(gca, 'YLabel'), 'String', 'RSSI/dBm');
 
-%% 
-rssi_kf_std =kalman_cmp(cur_rssi);
+%%
+figure('color', 'white')
+subplot(211)
+plot(HLK_17m_75cmA7, 'Color', 'r', 'Marker', '*')
+title('HLK-17m-75cm-A7')
+subplot(212)
+plot(HLK_1m_00cmA7, 'Color', 'r', 'Marker', '*')
+title('HLK-1m-00cm-A7')
 
-%% 
-%本例子从百度文库中得到， 稍加注释
-% clear
-N=length(cur_rssi);%取200个数
-
-% 生成噪声数据 计算噪声方差
-w=randn(1,N); %产生一个1×N的行向量，第一个数为0，w为过程噪声（其和后边的v在卡尔曼理论里均为高斯白噪声）
-w(1)=0;
-Q=var(w); % R、Q分别为过程噪声和测量噪声的协方差(此方程的状态只有一维，方差与协方差相同) 
-
-v=randn(1,N);%测量噪声
-R=var(v);
-
-% 计算真实状态
-x_true(1)=0;%状态x_true初始值
-A=1;%a为状态转移阵，此程序简单起见取1
-for k=2:N
-    x_true(k)=A*x_true(k-1)+w(k-1);  %系统状态方程，k时刻的状态等于k-1时刻状态乘以状态转移阵加噪声（此处忽略了系统的控制量）
-end
-
-
-% 由真实状态得到测量数据， 测量数据才是能被用来计算的数据， 其他都是不可见的
-z = cur_rssi;
-
-% 开始 预测-更新过程
-
-% x_predict: 预测过程得到的x
-% x_update:更新过程得到的x
-% P_predict:预测过程得到的P
-% P_update:更新过程得到的P
-
-%初始化误差 和 初始位置
-x_update(1)=x_true(1);%s(1)表示为初始最优化估计
-P_update(1)=0;%初始最优化估计协方差
-
-for t=2:N
-    %-----1. 预测-----
-    %-----1.1 预测状态-----
-    x_predict(t) = A*x_update(t-1); %没有控制变量
-    %-----1.2 预测误差协方差-----
-    P_predict(t)=A*P_update(t-1)*A'+Q;%p1为一步估计的协方差，此式从t-1时刻最优化估计s的协方差得到t-1时刻到t时刻一步估计的协方差
-
-    %-----2. 更新-----
-    %-----2.1 计算卡尔曼增益-----
-    K(t)=H*P_predict(t) / (H*P_predict(t)*H'+R);%b为卡尔曼增益，其意义表示为状态误差的协方差与量测误差的协方差之比(个人见解)
-    %-----2.2 更新状态-----
-    x_update(t)=x_predict(t)  +  K(t) * (z(t)-H*x_predict(t));%Y(t)-a*c*s(t-1)称之为新息，是观测值与一步估计得到的观测值之差，此式由上一时刻状态的最优化估计s(t-1)得到当前时刻的最优化估计s(t)
-    %-----2.3 更新误差协方差-----
-    P_update(t)=P_predict(t) - H*K(t)*P_predict(t);%此式由一步估计的协方差得到此时刻最优化估计的协方差
-end
-
-% plot
-%作图，红色为卡尔曼滤波，绿色为量测，蓝色为状态
-%kalman滤波的作用就是 由绿色的波形得到红色的波形， 使之尽量接近蓝色的真实状态。
-t=1:N;
-plot(t,x_update,'r',t,z,'g')
-legend('kalman','origin')
