@@ -196,5 +196,5 @@ function position_error_statistics(position, true_position, varargin)
     title('误差范围分布统计');
     ylabel('误差点个数百分比');
     axis auto;
-
+    figure2img(handle, 'D:\Code\BlueTooth\pos_bluetooth_matlab\静态定位结果-1.png')
 end

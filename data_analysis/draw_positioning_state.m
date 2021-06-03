@@ -67,7 +67,7 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
         beacon_x(k) = beacon(k).x;
         beacon_y(k) = beacon(k).y;
         name_temp = beacon(k).name;
-        labels{k} = strcat('anchor-', strrep(name_temp, 'onepos_HLK_', ''));
+        labels{k} = strcat('', strrep(name_temp, 'onepos_HLK_', ''));
     end
 
     beacon_x = reshape(beacon_x, [1, length(beacon_x)]);
@@ -76,7 +76,7 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
     beacon_x_d = beacon_x - min_xy(1);
     beacon_y_d = beacon_y - min_xy(2);
     plot(cur_axes, beacon_x_d, beacon_y_d, 'g^');
-    % text(cur_axes, beacon_x_d, beacon_y_d, labels)
+    text(cur_axes, beacon_x_d, beacon_y_d, labels)
 
     title(gca, '定位效果')
     box on
@@ -153,7 +153,8 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
             for j = 1:1:length(kf_data)
 
                 if isequal(j, 1)
-                    kf_params = kf_init(kf_data{j}.x - min_xy(1), kf_data{j}.y - min_xy(2), 0, 0);
+                    % kf_params = kf_init(kf_data{j}.x - min_xy(1), kf_data{j}.y - min_xy(2), 0, 0);
+                    kf_params = kf_init(2, 10, 0, 0);
                 else
                     kf_params = kf_update(kf_params, ...
                         [kf_data{j}.x - min_xy(1); kf_data{j}.y - min_xy(2)]);
@@ -162,11 +163,12 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
                 X_state{j} = kf_params.x;
             end
 
-            rectangle('Position', [0.8, 9, 16.5, 3],...
+            rectangle('Position', [0.8, 8, 30, 5], ...
                 'edgecolor', 'g', 'curvature', 0.1);
-            line([1,16],[11,11],'Color','r')
+            line([1, 30], [11, 11], 'Color', 'r', 'LineWidth', 1.8)
+            line([30, 30], [11, 5], 'Color', 'r', 'LineWidth', 1.8)
             hd = animatedline('color', [86, 141, 223] ./ 255, 'marker', '*', 'linestyle', '-');
-            
+
             for k = 1:1:length(X_state)
                 temp = X_state{k};
                 cur_dmx = temp(1);
