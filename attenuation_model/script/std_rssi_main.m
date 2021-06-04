@@ -106,17 +106,33 @@ grid minor
 
 %%
 clc;
-
+tcf;
 if false
     cur_rssi = HLK_0m_75cmA7;
 else
-    open('蓝牙设备接收信号特征-1.fig')
-    a = gca;
-    cur_rssi = a.Children.YData;
-    cur_rssi = cur_rssi(1:500);
+    % beacon2两值波动-1.fig
+    open('beacon4两值波动-2.fig')
+    % a = gca;
+    % cur_rssi = a.Children.YData;
+    % cur_rssi = cur_rssi(1:end);
+    load('rssi_figure.mat');
+    cur_rssi = beacon4_rssi;
 end
 
-R = var(cur_rssi);
+step_rssi = 0;
+step_index = 0;
+% 动态特性判断
+for k = 1:length(cur_rssi)
+
+    if isequal(mod(k, 500), 0)
+        step_index = int32(k / 500);
+    end
+
+    cur_rssi(k) = double(step_index) * step_rssi + cur_rssi(k);
+end
+
+R = var(cur_rssi)
+
 rssi_g = cur_rssi;
 
 for k = 5:length(cur_rssi)
