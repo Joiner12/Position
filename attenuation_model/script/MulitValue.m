@@ -2,14 +2,18 @@
 clc;
 tcf();
 % 'beacon4两值波动-3-单个信标测试-1m.fig'
-open('beacon4两值波动-3-单个信标测试.fig');
-open('beacon4两值波动-3-多个信标测试.fig');
+% 'beacon4两值波动-3-多个信标测试-2m.fig'
+open('beacon4两值波动-3-多个信标测试-2m.fig');
 a = gca;
-cur_rssi = a.Children.YData;
+beacon4_m_2m = a.Children.YData;
+tcf();
 
+%%
+clearvars -except beacon* rssi_figure
 %%
 clc;
 tcf;
+
 if false
     cur_rssi = HLK_0m_75cmA7;
 else
@@ -56,3 +60,29 @@ box on
 title('kalman filter .vs. gauss kalman filter')
 set(get(gca, 'XLabel'), 'String', '采样序列');
 set(get(gca, 'YLabel'), 'String', 'RSSI/dBm');
+
+%%
+tcf('lg');
+figure('name', 'lg', 'color', 'w');
+subplot(3,2,[1,2])
+plot(beacon4_s_1m,'Marker','*')
+hold on
+plot(beacon4_s_2m,'Marker','*')
+hold on
+plot(beacon4_m_1m,'Marker','*')
+hold on
+plot(beacon4_m_2m,'Marker','*')
+legend({'单beacon-1m','单beacon-2m','多beacon-1m','多beacon-2m'})
+xlabel('采样序列'); ylabel('RSSI/dBm');
+subplot(323)
+histogram(beacon4_s_1m, max(beacon4_s_1m) - min(beacon4_s_1m))
+title('单beacon-1m');xlabel('RSSI/dBm'); ylabel('频次');
+subplot(324)
+histogram(beacon4_s_2m, max(beacon4_s_2m) - min(beacon4_s_2m))
+title('单beacon-2m');xlabel('RSSI/dBm'); ylabel('频次');
+subplot(325)
+histogram(beacon4_m_1m, max(beacon4_m_1m) - min(beacon4_m_1m))
+title('多beacon-1m');xlabel('RSSI/dBm'); ylabel('频次');
+subplot(326)
+histogram(beacon4_m_2m, max(beacon4_m_2m) - min(beacon4_m_2m))
+title('多beacon-2m');xlabel('RSSI/dBm'); ylabel('频次');
