@@ -55,7 +55,9 @@ toc;
 tic;
 [est_wgn, proc_wgn] = trilateration_wgn(x_lct, y_lct, d_lct);
 toc;
-
+tic;
+[est_wgn_s, proc_wgn_s] = trilateration_wgn_s(x_lct, y_lct, d_lct);
+toc;
 tic;
 est_nlm = trilateration_fitnlm(x_lct, y_lct, d_lct);
 toc;
@@ -67,14 +69,28 @@ draw_location([1, 1, 0, 0], {[x_lct(1), y_lct(1), d_lct(1)], ...
     {est_gn, est_nlm, est_nlfit, centroid})
 
 %%
-tcf('process');
-figure('name', 'process');
-hold on
-proc_wgn_mat = cell2mat(proc_wgn);
-proc_gn_mat = cell2mat(proc_gn);
-proc_lm_mat = cell2mat(proc_lm);
-plot(proc_wgn_mat(1:2:end), proc_wgn_mat(2:2:end))
-plot(proc_gn_mat(1:2:end), proc_gn_mat(2:2:end))
-plot(proc_lm_mat(1:2:end), proc_lm_mat(2:2:end))
-legend('wgn', 'gn', 'lm')
-grid minor
+clc;
+x_lct = [ap_temp(1).x_ref, ap_temp(2).x_ref, ap_temp(3).x_ref];
+y_lct = [ap_temp(1).y_ref, ap_temp(2).y_ref, ap_temp(3).y_ref];
+d_lct = [ap_temp(1).dist, ap_temp(2).dist, ap_temp(3).dist];
+rall = @(x, y, X, Y, D) sqrt((x - X).^2 + (y - Y).^2) - D;
+r1 = @(x, y) sqrt((x - x_lct(1))^2 + (y - y_lct(1))^2) - d_lct(1);
+r2 = @(x, y) sqrt((x - x_lct(2))^2 + (y - y_lct(2))^2) - d_lct(2);
+r3 = @(x, y) sqrt((x - x_lct(3))^2 + (y - y_lct(3))^2) - d_lct(3);
+x_0 = mean(x_lct);
+y_0 = mean(y_lct);
+% disp(rall(x_0, y_0, x_lct, y_lct, d_lct))
+% disp([r1(x_0, y_0), r2(x_0, y_0), r3(x_0, y_0)])
+
+Ja = @(x, y, xl, yl) [(x - xl) ./ (sqrt((x - xl).^2 + (y - yl).^2)), ...
+                    (y - yl) ./ (sqrt((x - xl).^2 + (y - yl).^2))];
+J = zeros([length(x_lct), 2]);
+
+for k1 = 1:1:length(x_lct)
+    temp = Ja(x_0, y_0, x_lct(k1), y_lct(k1));
+    J(k1, :) = temp;
+end
+
+disp(J)
+temp1 =(Ja(x_0, y_0, x_lct, y_lct));
+reshape(temp1,[3,2])
