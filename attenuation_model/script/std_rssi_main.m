@@ -166,4 +166,4 @@ title('HLK-1m-00cm-A7')
 
 %%
 clc;
-parse_data = get_std_dist_rssi_data();
+parse_data = get_std_dist_rssi_data('figure');

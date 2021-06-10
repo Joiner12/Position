@@ -72,15 +72,24 @@ function parse_data = get_std_dist_rssi_data(varargin)
     for j = 1:1:file_cnt
         cur_file = file_selected{j, 1};
         [~, cur_file_name, ~] = fileparts(cur_file);
-        distance_temp = strrep(cur_file_name, '-', '_'); % 源数据命名格式:HLK-1m-50cm.txt
-        expr = '-[0-9]{1,2}|-[0-9]{2,}';
-        distance_temp = regexp(cur_file_name, expr, 'match');
-        distance_temp = strrep(distance_temp, '-', '');
-        distance_temp = str2double(distance_temp);
-        distance = -1; % 真实距离
 
-        if isequal(length(distance_temp), 2)
-            distance = distance_temp(1) + distance_temp(2) / 100;
+        % 根据文件名获取距离
+        if false
+            distance_temp = strrep(cur_file_name, '-', '_'); % 源数据命名格式:HLK-1m-50cm.txt
+            expr = '-[0-9]{1,2}|-[0-9]{2,}';
+            distance_temp = regexp(cur_file_name, expr, 'match');
+            distance_temp = strrep(distance_temp, '-', '');
+            distance_temp = str2double(distance_temp);
+            distance = -1; % 真实距离
+
+            if isequal(length(distance_temp), 2)
+                distance = distance_temp(1) + distance_temp(2) / 100;
+            end
+
+        else
+            distance_temp = strrep(cur_file_name, 'ch39-', ''); % 源数据命名格式:ch39-1m.txt
+            distance_temp = str2double(strrep(distance_temp, 'm', ''));
+            distance = distance_temp;
         end
 
         if ~isempty(ap_filter)
@@ -106,7 +115,25 @@ function parse_data = get_std_dist_rssi_data(varargin)
 
     %% 绘图
     if any(strcmpi(varargin, 'figure'))
-        
+        fig_num = ceil(data_part_cnt / 4);
+
+        for k1 = 1:1:fig_num
+            figure('color', 'white', 'name', strcat('fig-', num2str(k1)))
+
+            for k2 = 1:1:4
+
+                if (k1 - 1) * 4 + k2 > data_part_cnt
+                    break;
+                end
+
+                subplot(2, 2, k2)
+                data_temp = parse_data{(k1 - 1) * 4 + k2};
+                plot(data_temp.RSSI, 'Marker', '*')
+                title(strcat('distance:', num2str(data_temp.distance)))
+            end
+
+        end
+
     end
 
     toc(a);
