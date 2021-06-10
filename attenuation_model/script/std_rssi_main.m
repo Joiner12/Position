@@ -107,6 +107,7 @@ grid minor
 %%
 clc;
 tcf;
+
 if false
     cur_rssi = HLK_0m_75cmA7;
 else
@@ -163,3 +164,6 @@ subplot(212)
 plot(HLK_1m_00cmA7, 'Color', 'r', 'Marker', '*')
 title('HLK-1m-00cm-A7')
 
+%%
+clc;
+parse_data = get_std_dist_rssi_data();
