@@ -97,16 +97,24 @@ function parse_data = get_std_dist_rssi_data(varargin)
             for k = 1:1:length(ap_filter)
                 filter_temp = ap_filter{k};
                 rssi_temp = get_rssi_info(cur_file, filter_temp);
+                % gauss-filter
+                lgmf_val = like_gaussian_filter(rssi_temp, 1, 'mean');
+                % mean
+                mean_val = mean(rssi_temp);
                 data_temp_s = struct('distance', distance, 'apInfo', filter_temp, ...
-                    'RSSI', rssi_temp);
+                    'RSSI', rssi_temp, 'lgmf_val', lgmf_val, 'mean_val', mean_val);
                 parse_data{data_part_cnt} = data_temp_s;
                 data_part_cnt = data_part_cnt + 1;
             end
 
         else
             rssi_temp = get_rssi_info(cur_file);
+            % gauss-filter
+            lgmf_val = like_gaussian_filter(rssi_temp, 1, 'mean');
+            % mean
+            mean_val = mean(rssi_temp);
             data_temp_s = struct('distance', distance, 'apInfo', '', ...
-                'RSSI', rssi_temp);
+                'RSSI', rssi_temp, 'lgmf_val', lgmf_val, 'mean_val', mean_val);
             parse_data{data_part_cnt} = data_temp_s;
             data_part_cnt = data_part_cnt + 1;
         end
@@ -122,7 +130,7 @@ function parse_data = get_std_dist_rssi_data(varargin)
 
             for k2 = 1:1:4
 
-                if (k1 - 1) * 4 + k2 > data_part_cnt
+                if (k1 - 1) * 4 + k2 > data_part_cnt - 1
                     break;
                 end
 
