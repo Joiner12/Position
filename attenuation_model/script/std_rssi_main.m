@@ -262,3 +262,11 @@ legend('ch37', 'ch38', 'ch39')
 set(get(gca, 'XLabel'), 'String', 'æ‡¿Î/m');
 set(get(gca, 'YLabel'), 'String', 'RSSI∑Ω≤Ó/dbm^2');
 xlim([0,19])
+
+%% 
+get_std_rssi_data_with_time_stamp()
+
+%% 
+line_temp = 'scan_tick : 1707';
+time_stamp_temp = regexp(line_temp, '[\d]*', 'match');
+time_stamp_temp = str2double(time_stamp_temp{1,1})
