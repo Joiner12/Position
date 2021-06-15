@@ -1313,3 +1313,56 @@ down-x:&f(x) =0.02856 * (x + dev).^2 + 2.224 * (x + dev) + 43.38\\
 $$
 如果采用down-y作为结果，会出现d<=0的情况。
 
+## 六、单信道模型拟合
+
+### 1、单信道
+
+​	子带的概念也可用于蓝牙定位。同样，BLE  2.4 GHz 频段上有40 个通道的信道，每个信道的带宽为 2 MHz 。 BLE 的通道 37、38 和 39 是广播通道，循环广播相同的消息，其他 36 个通道设计用于连接通信。实际上，由于信道占用的频带不同，不同的信道会产生不同的RSS(Received Signal Strength)度量。 因此，聚合 RSS 会丢失细粒度信息，并且会减少每个通道的 RSS 度量的细节。
+
+<div style="text-align:center;background-color:white;">
+    <img src="../figure/信道测试.png">
+<p>
+    不同信道测试结果
+</p>
+</div>
+
+### 2、单信道距离-RSSI对应关系
+
+channel 37距离和RSSI对应关系实验结果：
+
+<div>
+    <img src="../figure/单信道37RSSI统计-1.png">
+</div>
+
+
+
+channel 38距离和RSSI对应关系实验结果：
+
+<div>
+    <img src="../figure/单信道38RSSI统计-1.png">
+</div>
+
+channel 39距离和RSSI对应关系实验结果：
+
+<div>
+    <img src="../figure/单信道39RSSI统计-1.png">
+</div>
+
+
+
+不同信道RSSI-距离对比结果：
+
+<div style="background-color:white">
+    <img src="../figure/单信道37-38-39对比-1.png">
+    <p style="text-align:center">
+        不同信道距离-RSSI均值对应关系
+    </p>
+    <img src="../figure/单信道37-38-39对比-方差-1.png">
+    <p style="text-align:center">
+        不同信道距离-RSSI方差对应关系
+    </p>
+</div>
+
+- 曲线平滑度：Ch37>Ch39>Ch38；
+- 统计方差：Ch39<Ch38<Ch37；
+

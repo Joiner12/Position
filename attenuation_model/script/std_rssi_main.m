@@ -167,9 +167,9 @@ title('HLK-1m-00cm-A7')
 %%
 clc;
 tcf();
-parse_data_ch37 = get_std_dist_rssi_data();
-parse_data_ch38 = get_std_dist_rssi_data();
-parse_data_ch39 = get_std_dist_rssi_data();
+% parse_data_ch37 = get_std_dist_rssi_data('figure', 'statistical');
+% parse_data_ch38 = get_std_dist_rssi_data('figure', 'statistical');
+parse_data_ch39 = get_std_dist_rssi_data('figure', 'statistical');
 
 %%
 gauss_vals_ch37 = zeros(0);
@@ -194,17 +194,71 @@ for k1 = 1:1:length(parse_data_ch39)
     mean_vals_ch39(k1) = parse_data_ch39{k1}.mean_val;
 end
 
+%%
 tcf('trend');
 figure('name', 'trend', 'color', 'white')
+box on
 hold on
-plot(gauss_vals_ch37, 'Linewidth', 1.5)
-plot(mean_vals_ch37, 'marker', 's', 'Linewidth', 1.5)
-plot(gauss_vals_ch38, 'marker', '*', 'Linewidth', 1.5)
-plot(mean_vals_ch38, 'marker', '^', 'Linewidth', 1.5)
-plot(gauss_vals_ch39, 'marker', '<', 'Linewidth', 1.5)
-plot(mean_vals_ch39, 'marker', '>', 'Linewidth', 1.5)
+% plot(gauss_vals_ch37, 'Linewidth', 1.5)
+plot(mean_vals_ch37, 'marker', '*', 'Linewidth', 1.0)
+% plot(gauss_vals_ch38, 'marker', '*', 'Linewidth', 1.5)
+plot(mean_vals_ch38, 'marker', '*', 'Linewidth', 1.0)
+% plot(gauss_vals_ch39, 'marker', '<', 'Linewidth', 1.5)
+plot(mean_vals_ch39, 'marker', '*', 'Linewidth', 1.0)
+legend('mean-filter-ch37', 'mean-filter-ch38', 'mean-filter-ch39')
 
-legend('gauss-filter-ch37', 'mean-filter-ch37', 'gauss-filter-ch38', 'mean-filter-ch38', 'gauss-filter-ch39', 'mean-filter-ch39')
+% legend('gauss-filter-ch37', 'mean-filter-ch37', 'gauss-filter-ch38', 'mean-filter-ch38', 'gauss-filter-ch39', 'mean-filter-ch39')
 set(get(gca, 'XLabel'), 'String', '距离/m');
 set(get(gca, 'YLabel'), 'String', 'RSSI/dbm');
 set(get(gca, 'Title'), 'String', 'CH-39距离-RSSI对应图');
+
+%%
+tcf('nake');
+figure('name', 'nake', 'color', 'w')
+hold on
+box on
+title('rssi-距离对应关系(单信道-ch39)')
+
+for k = 1:1:length(parse_data_ch39)
+    cur_info = parse_data_ch39{k};
+    scatter(ones(size(cur_info.RSSI)) * cur_info.distance, cur_info.RSSI, '*')
+
+    if isequal(k, 1)
+        avr_line = line('XData', cur_info.distance, 'YData', cur_info.mean_val, ...
+            'LineWidth', 1.5, 'Color', 'C', 'Marker', 'd');
+    else
+        avr_line.XData = [avr_line.XData, cur_info.distance];
+        avr_line.YData = [avr_line.YData, cur_info.mean_val];
+    end
+
+end
+
+set(get(gca, 'XLabel'), 'String', '距离/m');
+set(get(gca, 'YLabel'), 'String', 'RSSI/dbm');
+legend('rssi', '均值')
+xlim([0, 19])
+
+%%
+clc;
+var_ch37 = zeros(0);
+var_ch38 = zeros(0);
+var_ch39 = zeros(0);
+
+for k1 = 1:1:length(parse_data_ch37)
+    var_ch37(k1) = parse_data_ch37{k1}.v_val;
+    var_ch38(k1) = parse_data_ch38{k1}.v_val;
+    var_ch39(k1) = parse_data_ch39{k1}.v_val;
+end
+
+tcf('var');
+figure('name', 'var', 'color', 'w')
+hold on
+box on
+title('不同信道方差(Variance)与距离对应关系')
+plot(var_ch37, 'marker', 'd')
+plot(var_ch38, 'marker', '<')
+plot(var_ch39, 'marker', '>')
+legend('ch37', 'ch38', 'ch39')
+set(get(gca, 'XLabel'), 'String', '距离/m');
+set(get(gca, 'YLabel'), 'String', 'RSSI方差/dbm^2');
+xlim([0,19])

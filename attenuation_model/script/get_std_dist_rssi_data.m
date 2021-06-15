@@ -7,6 +7,8 @@ function parse_data = get_std_dist_rssi_data(varargin)
     %       src_folder:原始数据文件夹(e.g: d:xx\xx\xx\);
     %       ap_filter:apmsg滤波器，cell数据结构，如：{'A3','A7'}
     %       varargin:保留参数
+    %       'figure',绘制图示
+    %       'statistical',统计信息
     % 输出:
     %       parse_data:解析数据(cell)
     % example:
@@ -103,6 +105,15 @@ function parse_data = get_std_dist_rssi_data(varargin)
                 mean_val = mean(rssi_temp);
                 data_temp_s = struct('distance', distance, 'apInfo', filter_temp, ...
                     'RSSI', rssi_temp, 'lgmf_val', lgmf_val, 'mean_val', mean_val);
+
+                % 统计信息
+                if any(strcmpi(varargin, 'statistical'))
+                    [~, v_val, k_val, s_val] = get_rssi_statistics(rssi_temp);
+                    data_temp_s.v_val = v_val;
+                    data_temp_s.k_val = k_val;
+                    data_temp_s.s_val = s_val;
+                end
+
                 parse_data{data_part_cnt} = data_temp_s;
                 data_part_cnt = data_part_cnt + 1;
             end
@@ -115,6 +126,14 @@ function parse_data = get_std_dist_rssi_data(varargin)
             mean_val = mean(rssi_temp);
             data_temp_s = struct('distance', distance, 'apInfo', '', ...
                 'RSSI', rssi_temp, 'lgmf_val', lgmf_val, 'mean_val', mean_val);
+            % 统计信息
+            if any(strcmpi(varargin, 'statistical'))
+                [~, v_val, k_val, s_val] = get_rssi_statistics(rssi_temp);
+                data_temp_s.v_val = v_val;
+                data_temp_s.k_val = k_val;
+                data_temp_s.s_val = s_val;
+            end
+
             parse_data{data_part_cnt} = data_temp_s;
             data_part_cnt = data_part_cnt + 1;
         end
