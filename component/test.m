@@ -21,7 +21,7 @@ load ap_selector.mat
 
 %%
 
-trilat_table = ap_selector(2:end,:);
+trilat_table = ap_selector(2:end, :);
 trilat_table.CHARAC_ACT = zeros(size(trilat_table, 1), 1); % ap选择特征值[rssi信号稳定度]
 trilat_table.CHARAC_MEAN = zeros(size(trilat_table, 1), 1); % ap选择特征值[RSSI均值排序]
 trilat_table.CHARAC_VAR = zeros(size(trilat_table, 1), 1); % ap选择特征值[RSSI方差排序]
@@ -99,3 +99,9 @@ for j = 1:1:length(selected_ap_name)
     end
 
 end
+
+%%
+clc;
+a = randi([30, 70], [1, 10]) * -1;
+a = sort(a);
+mean(a(floor(10/2):floor(10/2) + 1))

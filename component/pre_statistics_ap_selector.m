@@ -134,7 +134,24 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             % trilateration_ap(valid_ap_cnt).rssi = trilat_table.rssi(table_index);
             rssi_temp = trilat_table.RECVRSSI(table_index, :);
             rssi_temp = rssi_temp(rssi_temp ~= 0);
-            trilateration_ap(valid_ap_cnt).rssi = mean(rssi_temp);
+            % 考虑将均值滤波替换为中值滤波
+            if true
+                trilateration_ap(valid_ap_cnt).rssi = mean(rssi_temp); % 均值滤波
+            else
+                rssi_temp_sorted = sort(rssi_temp); % 对非零RSSI数组进行排序
+
+                if isequal(mod(length(rssi_temp_sorted), 2), 1)
+                    % 取中值
+                    index_temp = ceil(length(rssi_temp) / 2);
+                    trilateration_ap(valid_ap_cnt).rssi = rssi_temp(index_temp);
+                else
+                    % 二分插值
+                    index_temp = floor(length(rssi_temp) / 2);
+                    trilateration_ap(valid_ap_cnt).rssi = mean(rssi_temp(index_temp:index_temp + 1));
+                end
+
+            end
+
             trilateration_ap(valid_ap_cnt).rssi_wma = trilat_table.RSSI(table_index);
             trilateration_ap(valid_ap_cnt).rssi_gf = trilat_table.RSSI(table_index);
             trilateration_ap(valid_ap_cnt).rssi_kf = trilat_table.RSSI(table_index);
