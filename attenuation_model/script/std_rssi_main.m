@@ -261,12 +261,61 @@ plot(var_ch39, 'marker', '>')
 legend('ch37', 'ch38', 'ch39')
 set(get(gca, 'XLabel'), 'String', '距离/m');
 set(get(gca, 'YLabel'), 'String', 'RSSI方差/dbm^2');
-xlim([0,19])
+xlim([0, 19])
+
+%%
+% ch37_lfr = zeros(0);
+% ch38_lfr = zeros(0);
+ch39_lfr = zeros(0);
+for k1 = 1:1:18
+    file_name = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\单信道测试-CH39', ...
+        ['ch39-', num2str(k1), 'm.txt'])
+    data_stamp = get_std_rssi_data_with_time_stamp('filepath', file_name);
+
+    y_data = zeros(0);
+    x_data = zeros(0);
+
+    for k = 1:length(data_stamp)
+        x_data(k) = data_stamp{k, 1};
+        rssi_temp = data_stamp{k, 2};
+
+        if isempty(rssi_temp)
+            y_data(k) = 0;
+        elseif length(rssi_temp) > 1
+            y_data(k) = rssi_temp(end);
+        else
+            y_data(k) = rssi_temp(1:end);
+        end
+
+    end
+
+    lose_frame_rate = length(y_data(y_data == 0)) / length(y_data);
+    % fprintf('lose frame rate:%0.2f\n', lose_frame_rate);
+    ch39_lfr(k1) = lose_frame_rate;
+end
+
+%%
+
+%%
+tcf('timestamp');
+figure('name', 'timestamp', 'color', 'w')
+hold on
+box on
+plot(x_data, y_data, 'Marker', '*');
+
+title('time stamp')
+set(get(gca, 'XLabel'), 'String', 'time/10ms');
+set(get(gca, 'YLabel'), 'String', 'RSSI');
 
 %% 
-get_std_rssi_data_with_time_stamp()
-
+tcf('lpr');
+figure('name', 'lpr', 'color', 'w')
+hold on
+box on
+plot(ch37_lfr)
+plot(ch38_lfr)
+plot(ch39_lfr)
+legend('ch37','ch38','ch39')
+title('lose frame rate')
 %% 
-line_temp = 'scan_tick : 1707';
-time_stamp_temp = regexp(line_temp, '[\d]*', 'match');
-time_stamp_temp = str2double(time_stamp_temp{1,1})
+distance = linspace(1,18,18);
