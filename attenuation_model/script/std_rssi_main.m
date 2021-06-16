@@ -318,4 +318,4 @@ plot(ch39_lfr)
 legend('ch37','ch38','ch39')
 title('lose frame rate')
 %% 
-distance = linspace(1,18,18);
+verify_midian_filter_and_model()
