@@ -318,4 +318,13 @@ plot(ch39_lfr)
 legend('ch37','ch38','ch39')
 title('lose frame rate')
 %% 
-verify_midian_filter_and_model()
+dist_part = distance(1:15);
+mean_vals_ch39_part = mean_vals_ch39(1:15);
+%% 
+for k=1:1:18
+verify_midian_filter_and_model(k);
+pause();
+end
+
+%% 
+create_logarithmic_model_fit (dist_part, mean_vals_ch39_part,'show-figure')
