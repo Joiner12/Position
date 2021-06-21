@@ -267,6 +267,7 @@ xlim([0, 19])
 % ch37_lfr = zeros(0);
 % ch38_lfr = zeros(0);
 ch39_lfr = zeros(0);
+
 for k1 = 1:1:18
     file_name = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\µ•–≈µ¿≤‚ ‘-CH39', ...
         ['ch39-', num2str(k1), 'm.txt'])
@@ -307,7 +308,7 @@ title('time stamp')
 set(get(gca, 'XLabel'), 'String', 'time/10ms');
 set(get(gca, 'YLabel'), 'String', 'RSSI');
 
-%% 
+%%
 tcf('lpr');
 figure('name', 'lpr', 'color', 'w')
 hold on
@@ -315,16 +316,16 @@ box on
 plot(ch37_lfr)
 plot(ch38_lfr)
 plot(ch39_lfr)
-legend('ch37','ch38','ch39')
+legend('ch37', 'ch38', 'ch39')
 title('lose frame rate')
-%% 
+%%
 dist_part = distance(1:15);
 mean_vals_ch39_part = mean_vals_ch39(1:15);
-%% 
-for k=1:1:18
-verify_midian_filter_and_model(k);
-pause();
+%%
+for k = 1:1:18
+    verify_midian_filter_and_model(k);
+    pause();
 end
 
-%% 
-create_logarithmic_model_fit (dist_part, mean_vals_ch39_part,'show-figure')
+%%
+create_logarithmic_model_fit (dist_part, mean_vals_ch39_part, 'show-figure')
