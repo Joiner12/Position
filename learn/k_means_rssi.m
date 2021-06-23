@@ -14,41 +14,47 @@ plot(cur_rssi(1:end), 'marker', '*');
 
 %%
 clc;
-data_rssi_y = cur_rssi(1:100);
+data_rssi_y = cur_rssi(1:50);
 data_rssi_x = 1:1:length(data_rssi_y);
-X = [data_rssi_y, data_rssi_y];
-tcf('clustering');
-figure('color', 'white', 'name', 'clustering');
-subplot(221)
-plot(X(:, 1), 'marker', '*');
-title('rssi');
 opts = statset('Display', 'final');
-[idx, C] = kmeans(X, 3, 'Distance', 'cityblock', ...
+[idx, C] = kmeans(data_rssi_y, 3, 'Distance', 'cityblock', ...
     'Replicates', 5, 'Options', opts);
-subplot(222)
-plot(X(idx == 1, 1), X(idx == 1, 2), 'r.', 'MarkerSize', 12)
+tcf('clustering-1');
+figure('color', 'white', 'name', 'clustering-1');
 hold on
-plot(X(idx == 2, 1), X(idx == 2, 2), 'b.', 'MarkerSize', 12)
-plot(X(idx == 3, 1), X(idx == 3, 2), 'c.', 'MarkerSize', 12)
-plot(C(:, 1), C(:, 2), 'kx', 'MarkerSize', 15, 'LineWidth', 3)
-legend('Cluster 1', 'Cluster 2', 'Cluster 2', 'Centroids', ...
-    'Location', 'NW')
-title('Cluster Assignments and Centroids')
-hold off
-
-subplot(223);
-hold on
-plot(data_rssi_y, 'marker', '*');
-plot(data_rssi_x(idx == 1), X(idx == 1, 2), 'r.', 'MarkerSize', 12)
-plot(data_rssi_x(idx == 2), X(idx == 2, 2), 'b.', 'MarkerSize', 12)
-plot(data_rssi_x(idx == 3), X(idx == 3, 2), 'c.', 'MarkerSize', 12)
+plot(data_rssi_x, data_rssi_y);
+plot(data_rssi_x(idx == 1), data_rssi_y(idx == 1), 'r*', 'MarkerSize', 12)
+plot(data_rssi_x(idx == 2), data_rssi_y(idx == 2), 'b*', 'MarkerSize', 12)
+plot(data_rssi_x(idx == 3), data_rssi_y(idx == 3), 'c*', 'MarkerSize', 12)
 line([1, length(data_rssi_y)], [C(1, 1), C(1, 1)], 'LineWidth', 1, 'color', 'r', 'LineStyle', '--')
 line([1, length(data_rssi_y)], [C(2, 1), C(2, 1)], 'LineWidth', 1, 'color', 'g', 'LineStyle', '--')
 line([1, length(data_rssi_y)], [C(3, 1), C(3, 1)], 'LineWidth', 1, 'color', 'c', 'LineStyle', '--')
-legend('origin', 'Cluster 1', 'Cluster 2', 'Cluster 3')
-title('Cluster Assignments')
+legend('rssi', 'Cluster 1', 'Cluster 2', 'Cluster 2', 'Location', 'NW')
+title('Cluster Assignments and Origin')
+hold off
+
+%%
+clc;
+data_rssi_y = cur_rssi(1:50);
+[rssi_channle, C1] = cluster_ble_channle(data_rssi_y);
+data_rssi_x = 1:1:length(rssi_channle);
+idx = rssi_channle(:, 2);
+tcf('clustering');
+figure('color', 'white', 'name', 'clustering');
+hold on
+plot(data_rssi_x, data_rssi_y);
+plot(data_rssi_x(idx == 1), data_rssi_y(idx == 1), 'r*', 'MarkerSize', 12)
+plot(data_rssi_x(idx == 2), data_rssi_y(idx == 2), 'b*', 'MarkerSize', 12)
+plot(data_rssi_x(idx == 3), data_rssi_y(idx == 3), 'c*', 'MarkerSize', 12)
+line([1, length(data_rssi_y)], [C1(1), C1(1)], 'LineWidth', 1, 'color', 'r', 'LineStyle', '--')
+line([1, length(data_rssi_y)], [C1(2), C1(2)], 'LineWidth', 1, 'color', 'g', 'LineStyle', '--')
+line([1, length(data_rssi_y)], [C1(3), C1(3)], 'LineWidth', 1, 'color', 'c', 'LineStyle', '--')
+legend('rssi', 'Cluster 1', 'Cluster 2', 'Cluster 2', 'Location', 'NW')
+title('Cluster Assignments and Origin')
 hold off
 
 %% 
-clc;
-rssi_channle = cluster_ble_channle(data_rssi_y);
+a = [1,2;3,4;5,6];
+b = [2,3;3,1];
+c={a,b}
+mean(c{1,1})
