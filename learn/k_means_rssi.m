@@ -36,7 +36,7 @@ hold off
 %%
 clc;
 data_rssi_y = cur_rssi(1:50);
-[rssi_channle, C1] = cluster_ble_channle(data_rssi_y);
+[rssi_channle, C1] = cluster_ble_channle(data_rssi_y, 'display');
 data_rssi_x = 1:1:length(rssi_channle);
 idx = rssi_channle(:, 2);
 tcf('clustering');
@@ -52,9 +52,3 @@ line([1, length(data_rssi_y)], [C1(3), C1(3)], 'LineWidth', 1, 'color', 'c', 'Li
 legend('rssi', 'Cluster 1', 'Cluster 2', 'Cluster 2', 'Location', 'NW')
 title('Cluster Assignments and Origin')
 hold off
-
-%% 
-a = [1,2;3,4;5,6];
-b = [2,3;3,1];
-c={a,b}
-mean(c{1,1})

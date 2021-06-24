@@ -51,6 +51,16 @@ function [rssi_channle, C] = cluster_ble_channle(rssi, varargin)
     sse_mat = cell2mat(cluster_evl(:, 3));
     min_sse_index = find(sse_mat == min(sse_mat), 1);
     rssi_channle = [calc_rssi, reshape(cluster_evl{min_sse_index, 1}, [len_rssi, 1])];
+
+    % 输出迭代过程
+    if any(strcmpi(varargin, 'display'))
+
+        for k_2 = 1:replicate
+            fprintf('replicated:%.0f,sse:%.4f\n', k_2, cluster_evl{k_2, 3});
+        end
+
+    end
+
 end
 
 %% minkovsic distance
@@ -75,49 +85,57 @@ function [idx, C, sse] = cluster_k_means(X, k, distance_measure)
     end
 
     len_X = length(X);
-    % k-means初始化质心向量
-    rng('shuffle'); % srand((unsigned int)time(NULL)),以时间戳作为随机数种子
-    centorid_cur = X(randi(len_X, k, 1), :); % 初始化聚类中心(质心向量)
-    centorid_pre = centorid_cur;
-    Clusters = cell(k, 1); % 簇集合
-    idx = zeros(0); % 观测量X对应的簇索引
-    sse = 2^63; % sse = sum square error
+    loop_cnt = 0;
 
-    for i_2 = 1:len_X
-        cur_point = X(i_2, :);
+    while true
+        % k-means初始化质心向量
+        rng('shuffle'); % srand((unsigned int)time(NULL)),以时间戳作为随机数种子
+        centorid_cur = X(randi(len_X, k, 1), :); % 初始化聚类中心(质心向量)
+        centorid_pre = centorid_cur;
+        Clusters = cell(k, 1); % 簇集合
+        idx = zeros(0); % 观测量X对应的簇索引
+        sse = 2^63; % sse = sum square error
 
-        if isequal(distance_measure, 1) %  Manhattan distance
-            opt = 'cityblock';
-        elseif isequal(distance_measure, 2) % Euclidean distance
-            opt = 'euclidean';
-        else % Chebyshev distance
-            opt = 'chebychev';
+        for i_2 = 1:len_X
+            cur_point = X(i_2, :);
+
+            if isequal(distance_measure, 1) %  Manhattan distance
+                opt = 'cityblock';
+            elseif isequal(distance_measure, 2) % Euclidean distance
+                opt = 'euclidean';
+            else % Chebyshev distance
+                opt = 'chebychev';
+            end
+
+            A_dist = dist_measure(cur_point, centorid_cur, opt);
+            c_i = find(A_dist == min(A_dist), 1);
+            idx(i_2) = c_i;
+            Clusters{c_i} = [Clusters{c_i}, cur_point];
+            % Clusters{length(Clusters{c_i, :}) + 1} = cur_point;
         end
 
-        A_dist = dist_measure(cur_point, centorid_cur, opt);
-        c_i = find(A_dist == min(A_dist), 1);
-        idx(i_2) = c_i;
-        Clusters{c_i} = [Clusters{c_i}, cur_point];
-        % Clusters{length(Clusters{c_i, :}) + 1} = cur_point;
-    end
+        C = centorid_cur;
 
-    for i_3 = 1:k
-        centorid_cur(i_3, :) = mean(Clusters{i_3, :});
-    end
-
-    C = centorid_pre;
-
-    if norm(centorid_pre - centorid_cur) <= 1e-4
-        % sum square erro
-        sse_temp = zeros(0);
-
-        for i_4 = 1:k
-            sse_temp(i_4) = vecnorm(Clusters{i_4, :} - centorid_cur, 2, 2);
+        for i_3 = 1:k
+            centorid_cur(i_3, :) = mean(Clusters{i_3, :});
         end
 
-        sse = sum(sse_temp.^2);
-        return;
+        loop_cnt = loop_cnt + 1;
+        centroid_threshold = 1; % 质心向量阈值
+
+        if norm(centorid_pre - centorid_cur) <= centroid_threshold || loop_cnt > 9
+            % sum square error
+            sse_temp = zeros(0);
+
+            for i_4 = 1:k
+                sse_temp(i_4) = vecnorm(Clusters{i_4, :} - centorid_cur(i_4), 2, 2);
+            end
+
+            sse = sum(sse_temp.^2);
+            break;
+        end
+
+        centorid_pre = centorid_cur;
     end
 
-    centorid_pre = centorid_cur;
 end
