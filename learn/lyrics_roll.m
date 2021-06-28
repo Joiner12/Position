@@ -9,6 +9,7 @@ function lyrics_roll(varargin)
         lyricfile = fullfile(path, file);
     end
 
+    assert(isfile(lyricfile), 'lyric file does not exist');
     lyric_id = open(lyricfile, 'r');
     lyric = cell(0);
 
