@@ -329,3 +329,26 @@ end
 
 %%
 create_logarithmic_model_fit (dist_part, mean_vals_ch39_part, 'show-figure')
+
+%%
+clc;
+rssi_37 = get_rssi_info('D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\单信道测试-CH39\ch39-1m.txt');
+rssi_38 = get_rssi_info('D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\单信道测试-CH39\ch39-5m.txt');
+rssi_39 = get_rssi_info('D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\单信道测试-CH39\ch39-15m.txt');
+rssi_all = get_rssi_info('D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\单信道测试-CH39\ch39-18m.txt');
+
+%%
+tcf('ssw');
+figure('name', 'ssw', 'color', 'w');
+subplot(221);
+plot(rssi_37, 'marker', '*', 'color', 'r')
+title('1')
+subplot(222);
+plot(rssi_38, 'marker', '*', 'color', 'r')
+title('5')
+subplot(223)
+plot(rssi_39, 'marker', '*', 'color', 'r')
+title('15')
+subplot(224)
+plot(rssi_all, 'marker', '*', 'color', 'r')
+title('18')
