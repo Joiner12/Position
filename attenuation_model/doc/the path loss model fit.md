@@ -1375,3 +1375,18 @@ channel 39距离和RSSI对应关系实验结果：
 
 - 丢包率：**ch39<ch38<ch37;**
 
+## 3、ch39模型
+
+```
+ans(x) = power(10,(a-x)/10/b)
+     Coefficients (with 95% confidence bounds):
+       a =      -17.91  (-34.24, -1.583)
+       b =       3.363  (1.758, 4.969)
+```
+
+<div>
+    <img src="../figure/单信道39拟合对数模型-1.png">
+    <p style="text-align:center;"> ch39 1:15米拟合对数模型
+    </p>
+</div>
+

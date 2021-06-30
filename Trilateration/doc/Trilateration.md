@@ -387,4 +387,5 @@ $$
 30. [Gauss-Newton算法学习_Where there is life, there is hope-CSDN博客](https://blog.csdn.net/jinshengtao/article/details/51615162)
 31. [最优化理论与算法------牛顿法（附Matlab实现）： - YuhuaStone - 博客园 (cnblogs.com)](https://www.cnblogs.com/yuhuastone/p/12814752.html)
 32. [数字信号处理４——高斯牛顿法与matlab实例_qinze5857的博客-CSDN博客](https://blog.csdn.net/qinze5857/article/details/109483432)
+33. [rssi [Bluetooth® LE Wiki\] (bluetoothle.wiki)](https://www.bluetoothle.wiki/rssi)
 

@@ -1,4 +1,4 @@
-function verify_midian_filter_and_model(real_dist)
+function verify_median_filter_and_model(real_dist)
     % real_dist = 2;
     % file_name = 'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\单信道测试-CH39\ch39-1m.txt';
     file_name = ['D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\单信道测试-CH39\', ...

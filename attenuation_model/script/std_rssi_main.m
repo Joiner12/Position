@@ -179,15 +179,15 @@ mean_vals_ch38 = zeros(0);
 gauss_vals_ch39 = zeros(0);
 mean_vals_ch39 = zeros(0);
 
-for k1 = 1:1:length(parse_data_ch37)
-    gauss_vals_ch37(k1) = parse_data_ch37{k1}.lgmf_val;
-    mean_vals_ch37(k1) = parse_data_ch37{k1}.mean_val;
-end
-
-for k1 = 1:1:length(parse_data_ch39)
-    gauss_vals_ch38(k1) = parse_data_ch38{k1}.lgmf_val;
-    mean_vals_ch38(k1) = parse_data_ch38{k1}.mean_val;
-end
+% for k1 = 1:1:length(parse_data_ch37)
+%     gauss_vals_ch37(k1) = parse_data_ch37{k1}.lgmf_val;
+%     mean_vals_ch37(k1) = parse_data_ch37{k1}.mean_val;
+% end
+%
+% for k1 = 1:1:length(parse_data_ch39)
+%     gauss_vals_ch38(k1) = parse_data_ch38{k1}.lgmf_val;
+%     mean_vals_ch38(k1) = parse_data_ch38{k1}.mean_val;
+% end
 
 for k1 = 1:1:length(parse_data_ch39)
     gauss_vals_ch39(k1) = parse_data_ch39{k1}.lgmf_val;
@@ -200,12 +200,12 @@ figure('name', 'trend', 'color', 'white')
 box on
 hold on
 % plot(gauss_vals_ch37, 'Linewidth', 1.5)
-plot(mean_vals_ch37, 'marker', '*', 'Linewidth', 1.0)
+% plot(mean_vals_ch37, 'marker', '*', 'Linewidth', 1.0)
 % plot(gauss_vals_ch38, 'marker', '*', 'Linewidth', 1.5)
-plot(mean_vals_ch38, 'marker', '*', 'Linewidth', 1.0)
+% plot(mean_vals_ch38, 'marker', '*', 'Linewidth', 1.0)
 % plot(gauss_vals_ch39, 'marker', '<', 'Linewidth', 1.5)
 plot(mean_vals_ch39, 'marker', '*', 'Linewidth', 1.0)
-legend('mean-filter-ch37', 'mean-filter-ch38', 'mean-filter-ch39')
+legend('mean-filter-ch39', 'mean-filter-ch38', 'mean-filter-ch39')
 
 % legend('gauss-filter-ch37', 'mean-filter-ch37', 'gauss-filter-ch38', 'mean-filter-ch38', 'gauss-filter-ch39', 'mean-filter-ch39')
 set(get(gca, 'XLabel'), 'String', '距离/m');
@@ -319,6 +319,7 @@ plot(ch39_lfr)
 legend('ch37', 'ch38', 'ch39')
 title('lose frame rate')
 %%
+distance = linspace(1, 18, 18);
 dist_part = distance(1:15);
 mean_vals_ch39_part = mean_vals_ch39(1:15);
 %%
@@ -332,23 +333,115 @@ create_logarithmic_model_fit (dist_part, mean_vals_ch39_part, 'show-figure')
 
 %%
 clc;
-rssi_37 = get_rssi_info('D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\单信道测试-CH39\ch39-1m.txt');
-rssi_38 = get_rssi_info('D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\单信道测试-CH39\ch39-5m.txt');
-rssi_39 = get_rssi_info('D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\单信道测试-CH39\ch39-15m.txt');
-rssi_all = get_rssi_info('D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\单信道测试-CH39\ch39-18m.txt');
+rssi_37_1 = get_rssi_info(...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\更换信标电源后数据采集\37chnl_1m.txt');
+rssi_37_5 = get_rssi_info(...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\更换信标电源后数据采集\37chnl_5m.txt');
+rssi_37_10 = get_rssi_info(...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\更换信标电源后数据采集\37chnl_10m.txt');
+rssi_37_15 = get_rssi_info(...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\更换信标电源后数据采集\37chnl_15m.txt');
+
+rssi_38_1 = get_rssi_info(...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\更换信标电源后数据采集\38chnl_1m.txt');
+rssi_38_5 = get_rssi_info(...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\更换信标电源后数据采集\38chnl_5m.txt');
+rssi_38_10 = get_rssi_info(...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\更换信标电源后数据采集\38chnl_10m.txt');
+rssi_38_15 = get_rssi_info(...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\更换信标电源后数据采集\38chnl_15m.txt');
+
+rssi_39_1 = get_rssi_info(...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\更换信标电源后数据采集\39chnl_1m.txt');
+rssi_39_5 = get_rssi_info(...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\更换信标电源后数据采集\39chnl_5m.txt');
+rssi_39_10 = get_rssi_info(...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\更换信标电源后数据采集\39chnl_10m.txt');
+rssi_39_15 = get_rssi_info(...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\更换信标电源后数据采集\39chnl_15m.txt');
 
 %%
-tcf('ssw');
-figure('name', 'ssw', 'color', 'w');
+tcf('ssw1');
+figure('name', 'ssw1', 'color', 'w');
+title('ch37')
 subplot(221);
-plot(rssi_37, 'marker', '*', 'color', 'r')
+plot(rssi_37_1, 'marker', '*', 'color', 'r')
 title('1')
 subplot(222);
-plot(rssi_38, 'marker', '*', 'color', 'r')
+plot(rssi_37_5, 'marker', '*', 'color', 'r')
 title('5')
 subplot(223)
-plot(rssi_39, 'marker', '*', 'color', 'r')
+plot(rssi_37_10, 'marker', '*', 'color', 'r')
 title('15')
 subplot(224)
-plot(rssi_all, 'marker', '*', 'color', 'r')
+plot(rssi_37_15, 'marker', '*', 'color', 'r')
 title('18')
+tcf('ssw2');
+figure('name', 'ssw2', 'color', 'w');
+title('ch38')
+subplot(221);
+plot(rssi_38_1, 'marker', '*', 'color', 'r')
+title('1')
+subplot(222);
+plot(rssi_38_5, 'marker', '*', 'color', 'r')
+title('5')
+subplot(223)
+plot(rssi_38_10, 'marker', '*', 'color', 'r')
+title('15')
+subplot(224)
+plot(rssi_38_15, 'marker', '*', 'color', 'r')
+title('18')
+tcf('ssw3');
+figure('name', 'ssw3', 'color', 'w');
+title('ch39')
+subplot(221);
+plot(rssi_39_1, 'marker', '*', 'color', 'r')
+title('1')
+subplot(222);
+plot(rssi_39_5, 'marker', '*', 'color', 'r')
+title('5')
+subplot(223)
+plot(rssi_39_10, 'marker', '*', 'color', 'r')
+title('15')
+subplot(224)
+plot(rssi_39_15, 'marker', '*', 'color', 'r')
+title('18')
+
+%%
+clc;
+rssi_39_1_1 = get_rssi_info(...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\电源影响测试\电源影响-ch39-1m.txt');
+rssi_39_5_1 = get_rssi_info(...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\电源影响测试\电源影响-ch39-5m.txt');
+rssi_39_10_1 = get_rssi_info(...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\电源影响测试\电源影响-ch39-10m.txt');
+rssi_39_15_1 = get_rssi_info(...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\电源影响测试\电源影响-ch39-15m.txt');
+
+tcf('ssw4');
+figure('name', 'ssw4', 'color', 'w');
+title('ch39')
+subplot(221);
+plot(rssi_39_1_1, 'marker', '*')
+hold on
+plot(rssi_39_1, 'marker', '*')
+legend('after', 'pre')
+title('1')
+subplot(222);
+plot(rssi_39_5_1, 'marker', '*')
+hold on
+plot(rssi_39_5, 'marker', '*')
+legend('after', 'pre')
+title('5')
+subplot(223)
+plot(rssi_39_10_1, 'marker', '*')
+hold on
+plot(rssi_39_10, 'marker', '*')
+legend('after', 'pre')
+title('10')
+subplot(224)
+plot(rssi_39_15_1, 'marker', '*')
+hold on
+plot(rssi_39_15, 'marker', '*')
+legend('after', 'pre')
+title('15')
