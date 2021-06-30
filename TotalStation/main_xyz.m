@@ -113,6 +113,13 @@ nbt = table(["nt1", "nt2", "nt3", "nt4", "nt5", "nt6"]', ...
     nbt_lat_lon_h(:, 1), nbt_lat_lon_h(:, 2), nbt_lat_lon_h(:, 3), ...
     'VariableNames', {'nodeName', 'lon', 'lat', 'height'});
 
+legs = cell(0);
+tcf('gep');
+figure('name', 'gep')
+geoplot(nbt.lat, nbt.lon,'LineStyle','-','Marker','*');
+for k = 1:length(nbt.lat)
+    legs{k} = strcat('nt', num2str(k));
+end
 %%
 [x_1, y_1, ~] = latlon_to_xy(nbt.lat(1), nbt.lon(1));
 [x_2, y_2, ~] = latlon_to_xy(nbt.lat(2), nbt.lon(2));
