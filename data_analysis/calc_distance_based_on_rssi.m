@@ -113,16 +113,13 @@ function distance = calc_distance_based_on_rssi(ap, varargin)
     % 模型选择
     model_mode = {'piecewise_logarithmic', 'ordinary_logarithmic', 'quadratic_polynomial'};
 
-    switch model_mode{3}
+    switch model_mode{2}
 
         case 'ordinary_logarithmic' % 一般对数模型
 
-            if false
-                A = -51.49;
-                b = 2.2;
-            else
-                A = -45.5;
-                b = 2.2;
+            if true
+                A = -19.91;
+                b = 3.363;
             end
 
             dist = rssi_to_distance_logarithmic(A, b, ap_rssi);

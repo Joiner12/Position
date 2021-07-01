@@ -154,7 +154,7 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
 
                 if isequal(j, 1)
                     % kf_params = kf_init(kf_data{j}.x - min_xy(1), kf_data{j}.y - min_xy(2), 0, 0);
-                    kf_params = kf_init(2, 10, 0, 0);
+                    kf_params = kf_init(20, 5, 0, 0);
                 else
                     kf_params = kf_update(kf_params, ...
                         [kf_data{j}.x - min_xy(1); kf_data{j}.y - min_xy(2)]);
