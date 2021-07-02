@@ -22,8 +22,11 @@ function env_feat = tencent_lib_environment(varargin)
 
     %试验区边缘位置
     env_num = env_num + 1;
-    lat{env_num} = [30.548043749; 30.548043749; 30.547877313; 30.547877313];
-    lon{env_num} = [104.058569922; 104.058749827; 104.058749827; 104.05856896];
+    % lat{env_num} = [30.548043749; 30.548043749; 30.547877313; 30.547877313];
+    % lon{env_num} = [104.058569922; 104.058749827; 104.058749827; 104.05856896];
+    % type{env_num} = 'closed_cycle';
+    lat{env_num} = [30.54785; 30.54785; 30.54804; 30.54804];
+    lon{env_num} = [104.05855; 104.05892; 104.05892; 104.05855];
     type{env_num} = 'closed_cycle';
 
     if true
@@ -32,8 +35,14 @@ function env_feat = tencent_lib_environment(varargin)
         lat{env_num} = [30.547955238; 30.547965822; 30.547965822; 30.547955238];
         lon{env_num} = [104.058653621; 104.058653621; 104.05866709; 104.05866709];
         type{env_num} = 'closed_cycle';
+
+        %靠厕所第二排中柱子位置
+        env_num = env_num + 1;
+        lat{env_num} = [30.547953315; 30.547963898; 30.547963898; 30.547953315];
+        lon{env_num} = [104.058749827; 104.058749827; 104.058739244; 104.058739244];
+        type{env_num} = 'closed_cycle';
     end
-    
+
     if false
         %靠厕所第一排左柱子位置
         env_num = env_num + 1;
@@ -45,12 +54,6 @@ function env_feat = tencent_lib_environment(varargin)
         env_num = env_num + 1;
         lat{env_num} = [30.547877313; 30.547877313; 30.547885019; 30.547885009];
         lon{env_num} = [104.058653621; 104.058661318; 104.058661318; 104.058653621];
-        type{env_num} = 'closed_cycle';
-
-        %靠厕所第二排中柱子位置
-        env_num = env_num + 1;
-        lat{env_num} = [30.547953315; 30.547963898; 30.547963898; 30.547953315];
-        lon{env_num} = [104.058749827; 104.058749827; 104.058739244; 104.058739244];
         type{env_num} = 'closed_cycle';
 
         %靠厕所第二排左柱子位置
@@ -113,6 +116,7 @@ function env_feat = tencent_lib_environment(varargin)
 
     %货梯门口
     env_num = env_num + 1;
+    % 30.548019508539
     lat{env_num} = [30.547998532; 30.547998532; 30.548011039; 30.548011039];
     lon{env_num} = [104.058569922; 104.058567998; 104.05856792; 104.058569922];
     type{env_num} = 'closed_cycle';
@@ -135,11 +139,12 @@ function env_feat = tencent_lib_environment(varargin)
 
     end
 
-    if any(strcmp(varargin,'showschmer'))
+    if any(strcmp(varargin, 'showschmer'))
         min_x = -2^61;
         min_y = -2^61;
         tcf('tencentenv');
-        figure('name','tencentenv','color','w');
-        
+        figure('name', 'tencentenv', 'color', 'w');
+
     end
+
 end

@@ -24,7 +24,7 @@ function position_error_statistics(position, true_position, varargin)
     %                         位置集中,则运行时警告,并只过滤在位置集中的那部分点位
     %输出：
     %
-
+    
     %% 误差数据统计
     if length(position) ~= length(true_position)
         flag = ['位置信息与其真值个数不同, position:', num2str(length(position)), ...
@@ -196,5 +196,10 @@ function position_error_statistics(position, true_position, varargin)
     title('误差范围分布统计');
     ylabel('误差点个数百分比');
     axis auto;
+
+    % 保存结果
+    if any(strcmpi('savefig', varargin))
+        figure2img(handle, 'D:\Code\BlueTooth\pos_bluetooth_matlab\静态定位结果-1.png')
+    end
 
 end

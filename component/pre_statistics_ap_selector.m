@@ -57,6 +57,7 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
         end
 
     end
+
     %% 根据apselector信息选择定位点
     %{
     ap selector 选择依据：
@@ -93,15 +94,16 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
     end
 
     % 重排序 & 避免使用去重复
-    [~, sort_act_rssi] = maxk(act_rssi, 5);
-    [~, sort_meanval_rssi] = maxk(meanval_rssi, 5);
-    [~, sort_var_rssi] = mink(var_rssi, 5);
+    % 此处存在问题,act_rssi完全相等时,maxk不能达到正确排序的目的；
+    [sort_act_rssi, sort_act_rssi_index] = maxk(act_rssi, 5);
+    [~, sort_meanval_rssi_index] = maxk(meanval_rssi, 5);
+    [~, sort_var_rssi_index] = mink(var_rssi, 5);
 
     % 特征值
-    for j = 1:1:length(sort_act_rssi)
-        trilat_table.CHARAC_ACT(sort_act_rssi(j)) = length(sort_act_rssi) + 1 - j;
-        trilat_table.CHARAC_MEAN(sort_meanval_rssi(j)) = length(sort_meanval_rssi) + 1 - j;
-        trilat_table.CHARAC_VAR(sort_var_rssi(j)) = length(sort_var_rssi) + 1 - j;
+    for j = 1:1:length(sort_act_rssi_index)
+        trilat_table.CHARAC_ACT(sort_act_rssi_index(j)) = int8(sort_act_rssi(j) / 2);
+        trilat_table.CHARAC_MEAN(sort_meanval_rssi_index(j)) = length(sort_meanval_rssi_index) + 1 - j;
+        trilat_table.CHARAC_VAR(sort_var_rssi_index(j)) = length(sort_var_rssi_index) + 1 - j;
     end
 
     % 神经元
@@ -132,7 +134,24 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             % trilateration_ap(valid_ap_cnt).rssi = trilat_table.rssi(table_index);
             rssi_temp = trilat_table.RECVRSSI(table_index, :);
             rssi_temp = rssi_temp(rssi_temp ~= 0);
-            trilateration_ap(valid_ap_cnt).rssi = mean(rssi_temp);
+            % 考虑将均值滤波替换为中值滤波
+            if false
+                trilateration_ap(valid_ap_cnt).rssi = mean(rssi_temp); % 均值滤波
+            else
+                rssi_temp_sorted = sort(rssi_temp); % 对非零RSSI数组进行排序
+
+                if isequal(mod(length(rssi_temp_sorted), 2), 1)
+                    % 取中值
+                    index_temp = ceil(length(rssi_temp) / 2);
+                    trilateration_ap(valid_ap_cnt).rssi = rssi_temp(index_temp);
+                else
+                    % 二分插值
+                    index_temp = floor(length(rssi_temp) / 2);
+                    trilateration_ap(valid_ap_cnt).rssi = mean(rssi_temp(index_temp:index_temp + 1));
+                end
+
+            end
+
             trilateration_ap(valid_ap_cnt).rssi_wma = trilat_table.RSSI(table_index);
             trilateration_ap(valid_ap_cnt).rssi_gf = trilat_table.RSSI(table_index);
             trilateration_ap(valid_ap_cnt).rssi_kf = trilat_table.RSSI(table_index);
