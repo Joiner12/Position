@@ -23,40 +23,6 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
     % 'estimated_positon':定位结果(latitude,longitude)|(x,y)
     % 'true_pos':真实位置(latitude,longitude)|(x,y)
 
-    %% base map
-
-    basemap = tencent_lib_environment();
-    min_xy = [2^31, 2^31];
-    hold on
-
-    for i = 1:1:length(basemap)
-        item_x = zeros(0);
-        item_y = zeros(0);
-
-        for j = 1:1:length(basemap{i}.position)
-            item_x(j) = basemap{i}.position(j).x;
-            item_y(j) = basemap{i}.position(j).y;
-            % update min positon
-            if min_xy(1) > min(item_x)
-                min_xy(1) = min(item_x);
-            end
-
-            if min_xy(2) > min(item_y)
-                min_xy(2) = min(item_y);
-            end
-
-        end
-
-        if strcmp(basemap{i}.type, 'closed_cycle')
-            item_x = reshape(item_x, [1, length(item_x)]);
-            item_y = reshape(item_y, [1, length(item_y)]);
-            item_x = [item_x, item_x(1)] - min_xy(1);
-            item_y = [item_y, item_y(1)] - min_xy(2);
-        end
-
-        line(cur_axes, item_x, item_y) % 绘制
-    end
-
     %% beacon
     beacon = hlk_beacon_location();
     beacon_x = zeros(0);
@@ -70,13 +36,17 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
         labels{k} = strcat('', strrep(name_temp, 'onepos_HLK_', ''));
     end
 
+    % base map
+    % ref_point_xy = [beacon_x(1).x, beacon_y(1).y]; % 以ope1信标为参考(0,0)位置
+    ref_point_xy = [min(beacon_x), min(beacon_y)]; % 以最小x和最小y作为参考位置
     beacon_x = reshape(beacon_x, [1, length(beacon_x)]);
     beacon_y = reshape(beacon_y, [1, length(beacon_y)]);
 
-    beacon_x_d = beacon_x - min_xy(1);
-    beacon_y_d = beacon_y - min_xy(2);
-    plot(cur_axes, beacon_x_d, beacon_y_d, 'g^');
+    beacon_x_d = beacon_x - ref_point_xy(1);
+    beacon_y_d = beacon_y - ref_point_xy(2);
+    plot(cur_axes, beacon_x_d, beacon_y_d, 'Marker', 'v', 'MarkerFaceColor', 'r', 'MarkerSize', 10);
     text(cur_axes, beacon_x_d, beacon_y_d, labels)
+    % circle
 
     title(gca, '定位效果')
     box on
@@ -88,8 +58,8 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
     if any(strcmp(varargin, 'estimated_positon'))
         est_pos = varargin{find(strcmp(varargin, 'estimated_positon')) + 1};
         [est_pos_x, est_pos_y, ~] = latlon_to_xy(est_pos(1), est_pos(2));
-        est_pos_x = est_pos_x - min_xy(1);
-        est_pos_y = est_pos_y - min_xy(2);
+        est_pos_x = est_pos_x - ref_point_xy(1);
+        est_pos_y = est_pos_y - ref_point_xy(2);
         plot(cur_axes, est_pos_x, est_pos_y, 'Marker', '*', ...
             'MarkerSize', 10, 'Color', 'r');
         text(cur_axes, est_pos_x, est_pos_y, '定位位置')
@@ -99,8 +69,8 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
     if any(strcmp(varargin, 'true_pos'))
         vartemp = varargin{find(strcmp(varargin, 'true_pos')) + 1};
         [true_pos_x, true_pos_y, ~] = latlon_to_xy(vartemp(1), vartemp(2));
-        true_pos_x = true_pos_x - min_xy(1);
-        true_pos_y = true_pos_y - min_xy(2);
+        true_pos_x = true_pos_x - ref_point_xy(1);
+        true_pos_y = true_pos_y - ref_point_xy(2);
         plot(cur_axes, true_pos_x, true_pos_y, 'b*')
         text(cur_axes, true_pos_x, true_pos_y, '真实位置')
         circles(true_pos_x, true_pos_y, 5, ...
@@ -109,6 +79,10 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
     end
 
     %% 绘制动|静图
+    if isempty(data)
+        return;
+    end
+
     switch drawmode
         case 'static'
             %% circle access point
@@ -118,8 +92,8 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
                 ap_temp = cur_ap(ii);
                 cur_color = rand(1, 3);
                 [c_x, c_y, ~] = latlon_to_xy(ap_temp.lat, ap_temp.lon);
-                c_x = c_x - min_xy(1);
-                c_y = c_y - min_xy(2);
+                c_x = c_x - ref_point_xy(1);
+                c_y = c_y - ref_point_xy(2);
                 circles(c_x, c_y, ap_temp.dist, ...
                     'facecolor', 'none', 'edgecolor', cur_color)
                 line([c_x, c_x + cos(15 * ii) * ap_temp.dist], ...
@@ -133,8 +107,8 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
             hd = animatedline('color', [86, 141, 223] ./ 255, 'marker', '*', 'linestyle', 'none');
 
             for k = 1:1:length(dynamic_data)
-                cur_dmx = dynamic_data{k}.x - min_xy(1);
-                cur_dmy = dynamic_data{k}.y - min_xy(2);
+                cur_dmx = dynamic_data{k}.x - ref_point_xy(1);
+                cur_dmy = dynamic_data{k}.y - ref_point_xy(2);
                 addpoints(hd, cur_dmx, cur_dmy);
                 pause(0.1);
 
@@ -153,11 +127,11 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
             for j = 1:1:length(kf_data)
 
                 if isequal(j, 1)
-                    % kf_params = kf_init(kf_data{j}.x - min_xy(1), kf_data{j}.y - min_xy(2), 0, 0);
+                    % kf_params = kf_init(kf_data{j}.x - ref_point_xy(1), kf_data{j}.y - ref_point_xy(2), 0, 0);
                     kf_params = kf_init(20, 5, 0, 0);
                 else
                     kf_params = kf_update(kf_params, ...
-                        [kf_data{j}.x - min_xy(1); kf_data{j}.y - min_xy(2)]);
+                        [kf_data{j}.x - ref_point_xy(1); kf_data{j}.y - ref_point_xy(2)]);
                 end
 
                 X_state{j} = kf_params.x;

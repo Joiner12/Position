@@ -102,12 +102,14 @@ update date:2021 - 05 - 12 14:18
 %}
 clc;
 disp('new bluetooth lat lon location');
-nbt_lat_lon_h = [104.058567643123, 30.547872167734, 467.946972989477
+nbt_lat_lon_h = [
+            104.058567643123, 30.547872167734, 467.946972989477
             104.058567183453, 30.548014837274, 468.115972990170
             104.058730768827, 30.548018797743, 467.900972989388
             104.058889206422, 30.547874726343, 468.024972987361
             104.058895271369, 30.548019508539, 469.051972987130
-            104.058728300713, 30.547880364315, 469.601972988807];
+            104.058728300713, 30.547880364315, 469.601972988807
+            ];
 
 nbt = table(["nt1", "nt2", "nt3", "nt4", "nt5", "nt6"]', ...
     nbt_lat_lon_h(:, 1), nbt_lat_lon_h(:, 2), nbt_lat_lon_h(:, 3), ...
@@ -116,10 +118,11 @@ nbt = table(["nt1", "nt2", "nt3", "nt4", "nt5", "nt6"]', ...
 legs = cell(0);
 tcf('gep');
 figure('name', 'gep')
-geoplot(nbt.lat, nbt.lon,'LineStyle','-','Marker','*');
-for k = 1:length(nbt.lat)
-    legs{k} = strcat('nt', num2str(k));
-end
+plot(nbt.lon, nbt.lat, 'LineStyle', 'none', 'Marker', '*');
+text(nbt.lon, nbt.lat, nbt.nodeName);
+% for k = 1:length(nbt.lat)
+%     legs{k} = strcat('nt', num2str(k));
+% end
 %%
 [x_1, y_1, ~] = latlon_to_xy(nbt.lat(1), nbt.lon(1));
 [x_2, y_2, ~] = latlon_to_xy(nbt.lat(2), nbt.lon(2));
