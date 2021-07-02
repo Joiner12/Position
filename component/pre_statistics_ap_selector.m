@@ -135,7 +135,7 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             rssi_temp = trilat_table.RECVRSSI(table_index, :);
             rssi_temp = rssi_temp(rssi_temp ~= 0);
             % 考虑将均值滤波替换为中值滤波
-            if true
+            if false
                 trilateration_ap(valid_ap_cnt).rssi = mean(rssi_temp); % 均值滤波
             else
                 rssi_temp_sorted = sort(rssi_temp); % 对非零RSSI数组进行排序
