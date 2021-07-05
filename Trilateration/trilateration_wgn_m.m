@@ -1,8 +1,8 @@
-function [est_pos_wgn, procss] = trilateration_wgn_s(x_tr, y_tr, d_tr, varargin)
+function [est_pos_wgn, procss] = trilateration_wgn_m(x_tr, y_tr, d_tr, varargin)
     % 功能:
-    %       加权高斯-牛顿(Weighted Gauss-Newton)
+    %       加权高斯-牛顿(Weighted Gauss-Newton)——矩阵
     % 定义:
-    %       [est_pos_gn, procss] = trilateration_wgn_s(x_tr, y_tr, d_tr, varargin)
+    %       [est_pos_gn, procss] = trilateration_wgn_m(x_tr, y_tr, d_tr, varargin)
     % 参数:
     %       x_tr,x轴坐标;
     %       y_tr,y轴坐标;

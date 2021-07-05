@@ -29,10 +29,19 @@ end
 
 %%
 clc;
-ap_temp = ap_final{16};
-x_lct = [ap_temp(1).x_ref, ap_temp(2).x_ref, ap_temp(3).x_ref];
-y_lct = [ap_temp(1).y_ref, ap_temp(2).y_ref, ap_temp(3).y_ref];
-d_lct = [ap_temp(1).dist, ap_temp(2).dist, ap_temp(3).dist];
+
+if false
+    ap_temp = ap_final{16};
+    x_lct = [ap_temp(1).x_ref, ap_temp(2).x_ref, ap_temp(3).x_ref];
+    y_lct = [ap_temp(1).y_ref, ap_temp(2).y_ref, ap_temp(3).y_ref];
+    d_lct = [ap_temp(1).dist, ap_temp(2).dist, ap_temp(3).dist];
+else
+    % 验证最小二乘(多节点 > 3)
+    % ap_temp = ap_final{16};
+    x_lct = [0, 3, 2.2, 1.2];
+    y_lct = [0, 1, 4, 4.6];
+    d_lct = [2, 1.5, 2.3, 3];
+end
 
 if false
     tic;
@@ -43,18 +52,23 @@ if false
     toc;
 end
 
-tic;
-[est_gn, proc_gn] = trilateration_gn(x_lct, y_lct, d_lct);
-toc;
+if false
+    tic;
+    [est_gn, proc_gn] = trilateration_gn(x_lct, y_lct, d_lct);
+    toc;
 
-tic;
-[est_lm, proc_lm] = trilateration_lm(x_lct, y_lct, d_lct);
-toc;
+end
 
-%
-tic;
-[est_wgn, proc_wgn] = trilateration_wgn(x_lct, y_lct, d_lct);
-toc;
+if false
+    tic;
+    [est_lm, proc_lm] = trilateration_lm(x_lct, y_lct, d_lct);
+    toc;
+    %
+    tic;
+    [est_wgn, proc_wgn] = trilateration_wgn(x_lct, y_lct, d_lct);
+    toc;
+end
+
 tic;
 [est_wgn_s, proc_wgn_s] = trilateration_wgn_s(x_lct, y_lct, d_lct);
 toc;
@@ -65,32 +79,6 @@ centroid = [mean(x_lct), mean(y_lct)];
 %%
 draw_location([1, 1, 0, 0], {[x_lct(1), y_lct(1), d_lct(1)], ...
                             [x_lct(2), y_lct(2), d_lct(2)], ...
-                            [x_lct(3), y_lct(3), d_lct(3)]}, ...
-    {est_gn, est_nlm, est_nlfit, centroid})
-
-%%
-clc;
-x_lct = [ap_temp(1).x_ref, ap_temp(2).x_ref, ap_temp(3).x_ref];
-y_lct = [ap_temp(1).y_ref, ap_temp(2).y_ref, ap_temp(3).y_ref];
-d_lct = [ap_temp(1).dist, ap_temp(2).dist, ap_temp(3).dist];
-rall = @(x, y, X, Y, D) sqrt((x - X).^2 + (y - Y).^2) - D;
-r1 = @(x, y) sqrt((x - x_lct(1))^2 + (y - y_lct(1))^2) - d_lct(1);
-r2 = @(x, y) sqrt((x - x_lct(2))^2 + (y - y_lct(2))^2) - d_lct(2);
-r3 = @(x, y) sqrt((x - x_lct(3))^2 + (y - y_lct(3))^2) - d_lct(3);
-x_0 = mean(x_lct);
-y_0 = mean(y_lct);
-% disp(rall(x_0, y_0, x_lct, y_lct, d_lct))
-% disp([r1(x_0, y_0), r2(x_0, y_0), r3(x_0, y_0)])
-
-Ja = @(x, y, xl, yl) [(x - xl) ./ (sqrt((x - xl).^2 + (y - yl).^2)), ...
-                    (y - yl) ./ (sqrt((x - xl).^2 + (y - yl).^2))];
-J = zeros([length(x_lct), 2]);
-
-for k1 = 1:1:length(x_lct)
-    temp = Ja(x_0, y_0, x_lct(k1), y_lct(k1));
-    J(k1, :) = temp;
-end
-
-disp(J)
-temp1 =(Ja(x_0, y_0, x_lct, y_lct));
-reshape(temp1,[3,2])
+                            [x_lct(3), y_lct(3), d_lct(3)], ...
+                            [x_lct(4), y_lct(4), d_lct(4)]}, ...
+    {est_wgn_s, est_nlm, centroid})
