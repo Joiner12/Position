@@ -25,7 +25,7 @@ function [position, debug_param] = bluetooth_position(data)
     debug_param.frame_id = 0;
     debug_param.config = config;
     %% apselector 初始化
-    ap_selector = init_ap_selector(20);
+    ap_selector = init_ap_selector(10);
     gif_cnt = 1;
 
     % 逐帧处理

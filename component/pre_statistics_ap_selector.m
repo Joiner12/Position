@@ -111,7 +111,7 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
     charc_temp = [trilat_table.CHARAC_ACT, trilat_table.CHARAC_MEAN, trilat_table.CHARAC_VAR];
     trilat_table.SELECT_WEIGHT = charc_temp * charac_weight';
 
-    [~, index_temp] = maxk(trilat_table.SELECT_WEIGHT, 3);
+    [~, index_temp] = maxk(trilat_table.SELECT_WEIGHT, 4);
     selected_ap_name = trilat_table.NAME(index_temp);
 
     %%
