@@ -1,8 +1,5 @@
 %%
 clc;
-data_file = 'D:\Code\BlueTooth\pos_bluetooth_matlab\data\ope单信道-ch39测试\static-2.txt';
-ap_filter = 'ope_5';
-rssi_ch = get_rssi_info(data_file, ap_filter);
-tcf('mar');
-figure('name', 'mar');
-% draw_positioning_state(gca, 'static', [])
+% markdown_tool.batch_remove('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1');
+markdown_tool.write_to_markdown('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\定位过程分析.md', ...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1');

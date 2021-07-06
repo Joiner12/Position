@@ -100,12 +100,12 @@ function [position, debug_param] = bluetooth_position(data)
             % lat:30.547966937307,lon:104.058595105583 static-1
             % lat:30.547966458202,lon:104.058698530348 static-2
             % lat:30.547965611298,lon:104.058814724652 static-3
-            true_pos_manual = [30.5479692317, 104.0585915092; ...
-                                30.5479705577, 104.0586741723; ...
-                                30.5479727197, 104.0587717089];
+            true_pos_manual = [30.547966937307, 104.058595105583; ...
+                                30.547966458202, 104.058698530348; ...
+                                30.547965611298, 104.058814724652];
             draw_positioning_state(gca, 'static', cur_ap, 'estimated_positon', ...
                 [pos_res.lat, pos_res.lon], ...
-                'true_pos', true_pos_manual(2, :));
+                'true_pos', true_pos_manual(1, :));
             % Éú³Égif
             if false
                 frame = getframe(gcf);
@@ -123,10 +123,10 @@ function [position, debug_param] = bluetooth_position(data)
             end
 
             % save png files
-            if false
+            if true
                 pause(0.1);
                 png_file = strcat('location-temp', num2str(gif_cnt), '.png');
-                png_file = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\', png_file);
+                png_file = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1', png_file);
                 imwrite(frame2im(getframe(gcf)), png_file);
                 fprintf('save figure as png file:%s\n', png_file);
             end

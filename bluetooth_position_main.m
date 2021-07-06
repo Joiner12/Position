@@ -8,7 +8,7 @@ if true
     % 根据全站仪修改ap经纬度信息
     % [~, data_file] = modify_geoinfo();
     % 读取待定位数据
-    data_file = 'D:\Code\BlueTooth\pos_bluetooth_matlab\data\ope单信道-ch39测试\static-2.txt';
+    data_file = 'D:\Code\BlueTooth\pos_bluetooth_matlab\data\ope单信道-ch39测试\static-1.txt';
     files_data = data_import('datafile', data_file);
 else
     files_data = data_import();
@@ -24,6 +24,8 @@ disp('数据初始化成功');
 
 %% 蓝牙定位
 %初始化定位结果
+% 批量删除缓存文件
+markdown_tool.batch_remove('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1');
 file_num = length(files_data);
 position = cell(file_num, 1);
 filter_points = cell(file_num, 1);
@@ -35,19 +37,23 @@ for i = 1:file_num
     if false
         position{i}.true_pos = files_true_pos{i};
     else
-        % lat:30.5479692317,lon:104.0585915092 static-1
-        % lat:30.5479705577,lon:104.0586741723 static-2
-        % lat:30.5479727197,lon:104.0587717089 static-3
-        true_pos_manual = [30.5479692317, 104.0585915092; ...
-                            30.5479705577, 104.0586741723; ...
-                            30.5479727197, 104.0587717089];
-        true_pos_temp = struct('lat', true_pos_manual(2, 1), 'lon', true_pos_manual(2, 2));
+        % lat:30.547966937307,lon:104.058595105583 static-1
+        % lat:30.547966458202,lon:104.058698530348 static-2
+        % lat:30.547965611298,lon:104.058814724652 static-3
+        true_pos_manual = [30.547966937307, 104.058595105583; ...
+                            30.547966458202, 104.058698530348; ...
+                            30.547965611298, 104.058814724652];
+        true_pos_index_temp = 1;
+        true_pos_temp = struct('lat', true_pos_manual(true_pos_index_temp, 1), ...
+            'lon', true_pos_manual(true_pos_index_temp, 2));
 
         position{i}.true_pos = repmat(true_pos_temp, ...
             size(position{i}.pos_res, 1), size(position{i}.pos_res, 2));
     end
 
     filter_points{i} = debug{i}.centroid;
+    markdown_tool.write_to_markdown('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\定位过程分析.md', ...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1');
 end
 
 %% 静态分析
@@ -59,15 +65,17 @@ if true
     %获取信标信息
     beacon = hlk_beacon_location();
     position_error_statistics(position{1, 1}.pos_res, position{1, 1}.true_pos);
+
     if false
         draw_trajectory_and_error_diagram(position, ...
-        null_val, ...
-        env_feat, ...
-        beacon, ...
-        draw_type, ...
-        'filter_point', ...
-        filter_points);
+            null_val, ...
+            env_feat, ...
+            beacon, ...
+            draw_type, ...
+            'filter_point', ...
+            filter_points);
     end
+
 end
 
 %% 动态分析
@@ -81,4 +89,3 @@ if true
 end
 
 disp('定位处理结束');
-
