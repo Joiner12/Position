@@ -97,9 +97,9 @@ function [position, debug_param] = bluetooth_position(data)
 
             % draw_positioning_state(gca,'static', cur_ap, 'estimated_positon', [pos_res.lat, pos_res.lon], ...
                 %     'true_pos', [30.54798217, 104.05861620]);
-            % lat:30.5479692317,lon:104.0585915092 static-1
-            % lat:30.5479705577,lon:104.0586741723 static-2
-            % lat:30.5479727197,lon:104.0587717089 static-3
+            % lat:30.547966937307,lon:104.058595105583 static-1
+            % lat:30.547966458202,lon:104.058698530348 static-2
+            % lat:30.547965611298,lon:104.058814724652 static-3
             true_pos_manual = [30.5479692317, 104.0585915092; ...
                                 30.5479705577, 104.0586741723; ...
                                 30.5479727197, 104.0587717089];
