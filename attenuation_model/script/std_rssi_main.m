@@ -445,3 +445,27 @@ hold on
 plot(rssi_39_15, 'marker', '*')
 legend('after', 'pre')
 title('15')
+
+%% check for median filter
+clc;
+disp('check for median filter');
+rssi_39_static_1 = get_rssi_info(...
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\data\ope单信道-ch39测试\static-1.txt', ...
+    'ope_2');
+median_filter_rssi_39_static_1 = median_filter(rssi_39_static_1, 11);
+kalman_filter_rssi_39_static_1 = kalman_filter_rssi(rssi_39_static_1, 0.1, 10);
+median_kalman_filter_rssi_39_static_1 = median_filter(kalman_filter_rssi_39_static_1, 11);
+tcf('medianfilter');
+rssi_x = 1:1:length(rssi_39_static_1);
+figure('name', 'medianfilter', 'color', 'w');
+hold on
+plot(rssi_x, rssi_39_static_1, 'Marker', '.', 'MarkerSize', 8)
+plot(rssi_x, median_filter_rssi_39_static_1, 'Marker', '.', 'MarkerSize', 8)
+plot(rssi_x, kalman_filter_rssi_39_static_1, 'Marker', '.', 'MarkerSize', 8)
+plot(rssi_x, median_kalman_filter_rssi_39_static_1, 'Marker', '.', 'MarkerSize', 8)
+legend({'org', 'median', 'kalman', 'kalman-median'});
+set(get(gca, 'XLabel'), 'String', '采样序列');
+set(get(gca, 'YLabel'), 'String', 'RSSI/dBm');
+set(get(gca, 'Title'), 'String', 'kalman & median filter');
+
+
