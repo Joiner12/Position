@@ -144,11 +144,11 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
                 if isequal(mod(length(rssi_temp_sorted), 2), 1)
                     % 取中值
                     index_temp = ceil(length(rssi_temp) / 2);
-                    trilateration_ap(valid_ap_cnt).rssi = rssi_temp(index_temp);
+                    trilateration_ap(valid_ap_cnt).rssi = rssi_temp_sorted(index_temp);
                 else
                     % 二分插值
                     index_temp = floor(length(rssi_temp) / 2);
-                    trilateration_ap(valid_ap_cnt).rssi = mean(rssi_temp(index_temp:index_temp + 1));
+                    trilateration_ap(valid_ap_cnt).rssi = mean(rssi_temp_sorted(index_temp:index_temp + 1));
                 end
 
             end
@@ -160,7 +160,6 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             valid_ap_cnt = valid_ap_cnt + 1;
         end
 
-        debug_line = 1;
     end
 
 end
