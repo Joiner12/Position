@@ -450,14 +450,17 @@ title('15')
 clc;
 disp('check for median filter');
 rssi_39_static_1 = get_rssi_info(...
-    'D:\Code\BlueTooth\pos_bluetooth_matlab\data\ope单信道-ch39测试\static-1.txt', ...
-    'ope_2');
+    'D:\Code\BlueTooth\pos_bluetooth_matlab\data\ope单信道-ch39测试\static-3.txt', ...
+    'ope_4');
 median_filter_rssi_39_static_1 = median_filter(rssi_39_static_1, 11);
 kalman_filter_rssi_39_static_1 = kalman_filter_rssi(rssi_39_static_1, 0.1, 10);
 median_kalman_filter_rssi_39_static_1 = median_filter(kalman_filter_rssi_39_static_1, 11);
 tcf('medianfilter');
-rssi_x = 1:1:length(rssi_39_static_1);
-figure('name', 'medianfilter', 'color', 'w');
+rssi_x = 1:1:length(rssi_39_static_1); % 
+% 'Position',[1,31,1920,972],'InnerPosition',[1,31,1920,972],'OuterPosition',[-7,23,1936,1066]
+f1 = figure('name', 'medianfilter', 'color', 'w'); %,...
+    %'Position',[1,31,1920,972],'InnerPosition',[1,31,1920,972],'OuterPosition',[-7,23,1936,1066]...);
+    
 hold on
 plot(rssi_x, rssi_39_static_1, 'Marker', '.', 'MarkerSize', 8)
 plot(rssi_x, median_filter_rssi_39_static_1, 'Marker', '.', 'MarkerSize', 8)
@@ -467,5 +470,8 @@ legend({'org', 'median', 'kalman', 'kalman-median'});
 set(get(gca, 'XLabel'), 'String', '采样序列');
 set(get(gca, 'YLabel'), 'String', 'RSSI/dBm');
 set(get(gca, 'Title'), 'String', 'kalman & median filter');
-
-
+box on
+if true
+    pic_name = 'kalman-median-filtering-3-ope4.png';
+    saveas(f1,fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img',pic_name));
+end

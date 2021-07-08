@@ -25,7 +25,7 @@ function [position, debug_param] = bluetooth_position(data)
     debug_param.frame_id = 0;
     debug_param.config = config;
     %% apselector 初始化
-    ap_selector = init_ap_selector(10);
+    ap_selector = init_ap_selector(21);
     gif_cnt = 1;
 
     % 逐帧处理
@@ -105,7 +105,7 @@ function [position, debug_param] = bluetooth_position(data)
                                 30.547965611298, 104.058814724652];
             draw_positioning_state(gca, 'static', cur_ap, 'estimated_positon', ...
                 [pos_res.lat, pos_res.lon], ...
-                'true_pos', true_pos_manual(1, :));
+                'true_pos', true_pos_manual(2, :));
             % 生成gif
             if false
                 frame = getframe(gcf);
@@ -132,6 +132,11 @@ function [position, debug_param] = bluetooth_position(data)
             end
 
             gif_cnt = gif_cnt +1;
+
+            if isequal(gif_cnt, 15)
+                debugline = 1;
+            end
+
             fprintf('cnt = %.0f\n', gif_cnt);
         end
 
