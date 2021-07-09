@@ -76,6 +76,7 @@ classdef markdown_tool
 
             if true
                 fildId = fopen(tar_md_file, 'w');
+                fprintf(fildId, "**%s** \n", string(datetime('now')))
 
                 for j = 1:length(tar_pic)
                     template_temp = '<div><img src="pic-path" style="zoom:150%%;" />\n<p align="center">label</p></div>\n';

@@ -105,7 +105,7 @@ function [position, debug_param] = bluetooth_position(data)
                                 30.547965611298, 104.058814724652];
             draw_positioning_state(gca, 'static', cur_ap, 'estimated_positon', ...
                 [pos_res.lat, pos_res.lon], ...
-                'true_pos', true_pos_manual(2, :));
+                'true_pos', true_pos_manual(3, :));
             % Éú³Égif
             if false
                 frame = getframe(gcf);
