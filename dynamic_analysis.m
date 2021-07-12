@@ -18,6 +18,6 @@ config_names = config_s.config_name;
 b = 2;
 %index = strcmpi(fieldnames(config_s), config_name);
 
-%%
-a = tar_pic{1};
-a{1}
+%% 
+a = [3,2,5,7,2];
+fliplr(a)
