@@ -105,7 +105,7 @@ function [position, debug_param] = bluetooth_position(data)
                                 30.547965611298, 104.058814724652];
             draw_positioning_state(gca, 'static', cur_ap, 'estimated_positon', ...
                 [pos_res.lat, pos_res.lon], ...
-                'true_pos', true_pos_manual(3, :));
+                'true_pos', true_pos_manual(1, :));
             % Éú³Égif
             if false
                 frame = getframe(gcf);
@@ -133,7 +133,7 @@ function [position, debug_param] = bluetooth_position(data)
 
             gif_cnt = gif_cnt +1;
 
-            if isequal(gif_cnt, 15)
+            if gif_cnt >= 36
                 debugline = 1;
             end
 

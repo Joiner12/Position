@@ -15,5 +15,9 @@ config_s.config_value(2) = 'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\¶¨Î»¹ý³Ì·
 config_s.config_name(3) = 'markdown_file_2';
 config_s(3).config_value(3) = 'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\¶¯¾²Ì¬¶¨Î»½á¹û·ÖÎö.md';
 config_names = config_s.config_name;
-b =2;
+b = 2;
 %index = strcmpi(fieldnames(config_s), config_name);
+
+%%
+a = tar_pic{1};
+a{1}
