@@ -66,25 +66,39 @@ classdef markdown_tool
             end
 
             for k = 1:length(dir_folder)
-                exp_temp = regexp(dir_folder(k).name, 'location-temp\d*.png', 'match');
+                exp_temp_name = regexp(dir_folder(k).name, 'location-temp\d*.png', 'match');
 
-                if ~isempty(exp_temp)
-                    tar_pic{length(tar_pic) + 1} = fullfile(dir_folder(k).folder, exp_temp{1:end});
+                if ~isempty(exp_temp_name)
+                    exp_temp_serial = regexp(exp_temp_name, '[\d]{1,}', 'match');
+                    exp_temp_serial = str2double(exp_temp_serial{1, 1});
+                    tar_pic{length(tar_pic) + 1} = {exp_temp_serial, fullfile(dir_folder(k).folder, exp_temp_name{1:end})};
                 end
 
             end
 
             if true
                 fildId = fopen(tar_md_file, 'w');
-                fprintf(fildId, "**%s** \n", string(datetime('now')))
+                fprintf(fildId, "**%s** \n", string(datetime('now')));
 
-                for j = 1:length(tar_pic)
-                    template_temp = '<div><img src="pic-path" style="zoom:150%%;" />\n<p align="center">label</p></div>\n';
-                    template_temp = strrep(template_temp, 'pic-path', strrep(tar_pic{j}, '\', '\\'));
-                    template_temp = strrep(template_temp, 'label', strcat('location-', num2str(j)));
-                    %template_temp = strcat('wangde',num2str(j),'\n');
-                    fprintf(fildId, template_temp);
-                    fprintf(fildId, '\n');
+                len_pic = length(tar_pic);
+
+                for j = 1:len_pic
+
+                    for k = 1:len_pic
+                        tar_pic_temp = tar_pic{k};
+                        cur_serial = tar_pic_temp{1};
+
+                        if isequal(cur_serial, j)
+                            template_temp = '<div><img src="pic-path" style="zoom:150%%;" />\n<p align="center">label</p></div>\n';
+                            template_temp = strrep(template_temp, 'pic-path', strrep(tar_pic_temp{2}, '\', '\\'));
+                            template_temp = strrep(template_temp, 'label', strcat('location-', num2str(cur_serial)));
+                            %template_temp = strcat('wangde',num2str(j),'\n');
+                            fprintf(fildId, template_temp);
+                            fprintf(fildId, '\n');
+                        end
+
+                    end
+
                 end
 
                 fclose(fildId);
