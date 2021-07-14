@@ -106,3 +106,21 @@ if true
     pic_name = 'kalman-median-filtering-3-ope4.png';
     saveas(f1, fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img', pic_name));
 end
+
+%%
+clc;
+% Linear model Poly2:
+% f(x) = p1*x^2 + p2*x + p3
+% where x is normalized by mean -47.11 and std 6.718
+% Coefficients (with 95% confidence bounds):
+% p1 =      0.8076  (-0.5569, 2.172)
+% p2 =      -4.642  (-6.304, -2.98)
+% p3 =       7.191  (5.202, 9.18)
+poly_model_func = @(a, b, c, env, x)(a .* (x - env).^2 + b .* (x - env) + c);
+rssi_x = linspace(min(mean_vals_ch39) - 15, max(mean_vals_ch39) + 5, 50);
+% rssi_x = rssi_x ; % center
+dist_y = poly_model_func(0.01789, 0.9949, 14.35, -10, rssi_x);
+tcf('poly-model');
+f1 = figure('name', 'poly-model', 'color', 'w');
+
+plot(rssi_x, dist_y, 'Marker', '.')
