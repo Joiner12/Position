@@ -1389,4 +1389,3 @@ ans(x) = power(10,(a-x)/10/b)
     <p style="text-align:center;"> ch39 1:15米拟合对数模型
     </p>
 </div>
-
