@@ -1330,7 +1330,7 @@ $$
 
 channel 37距离和RSSI对应关系实验结果：
 
-<div>
+<div style="background-color:white;text-align:center;">
     <img src="../figure/单信道37RSSI统计-1.png">
 </div>
 
@@ -1338,13 +1338,13 @@ channel 37距离和RSSI对应关系实验结果：
 
 channel 38距离和RSSI对应关系实验结果：
 
-<div>
+<div style="background-color:white;text-align:center;">
     <img src="../figure/单信道38RSSI统计-1.png">
 </div>
 
 channel 39距离和RSSI对应关系实验结果：
 
-<div>
+<div style="background-color:white;text-align:center;">
     <img src="../figure/单信道39RSSI统计-1.png">
 </div>
 
@@ -1352,7 +1352,7 @@ channel 39距离和RSSI对应关系实验结果：
 
 不同信道RSSI-距离对比结果：
 
-<div style="background-color:white">
+<div style="background-color:white;text-align:center;">
     <img src="../figure/单信道37-38-39对比-1.png">
     <p style="text-align:center">
         不同信道距离-RSSI均值对应关系
@@ -1363,10 +1363,11 @@ channel 39距离和RSSI对应关系实验结果：
     </p>
 </div>
 
+
 - 曲线平滑度：**Ch37>Ch39>Ch38；**
 - 统计方差：**Ch39<Ch38<Ch37；**
 
-<div style="background-color:white">
+<div style="background-color:white;text-align:center;">
     <img src="../figure/单信道37-38-39对比-丢包率-1.png">
     <p style="text-align:center">
         不同信道距离-RSSI均值对应关系
@@ -1389,3 +1390,29 @@ ans(x) = power(10,(a-x)/10/b)
     <p style="text-align:center;"> ch39 1:15米拟合对数模型
     </p>
 </div>
+# 七、无线信道
+
+## 1、路径损耗（path loss）
+
+路径损耗，或称传播损耗，指电波在空间传播所产生的损耗，是由发射功率的辐射扩散及信道的传播特性造成的，反映宏观范围内接收信号功率均值的变化。如下图所示，在自由空间中，电磁辐射的强度根据平方反比定律随着距离的增加而减小，因为同样的能量在一个面积上与距离源的距离平方成正比。
+
+<div style="background-color:white;text-align:center;">
+    <img src="img/天线发射功率路径损耗模型-1.png">
+    <p> 天线发射功率损耗模型
+    </p>
+</div>
+
+不同发射功率增益对路径损耗模型的影响是曲线沿y轴整体偏移。
+
+## 2、衰落叠加综合
+
+综合看传播路径衰落（Path Loss）、遮挡（Shadowing）、多径（Narrowband Fading）对接收信号的影响（如下图）。Path Loss造成信号衰减是均匀的、单调的；Shadowing造成的衰减相对更快（比Path Loss），断崖下跌；Fading造成的衰减是快速变化的（由于频率高），基本呈现零均值高斯分布。
+
+
+
+<div style="background-color:white;text-align:center;">
+    <img src="img/all-together.png">
+    <p> 衰落叠加综合
+    </p>
+</div>
+

@@ -124,3 +124,22 @@ tcf('poly-model');
 f1 = figure('name', 'poly-model', 'color', 'w');
 
 plot(rssi_x, dist_y, 'Marker', '.')
+
+%%
+clc;
+[dist, prx_set_1] = wireless_channel_simulation(2400 * 1000000, 1, 1);
+[~, prx_set_2] = wireless_channel_simulation(2400 * 1000000, 2, 1);
+[~, prx_set_3] = wireless_channel_simulation(2400 * 1000000, 3, 1);
+[~, prx_set_4] = wireless_channel_simulation(2400 * 1000000, 4, 1);
+tcf('wan');
+figure('name', 'wan', 'color', 'w');
+box on
+hold on
+plot(dist(1:25), prx_set_1(1:25), 'LineWidth', 2)
+plot(dist(1:25), prx_set_2(1:25), 'LineWidth', 2)
+plot(dist(1:25), prx_set_3(1:25), 'LineWidth', 2)
+plot(dist(1:25), prx_set_4(1:25), 'LineWidth', 2)
+legend('TXAntenna Gain 1', 'TXAntenna Gain 2', 'TXAntenna Gain 3', 'TXAntenna Gain 4')
+ylabel('RX Power (dBm)');
+xlabel('Distance (m)');
+title('不同发射功率-路径损耗(path loss)模型')
