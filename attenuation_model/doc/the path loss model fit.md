@@ -1415,4 +1415,7 @@ ans(x) = power(10,(a-x)/10/b)
     <p> 衰落叠加综合
     </p>
 </div>
+## 3、LE自动调整功率
+
+[蓝牙射频规范_wws的博客-CSDN博客_蓝牙射频](https://blog.csdn.net/wwws1994/article/details/112346906)
 

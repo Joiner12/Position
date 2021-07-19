@@ -143,3 +143,11 @@ legend('TXAntenna Gain 1', 'TXAntenna Gain 2', 'TXAntenna Gain 3', 'TXAntenna Ga
 ylabel('RX Power (dBm)');
 xlabel('Distance (m)');
 title('不同发射功率-路径损耗(path loss)模型')
+
+%% 
+clc;
+struct_test = struct();
+for k=1:8
+    struct_test(k).name = '我为你翻山越岭 却无心看风景';
+    struct_test(k).lyr = [3,4,5,1];
+end
