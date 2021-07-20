@@ -1415,7 +1415,63 @@ ans(x) = power(10,(a-x)/10/b)
     <p> 衰落叠加综合
     </p>
 </div>
-## 3、LE自动调整功率
+## 3、瑞利衰落
 
-[蓝牙射频规范_wws的博客-CSDN博客_蓝牙射频](https://blog.csdn.net/wwws1994/article/details/112346906)
+**选择性衰落**：在同一位置，由于反射径信号的存在，发射不同频率的信号时，在接收机处接收到信号有的频率是被增强了，有的频率是被削弱了。频率选择性由此产生。
+
+**相干带宽**：把那些受到的影响基本一致的频率范围叫做相干带宽。
+
+**平坦衰落**：假设发射的信号带宽较窄，小于相干带宽，我们可以知道，信号的频带内受到的衰落影响基本是一致的。这时称这样的衰落为平坦衰落。
+
+**瑞利衰落**：当我们把更多反射径的信号基本看作同一径信号时，瑞利衰落由此产生。在存在更多反射径的情况下，各个径到达的方向不一样，相位不一样，可以看作服从同一分布的随机变量。由概率论的知识，多个服从同一分布随机变量的和服从高斯分布。由于实际的信号一般是通过I、Q两路传输，因此I路服从高斯分布，Q路服从高斯分布，包络则服从瑞利分布。
+
+### 3.1、小尺度衰落建模
+
+多径衰落造成信号幅度波动，是因为经过不同路径传播之后，到达信号的“相位”不同，相位差异是由于不同路径的传输距离不同造成的，接收信号幅度的快速波动，其模型通常是服从某种分布的随机变量。
+
+多径衰落最常见的分布是瑞利分布：
+$$
+\begin{align}
+&f(r) = \frac{r}{\sigma^2}exp(-\frac{r^2}{2\sigma^2}).r\ge0\\
+\end{align}
+$$
+
+
+<div style="text-align:center;background-color:#DDE7D2;">
+    <p>
+        瑞利分布概率密度函数
+    </p>
+    <img src="https://img-blog.csdnimg.cn/20210720150434626.png">
+    <p>
+        瑞利分布概率密度图
+    </p>
+    <img src="https://tse1-mm.cn.bing.net/th/id/R-C.832b930ca557ddaa065ac0e9c9ebe5a5?rik=F2RLA1PFkKlXjg&riu=http%3a%2f%2fwww.vue5.com%2fupload%2fstatistics%2fimages%2frayleigh_distribution.jpg&ehk=0VnWkQtGbiUHGF0eloJAsowV4h9HYyNmhV7XFuiFfnY%3d&risl=&pid=ImgRaw">
+</div>
+
+
+
+当存在较强的LOS信号时，随机变量服从莱斯分布：
+
+<div style="text-align:center;background-color:#DDE7D2">
+    <p>莱斯分布</p>
+    <img src="https://img-blog.csdnimg.cn/20210720152413657.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jpc2t5XzEx,size_16,color_FFFFFF,t_70">
+    <p>莱斯分布概率密度图</p>
+    <img src="https://www.researchgate.net/publication/303847147/figure/fig5/AS:372574296002617@1465840043011/Probability-density-function-curves-for-composite-Weibull-Gamma-model-with-varying_Q320.jpg">
+</div>
+
+​    
+
+
+$$
+\begin{align}
+f(r)={\sigma^2}exp(-\frac{r^2+K^2}{2\sigma^2}).I_0(\frac{K_r}{\sigma^2}),r\ge0,K\ge0 \\
+\end{align}
+$$
+
+
+K是判定LOS信号与其他多径信号相比差别有多大的关系因子。
+
+
+
+https://blog.csdn.net/wwws1994/article/details/112346906
 
