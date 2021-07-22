@@ -1480,3 +1480,10 @@ https://blog.csdn.net/wwws1994/article/details/112346906
 
 - 最大、最小值同瑞利分布的关系；
 - ....
+
+
+
+# Reference
+
+1.[无线传感器网络实验报告（八）RSSI链路质量检测 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/338223876)
+

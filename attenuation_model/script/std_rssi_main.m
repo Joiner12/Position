@@ -13,48 +13,24 @@ fplot(f2, rssi_x, 'LineWidth', 1.5, 'Marker', 'd')
 fplot(f3, rssi_x, 'LineWidth', 1.5, 'Marker', 'd')
 legend('up', 'down-x', 'down-y')
 title("多项式拟合-引入环境因子(DEV)")
-xlabel('rssi/dbm');
+xlabel('rssi/dB');
 ylabel('distance/m')
 box on
 grid minor
 
-%%
-tcf('trend');
-figure('name', 'trend', 'color', 'white')
-box on
-hold on
-plot(mean_vals_ch39, 'marker', '*', 'Linewidth', 1.0)
-legend('mean-filter-ch39', 'mean-filter-ch38', 'mean-filter-ch39')
-
-set(get(gca, 'XLabel'), 'String', '距离/m');
-set(get(gca, 'YLabel'), 'String', 'RSSI/dbm');
-set(get(gca, 'Title'), 'String', 'CH-39距离-RSSI对应图');
-
-%%
+%% 分析统计特征
 tcf('nake');
-figure('name', 'nake', 'color', 'w')
-hold on
+figure('name', 'wayback', 'color', 'w')
 box on
-title('rssi-距离对应关系(单信道-ch39)')
 
 for k = 1:1:length(parse_data_ch39)
+    subplot(6, 3, k)
     cur_info = parse_data_ch39{k};
-    scatter(ones(size(cur_info.RSSI)) * cur_info.distance, cur_info.RSSI, '*')
-
-    if isequal(k, 1)
-        avr_line = line('XData', cur_info.distance, 'YData', cur_info.mean_val, ...
-            'LineWidth', 1.5, 'Color', 'C', 'Marker', 'd');
-    else
-        avr_line.XData = [avr_line.XData, cur_info.distance];
-        avr_line.YData = [avr_line.YData, cur_info.mean_val];
-    end
-
+    histogram(cur_info.RSSI)
+    set(get(gca, 'XLabel'), 'String', '距离/m');
+    set(get(gca, 'YLabel'), 'String', 'RSSI/dB');
+    title(['距离:', num2str(k), 'm']);
 end
-
-set(get(gca, 'XLabel'), 'String', '距离/m');
-set(get(gca, 'YLabel'), 'String', 'RSSI/dbm');
-legend('rssi', '均值')
-xlim([0, 19])
 
 %%
 tcf('lpr');
@@ -144,10 +120,11 @@ ylabel('RX Power (dBm)');
 xlabel('Distance (m)');
 title('不同发射功率-路径损耗(path loss)模型')
 
-%% 
+%%
 clc;
 struct_test = struct();
-for k=1:8
+
+for k = 1:8
     struct_test(k).name = '我为你翻山越岭 却无心看风景';
-    struct_test(k).lyr = [3,4,5,1];
+    struct_test(k).lyr = [3, 4, 5, 1];
 end
