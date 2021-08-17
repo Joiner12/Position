@@ -55,16 +55,3 @@ text(lat_tolit(1), lon_tolit(1), 'toilet')
 hold on
 geoplot(lat_lift, lon_lift, 'r')
 text(lat_lift(1), lon_lift(1), 'lift')
-
-% figure
-% geoplot(lat, lon);
-% text(lat, lon, name);
-% hold on
-% geoplot(lat_e, lon_e, '*');
-% hold on
-% geoplot(lat_tolit, lon_tolit, 'g')
-% text(lat_tolit(1), lon_tolit(1), 'toilet')
-% 
-% hold on
-% geoplot(lat_lift, lon_lift, 'r')
-% text(lat_lift(1), lon_lift(1), 'lift')
