@@ -88,4 +88,8 @@ hold on
 plot(rssi_data_1_new(index).rssi, 'marker', '.');
 legend(rssi_data_1(index).name, rssi_data_1_new(index).name)
 title(strcat('ope-', num2str(index)));
-Detecting and Correcting for Human Obstacles in BLE Trilateration Using Artificial Intelligence
+%%
+clc;
+a1 = get_test_point('P1')
+a2 = get_test_point({'P1', 'P2'})
+a1{1}.lat

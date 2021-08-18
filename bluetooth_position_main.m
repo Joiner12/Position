@@ -8,8 +8,8 @@ if true
     % 根据全站仪修改ap经纬度信息
     % [~, data_file] = modify_geoinfo();
     % 读取待定位数据
-    data_file = ['D:\Code\BlueTooth\pos_bluetooth_matlab\data\ope单信道-ch39-smallerScale测试\', ...
-                'data_new-added_lat_lon.txt'];
+    data_file = ['D:\Code\BlueTooth\pos_bluetooth_matlab\data\7x7静态测试数据-1\', ...
+                'static-P1-1.txt'];
     files_data = data_import('datafile', data_file);
 else
     files_data = data_import();
@@ -23,7 +23,6 @@ files_data = init_rssi_reference(files_data, -50.06763);
 
 disp('数据初始化成功');
 
-%
 % 蓝牙定位
 % 初始化定位结果
 % 批量删除缓存文件

@@ -25,7 +25,7 @@ function [position, debug_param] = bluetooth_position(data)
     debug_param.frame_id = 0;
     debug_param.config = config;
     %% apselector 初始化
-    ap_selector = init_ap_selector(21);
+    ap_selector = init_ap_selector(11);
     gif_cnt = 1;
 
     % 逐帧处理
@@ -33,49 +33,49 @@ function [position, debug_param] = bluetooth_position(data)
         %% 定位前预处理
         debug_param.frame_id = i;
 
-        cur_ap = data{i};
+        cur_frame_ap = data{i};
 
         %剔除经纬度数据无效的ap数据
-        cur_ap = prev_data_reduction_invalid_coordinate_del(cur_ap);
+        cur_frame_ap = prev_data_reduction_invalid_coordinate_del(cur_frame_ap);
 
         %整合相同的ap数据
-        cur_ap = prev_data_redcution_integrate_same_ap(cur_ap, ...
+        cur_frame_ap = prev_data_redcution_integrate_same_ap(cur_frame_ap, ...
             config.integrate_same_ap_param);
 
         % 对ap接收到的原始RSSI进行滤波处理——滑动滤波
-        cur_ap = prev_data_reduction_rssi_fit(cur_ap, ...
+        cur_frame_ap = prev_data_reduction_rssi_fit(cur_frame_ap, ...
             config.rssi_fit_type, ...
             config.rssi_fit_param);
 
         if rssi_fit_flag
             %rssi滤波（后续只会用到卡尔曼滤波后结果rssi_kf，高斯及平滑结果仅用于数据分析）
-            [cur_ap, ap_buf] = prev_rssi_filter(cur_ap, ...
+            [cur_frame_ap, ap_buf] = prev_rssi_filter(cur_frame_ap, ...
                 ap_buf, ...
                 config.rssi_filter_param);
 
-            for j = 1:length(cur_ap)
-                cur_ap(j).rssi = cur_ap(j).rssi_kf;
+            for j = 1:length(cur_frame_ap)
+                cur_frame_ap(j).rssi = cur_frame_ap(j).rssi_kf;
             end
 
         else
 
-            for j = 1:length(cur_ap)
-                cur_ap(j).rssi_kf = cur_ap(j).rssi;
+            for j = 1:length(cur_frame_ap)
+                cur_frame_ap(j).rssi_kf = cur_frame_ap(j).rssi;
             end
 
         end
 
-        [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_ap, ap_selector);
+        [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame_ap, ap_selector);
 
         %% 对数模型:RSSI转换为距离
-        cur_ap = prev_dist_calc(trilateration_ap, ...
+        cur_frame_ap = prev_dist_calc(trilateration_ap, ...
             config.dist_calc_type, ...
             config.dist_calc_param);
 
-        debug_param.ap_final_dist_calc{i} = cur_ap;
+        debug_param.ap_final_dist_calc{i} = cur_frame_ap;
 
         %% 三边定位,pos_res = [x,y]
-        [pos_res, ~] = trilateration_calc(cur_ap);
+        [pos_res, ~] = trilateration_calc(cur_frame_ap);
 
         %% 定位后处理-范围滤波
         if true & false
@@ -95,13 +95,13 @@ function [position, debug_param] = bluetooth_position(data)
             tcf('Positining'); % todo:异常点处理
             figure('name', 'Positining', 'Color', 'w');
 
-            % draw_positioning_state(gca,'static', cur_ap, 'estimated_positon', [pos_res.lat, pos_res.lon], ...
+            % draw_positioning_state(gca,'static', cur_frame_ap, 'estimated_positon', [pos_res.lat, pos_res.lon], ...
                 %     'true_pos', [30.54798217, 104.05861620]);
             % lat:30.547966937307,lon:104.058595105583 static-1
             % lat:30.547966458202,lon:104.058698530348 static-2
             % lat:30.547965611298,lon:104.058814724652 static-3
             true_pos_manual = get_test_point("P1");
-            draw_positioning_state(gca, 'static', cur_ap, 'estimated_positon', ...
+            draw_positioning_state(gca, 'static', cur_frame_ap, 'estimated_positon', ...
                 [pos_res.lat, pos_res.lon], ...
                 'true_pos', [true_pos_manual{1}.lat, true_pos_manual{1}.lon]);
             % 生成gif
