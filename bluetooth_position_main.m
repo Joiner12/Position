@@ -44,16 +44,9 @@ for i = 1:file_num
     if false
         position{i}.true_pos = files_true_pos{i};
     else
-        % lat:30.547966937307,lon:104.058595105583 static-1
-        % lat:30.547966458202,lon:104.058698530348 static-2
-        % lat:30.547965611298,lon:104.058814724652 static-3
-        true_pos_manual = [30.547966937307, 104.058595105583; ...
-                            30.547966458202, 104.058698530348; ...
-                            30.547965611298, 104.058814724652; ...
-                            30.54793637, 104.05869018];
-        true_pos_index_temp = 4;
-        true_pos_temp = struct('lat', true_pos_manual(true_pos_index_temp, 1), ...
-            'lon', true_pos_manual(true_pos_index_temp, 2));
+        true_pos_manual = get_test_point("P1");
+        true_pos_temp = struct('lat', true_pos_manual{1}.lat, ...
+            'lon', true_pos_manual{1}.lon);
 
         position{i}.true_pos = repmat(true_pos_temp, ...
             size(position{i}.pos_res, 1), size(position{i}.pos_res, 2));
