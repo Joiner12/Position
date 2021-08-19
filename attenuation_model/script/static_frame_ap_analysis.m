@@ -86,6 +86,7 @@ end
 tcf('frame-data');
 figure('name', 'frame-data', 'color', 'white');
 hold on
+%{
 scatter(ope_0{2, 1}, ope_0{1, 1}, 'filled', ...
     'MarkerEdgeColor', [101, 207, 213] ./ 255, 'MarkerFaceColor', [101, 207, 213] ./ 255);
 scatter(ope_1{2, 1}, ope_1{1, 1}, 'filled', ...
@@ -98,11 +99,12 @@ scatter(ope_8{2, 1}, ope_8{1, 1}, 'filled', ...
     'MarkerEdgeColor', [67, 94, 190] ./ 255, 'MarkerFaceColor', [67, 94, 190] ./ 255);
 scatter(ope_9{2, 1}, ope_9{1, 1}, 'filled', ...
     'MarkerEdgeColor', [189, 67, 190] ./ 255, 'MarkerFaceColor', [189, 67, 190] ./ 255);
-plot(ope_0{2, 1}, ope_0{1, 1});
-plot(ope_1{2, 1}, ope_1{1, 1});
-plot(ope_6{2, 1}, ope_6{1, 1});
-plot(ope_7{2, 1}, ope_7{1, 1});
-plot(ope_8{2, 1}, ope_8{1, 1});
-plot(ope_9{2, 1}, ope_9{1, 1});
+%}
+plot(ope_0{2, 1}, ope_0{1, 1}, 'Marker', '*');
+plot(ope_1{2, 1}, ope_1{1, 1}, 'Marker', 'o');
+plot(ope_6{2, 1}, ope_6{1, 1}, 'Marker', 'd');
+plot(ope_7{2, 1}, ope_7{1, 1}, 'Marker', '<');
+plot(ope_8{2, 1}, ope_8{1, 1}, 'Marker', 'x');
+plot(ope_9{2, 1}, ope_9{1, 1}, 'Marker', '^');
 hold off
 legend({'ope_0', 'ope_1', 'ope_6', 'ope_7', 'ope_8', 'ope_9'})
