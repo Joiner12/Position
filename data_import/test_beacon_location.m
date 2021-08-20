@@ -14,6 +14,9 @@ for k = 1:1:length(beacon)
     name{k} = beacon(k).name;
 end
 
+name_e = {'HLK_1', 'HLK_3', 'HLK_7', 'HLK_8'};
+lat_e = [30.5480384, 30.5478864, 30.5478867, 30.5480210];
+lon_e = [104.0586489, 104.0586441, 104.0585689, 104.0585709];
 
 %厕所门口
 lat_tolit = [30.547941771; 30.54793215; 30.54793215; 30.547941771; 30.547941771];
@@ -25,11 +28,11 @@ lon_lift = [104.058569922; 104.058567998; 104.05856792; 104.058569922; 104.05856
 
 tcf('hs');
 figure('name', 'hs', 'color', 'w');
-subplot(311)
+subplot(211)
 plot(x - min(x), y - min(y), '*')
 text(x - min(x), y - min(y), name)
 
-subplot(312)
+subplot(212)
 geoplot(lat, lon);
 text(lat, lon, name);
 hold on
@@ -42,27 +45,7 @@ hold on
 geoplot(lat_lift, lon_lift, 'r')
 text(lat_lift(1), lon_lift(1), 'lift')
 
-subplot(313)
-geoplot(lat_e, lon_e);
-text(lat_e, lon_e, name_e);
-hold on
-geoplot(lat_tolit, lon_tolit, 'g')
-text(lat_tolit(1), lon_tolit(1), 'toilet')
-
-hold on
-geoplot(lat_lift, lon_lift, 'r')
-text(lat_lift(1), lon_lift(1), 'lift')
-
-%% 实际测试对数模型点位
-% 以ope1为参考坐标[0,0]
-L1 = [0, 4.6];
-L2 = [0, 4.6];
-locator_points = {L1, L2};
-tcf('hs-1');
+tcf('hs-1')
 figure('name', 'hs-1', 'color', 'w');
-hold on
-plot(x - min(x), y - min(y), '*')
-text(x - min(x), y - min(y), name)
-plot([0:0.5:16], ones(size([0:0.5:16])) .* 3.7, 'LineWidth', 2)
-grid minor
-
+geoplot(lat, lon);
+text(lat, lon, name);
