@@ -1481,6 +1481,50 @@ https://blog.csdn.net/wwws1994/article/details/112346906
 - 最大、最小值同瑞利分布的关系；
 - ....
 
+# 八、真实环境下标准RSSI-DIST特征
+
+<div style="text-align:center;background-color:white;">
+    <img src="../figure/real_env_std_ope_0.png">
+    <br>
+    <p style="font-size:25px;font-color:gray;">ope0</p>
+</div>
+
+
+
+<div style="text-align:center;background-color:white;">
+    <img src="../figure/real_env_std_ope_1.png">
+    <br>
+    <p style="font-size:25px;font-color:gray;">ope1</p>
+</div>
+
+<div style="text-align:center;background-color:white;">
+    <img src="../figure/real_env_std_ope_6.png">
+    <br>
+    <p style="font-size:25px;font-color:gray;">ope6</p>
+</div>
+
+<div style="text-align:center;background-color:white;">
+    <img src="../figure/real_env_std_ope_7.png">
+    <br>
+    <p style="font-size:25px;font-color:gray;">ope7</p>
+</div>
+
+
+
+<div style="text-align:center;background-color:white;">
+    <img src="../figure/real_env_std_ope_8.png">
+    <br>
+    <p style="font-size:25px;font-color:gray;">ope8</p>
+</div>
+
+<div style="text-align:center;background-color:white;">
+    <img src="../figure/real_env_std_ope_9.png">
+    <br>
+    <p style="font-size:25px;font-color:gray;">ope9</p>
+</div>
+
+
+
 
 
 # Reference
