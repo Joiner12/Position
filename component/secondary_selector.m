@@ -25,9 +25,6 @@ function secondary_selector()
     end
 
     beacon_t = struct2table(beacon_s);
-    % todo:需要考虑奇异解情况，三点近似位于同一直线上;
-    % rel_position_x = [];
-    % rel_position_y = 0;
     % 假设:距离质心欧式距离和最小的点作为选择点.
     choose_index = nchoosek(1:1:6, 4);
     % 4 in 6
@@ -44,13 +41,38 @@ function secondary_selector()
                 beacon_t.name(t_indextemp(1), :), ...
                 beacon_t.name(t_indextemp(2), :), ...
                 beacon_t.name(t_indextemp(3), :));
-            % 判断是否为近似同一条直线上点
-            % todo:角度计算
-            theta = cross(ABC_pos(1, :) - ABC_pos(2, :), ABC_pos(3, :) - ABC_pos(1, :));
-            theta = thata / mod(ABC_pos(1, :) - ABC_pos(2, :)) / mod(ABC_pos(3, :) - ABC_pos(1, :));
-            disp(asin(theta));
+            cos_theta = dot(ABC_pos(1, :) - ABC_pos(2, :), ABC_pos(3, :) - ABC_pos(1, :));
+            cos_theta = cos_theta ...
+                / norm(ABC_pos(1, :) - ABC_pos(2, :)) ...
+                / norm(ABC_pos(3, :) - ABC_pos(1, :));
+            % θ < 5° 为近似同一条直线上点
+            if abs(cos_theta) >= cosd(5)
+                warning('奇异结点');
+            end
+
         end
 
     end
 
+    %% k-means clustering n*p → n*1
+    pos_x = beacon_t.rel_x;
+    pos_y = beacon_t.rel_y;
+    pos_xy = [pos_x(1:4) pos_y(1:4)];
+    opts = statset('Display', 'final');
+    [idx, C] = kmeans(pos_xy, 2, 'Distance', 'sqeuclidean', ...
+        'Replicates', 5, 'Options', opts);
+    disp('k-means');
+    % tcf('clustering-1');
+    % figure('color', 'white', 'name', 'clustering-1');
+    % hold on
+    % plot(data_rssi_x, data_rssi_y);
+    % plot(data_rssi_x(idx == 1), data_rssi_y(idx == 1), 'r*', 'MarkerSize', 12)
+    % plot(data_rssi_x(idx == 2), data_rssi_y(idx == 2), 'b*', 'MarkerSize', 12)
+    % plot(data_rssi_x(idx == 3), data_rssi_y(idx == 3), 'c*', 'MarkerSize', 12)
+    % line([1, length(data_rssi_y)], [C(1, 1), C(1, 1)], 'LineWidth', 1, 'color', 'r', 'LineStyle', '--')
+    % line([1, length(data_rssi_y)], [C(2, 1), C(2, 1)], 'LineWidth', 1, 'color', 'g', 'LineStyle', '--')
+    % line([1, length(data_rssi_y)], [C(3, 1), C(3, 1)], 'LineWidth', 1, 'color', 'c', 'LineStyle', '--')
+    % legend('rssi', 'Cluster 1', 'Cluster 2', 'Cluster 2', 'Location', 'NW')
+    % title('Cluster Assignments and Origin')
+    % hold off
 end

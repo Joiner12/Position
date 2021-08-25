@@ -104,4 +104,4 @@ end
 clc;
 a = randi([30, 70], [1, 10]) * -1;
 a = sort(a);
-mean(a(floor(10/2):floor(10/2) + 1))
+mean(a(floor(10/2):floor(10/2) + 1)
