@@ -138,8 +138,8 @@ std_ope_9 = joint_lines_t(joint_lines_t.tail == "ope_9", :);
 
 %% figure-show rssi features
 clc;
-cur_ope = std_ope_9;
-figure_name = 'ope_9_rssi';
+cur_ope = std_ope_0;
+figure_name = 'ope_0_rssi';
 tcf(figure_name);
 f1 = figure('name', figure_name, 'color', 'white', 'Position', [302, 217, 1216, 683]);
 line_marker = ['o', '+', '*', 'x', 's', 'd', '<', '>', 'p', 'h'];
@@ -160,3 +160,48 @@ text(0, 1, ['ope', temp{1}], ...
     'FontSize', 20, 'Color', 'red');
 xlim([0, 2])
 ylim([0, 2])
+
+%% 标准RSSI-DIST数据
+clc; disp('标准数据');
+std_ope_0_r = resort_dist_rssi(std_ope_0);
+std_ope_1_r = resort_dist_rssi(std_ope_1);
+std_ope_6_r = resort_dist_rssi(std_ope_6);
+std_ope_7_r = resort_dist_rssi(std_ope_7);
+std_ope_8_r = resort_dist_rssi(std_ope_8);
+std_ope_9_r = resort_dist_rssi(std_ope_9);
+%%
+tcf('std-dist-1'); figure('name', 'std-dist-1', 'color', 'white');
+hold on
+plot(std_ope_0_r.dist, std_ope_0_r.rssi, 'Marker', line_marker(randi([1, 10])), 'LineWidth', 1.6)
+plot(std_ope_1_r.dist, std_ope_1_r.rssi, 'Marker', line_marker(randi([1, 10])), 'LineWidth', 1.6)
+plot(std_ope_6_r.dist, std_ope_6_r.rssi, 'Marker', line_marker(randi([1, 10])), 'LineWidth', 1.6)
+plot(std_ope_7_r.dist, std_ope_7_r.rssi, 'Marker', line_marker(randi([1, 10])), 'LineWidth', 1.6)
+plot(std_ope_8_r.dist, std_ope_8_r.rssi, 'Marker', line_marker(randi([1, 10])), 'LineWidth', 1.6)
+plot(std_ope_9_r.dist, std_ope_9_r.rssi, 'Marker', line_marker(randi([1, 10])), 'LineWidth', 1.6)
+legend('0', '1', '6', '7', '8', '9')
+title('真实环境下不同信标RSSI-DIST对比图')
+xlabel('dist/m')
+ylabel('rssi/dbm')
+box on
+
+%% spcrv
+tcf('std-dist-2'); figure('name', 'std-dist-2', 'color', 'white');
+x_1 = std_ope_9_r.dist';
+y_1 = std_ope_9_r.rssi';
+values = spcrv([[x_1(1) x_1 x_1(end)]; [y_1(1) y_1 y_1(end)]], 3);
+plot(values(1, :), values(2, :), 'g');
+hold on
+plot(x_1, y_1, 'LineStyle', 'None', 'Marker', '*')
+%%
+function dist_rssi = resort_dist_rssi(org_data)
+    dist_rssi = table();
+    mean_val_temp = org_data.rssi_mean_val;
+    len_temp = org_data.len;
+    len_temp_s = sort(len_temp);
+
+    for k = 1:length(len_temp_s)
+        dist_rssi.dist(k) = len_temp_s(k);
+        dist_rssi.rssi(k) = mean_val_temp(len_temp == len_temp_s(k));
+    end
+
+end

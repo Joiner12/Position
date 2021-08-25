@@ -1522,9 +1522,17 @@ https://blog.csdn.net/wwws1994/article/details/112346906
     <br>
     <p style="font-size:25px;font-color:gray;">ope9</p>
 </div>
+**真实环境下RSSI-DIST特征对比**
 
+<img src="https://gitee.com/RiskyJR/pic-bed/raw/master/20210825110205.png">
 
-
+- [ ] dist<8，rssi 在[-65,-45]范围内；
+- [ ] fingerprint方法解决；
+- [ ] 将所有的距离重排序，绘制成一条曲线；
+- [ ] 考虑RSSI分布左偏性；
+- [ ] 信噪比较大；
+- [ ] 找出一条中间的曲线；
+- [ ] 什么原因导致的实测曲线和标准对数模型差距如此之大；
 
 
 # Reference
