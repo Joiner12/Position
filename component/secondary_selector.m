@@ -1,21 +1,32 @@
-function secondary_selector()
+function trilateration_ap = secondary_selector(pre_trilateration_ap, varargin)
     % 功能:
-    %       根据BS(base station)的布局信息,选择最有可能作为定位BS的三点;
+    %       根据BS(base station)的地理位置信息,选择最有可能作为定位BS的三点;
     % 定义:
-    % ...
-    beacon_s = hlk_beacon_location();
+    %       trilateration_ap = secondary_selector(pre_trilateration_ap, varargin)
+    % 参数:
+    %       pre_trilateration_ap,存储BS信息的结构体数组;
+    %       varargin,扩展参数
+    % 输出:
+    %       trilateration_ap,处理后存储BS信息的结构体数组;
+    % 说明:
+    %       1.由于蓝牙RSSI传播过程中，会受到外部环境的影响，接收器收到的信号包含直射、折射、反射等
+    %       多种分量，导致在距离较远的情况下，RSSI较大。
+    %       2.ap_selector预先选择出四个BS，然后再根据BS的位置信息筛选掉RSSI较大，但真实距离相对较远
+    %       的BS.
+    %       3.选择依据：任意三点构成一个三角形，所构成三角形三点到质心欧式距离和最小的三角形作为选择点.
+    beacon_s = pre_trilateration_ap;
+    trilateration_ap = pre_trilateration_ap;
+
+    % 待选BS数目不足，返回
+    if length(pre_trilateration_ap) <= 3
+        return
+    end
+
     x = zeros(0);
     y = zeros(0);
-    name = cell(0);
-    lat = zeros(0);
-    lon = zeros(0);
 
     for k = 1:1:length(beacon_s)
-        x(k) = beacon_s(k).x;
-        y(k) = beacon_s(k).y;
-        lat(k) = beacon_s(k).lat;
-        lon(k) = beacon_s(k).lon;
-        name{k} = beacon_s(k).name;
+        [x(k), y(k), ~] = latlon_to_xy(beacon_s(k).lat, beacon_s(k).lon);
     end
 
     %  相对坐标
@@ -25,54 +36,39 @@ function secondary_selector()
     end
 
     beacon_t = struct2table(beacon_s);
-    % 假设:距离质心欧式距离和最小的点作为选择点.
-    choose_index = nchoosek(1:1:6, 4);
-    % 4 in 6
-    for k = 1:size(choose_index, 1)
-        % 3 in 4
-        select_beacon_index = nchoosek(choose_index(k, :), 3);
+    table_cnt = 0;
+    min_centroid = struct('sum_dist', intmax('uint32'), 'bs_index', [1, 2, 3]); % 最小质心距离和BS
+    select_beacon_index = nchoosek(1:length(pre_trilateration_ap), 3); % 可能的三角形组合
 
-        for j = 1:size(select_beacon_index, 1)
-            t_indextemp = select_beacon_index(j, :);
-            ABC_pos = [beacon_t.rel_x(t_indextemp(1), :), beacon_t.rel_y(t_indextemp(1), :); ...
-                        beacon_t.rel_x(t_indextemp(2), :), beacon_t.rel_y(t_indextemp(2), :); ...
-                        beacon_t.rel_x(t_indextemp(3), :), beacon_t.rel_y(t_indextemp(3), :); ];
-            fprintf('selected beacons:%s,%s,%s\n', ...
-                beacon_t.name(t_indextemp(1), :), ...
-                beacon_t.name(t_indextemp(2), :), ...
-                beacon_t.name(t_indextemp(3), :));
-            cos_theta = dot(ABC_pos(1, :) - ABC_pos(2, :), ABC_pos(3, :) - ABC_pos(1, :));
-            cos_theta = cos_theta ...
-                / norm(ABC_pos(1, :) - ABC_pos(2, :)) ...
-                / norm(ABC_pos(3, :) - ABC_pos(1, :));
-            % θ < 5° 为近似同一条直线上点
-            if abs(cos_theta) >= cosd(5)
-                warning('奇异结点');
-            end
+    for j = 1:size(select_beacon_index, 1)
+        t_indextemp = select_beacon_index(j, :);
+        table_cnt = table_cnt + 1;
+        ABC_pos = [beacon_t.rel_x(t_indextemp(1), :), beacon_t.rel_y(t_indextemp(1), :); ...
+                    beacon_t.rel_x(t_indextemp(2), :), beacon_t.rel_y(t_indextemp(2), :); ...
+                    beacon_t.rel_x(t_indextemp(3), :), beacon_t.rel_y(t_indextemp(3), :); ];
 
+        cos_theta = dot(ABC_pos(1, :) - ABC_pos(2, :), ABC_pos(3, :) - ABC_pos(1, :));
+        cos_theta = cos_theta ...
+            / norm(ABC_pos(1, :) - ABC_pos(2, :)) ...
+            / norm(ABC_pos(3, :) - ABC_pos(1, :));
+        % θ < 5° 为近似同一条直线上点
+        % 三边定位过程中的奇异解,由于奇异解的质心距离和相比较于正常解大,因此不用进行特别处理;
+        if abs(cos_theta) >= cosd(5)
+            % warning('奇异节点');
+        end
+
+        centroid_point = mean(ABC_pos);
+        centroid_dist = zeros(0);
+
+        for k_1 = 1:3
+            centroid_dist(k_1) = norm(ABC_pos(k_1, :) - centroid_point);
+        end
+
+        if sum(centroid_dist) < min_centroid.sum_dist
+            min_centroid.bs_index = t_indextemp;
         end
 
     end
 
-    %% k-means clustering n*p → n*1
-    pos_x = beacon_t.rel_x;
-    pos_y = beacon_t.rel_y;
-    pos_xy = [pos_x(1:4) pos_y(1:4)];
-    opts = statset('Display', 'final');
-    [idx, C] = kmeans(pos_xy, 2, 'Distance', 'sqeuclidean', ...
-        'Replicates', 5, 'Options', opts);
-    disp('k-means');
-    % tcf('clustering-1');
-    % figure('color', 'white', 'name', 'clustering-1');
-    % hold on
-    % plot(data_rssi_x, data_rssi_y);
-    % plot(data_rssi_x(idx == 1), data_rssi_y(idx == 1), 'r*', 'MarkerSize', 12)
-    % plot(data_rssi_x(idx == 2), data_rssi_y(idx == 2), 'b*', 'MarkerSize', 12)
-    % plot(data_rssi_x(idx == 3), data_rssi_y(idx == 3), 'c*', 'MarkerSize', 12)
-    % line([1, length(data_rssi_y)], [C(1, 1), C(1, 1)], 'LineWidth', 1, 'color', 'r', 'LineStyle', '--')
-    % line([1, length(data_rssi_y)], [C(2, 1), C(2, 1)], 'LineWidth', 1, 'color', 'g', 'LineStyle', '--')
-    % line([1, length(data_rssi_y)], [C(3, 1), C(3, 1)], 'LineWidth', 1, 'color', 'c', 'LineStyle', '--')
-    % legend('rssi', 'Cluster 1', 'Cluster 2', 'Cluster 2', 'Location', 'NW')
-    % title('Cluster Assignments and Origin')
-    % hold off
+    trilateration_ap = beacon_s(t_indextemp);
 end

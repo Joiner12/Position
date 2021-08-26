@@ -66,7 +66,8 @@ function [position, debug_param] = bluetooth_position(data)
         end
 
         [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame_ap, ap_selector);
-
+        %% 根据BS(base station)布局进行二次选择
+        trilateration_ap = secondary_selector(trilateration_ap);
         %% 对数模型:RSSI转换为距离
         cur_frame_ap = prev_dist_calc(trilateration_ap, ...
             config.dist_calc_type, ...

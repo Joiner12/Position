@@ -102,6 +102,6 @@ end
 
 %%
 clc;
-a = randi([30, 70], [1, 10]) * -1;
-a = sort(a);
-mean(a(floor(10/2):floor(10/2) + 1)
+load('ap_selector_1.mat');
+pre_trilateration_ap = trilateration_ap;
+trilateration_ap_af = secondary_selector(pre_trilateration_ap);
