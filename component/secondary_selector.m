@@ -66,9 +66,10 @@ function trilateration_ap = secondary_selector(pre_trilateration_ap, varargin)
 
         if sum(centroid_dist) < min_centroid.sum_dist
             min_centroid.bs_index = t_indextemp;
+            min_centroid.sum_dist = sum(centroid_dist);
         end
 
     end
 
-    trilateration_ap = beacon_s(t_indextemp);
+    trilateration_ap = beacon_s(min_centroid.bs_index);
 end
