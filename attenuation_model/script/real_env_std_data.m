@@ -122,6 +122,8 @@ for k = 1:joints_len
     rssi_temp = get_rssi_info(data_file, ap_filter);
     joint_lines(k).RSSI = rssi_temp;
     joint_lines(k).rssi_mean_val = mean(rssi_temp);
+    joint_lines(k).rssi_std_val = std(rssi_temp);
+    joint_lines(k).rssi_median_val = median(rssi_temp);
     disp([data_file, ap_filter]);
 end
 
@@ -135,6 +137,13 @@ std_ope_6 = joint_lines_t(joint_lines_t.tail == "ope_6", :);
 std_ope_7 = joint_lines_t(joint_lines_t.tail == "ope_7", :);
 std_ope_8 = joint_lines_t(joint_lines_t.tail == "ope_8", :);
 std_ope_9 = joint_lines_t(joint_lines_t.tail == "ope_9", :);
+% resort data by real distance
+std_ope_0_r_t = resort_table(std_ope_0);
+std_ope_1_r_t = resort_table(std_ope_1);
+std_ope_6_r_t = resort_table(std_ope_6);
+std_ope_7_r_t = resort_table(std_ope_7);
+std_ope_8_r_t = resort_table(std_ope_8);
+std_ope_9_r_t = resort_table(std_ope_9);
 
 %% figure-show rssi features
 clc;
@@ -225,9 +234,18 @@ if true
     hold on
     plot(x_1, y_1, 'LineStyle', 'None', 'Marker', '*')
 end
-%% 
+
+%% 分析ope_x统计特征
+tcf('rssi-statistic'); figure('name', 'rssi-statistic', 'color', 'white')
+hold on
+plot(std_ope_0_r_t.rssi_mean_val, 'LineWidth', 1.5)
+plot(std_ope_0_r_t.rssi_std_val, 'LineWidth', 1.5)
+plot(std_ope_0_r_t.rssi_median_val, 'LineWidth', 1.5)
+legend('mean', 'std', 'median')
+%%
 ch39_real_rssi = dist_rssi_all_t_r.rssi;
 ch39_real_dist = dist_rssi_all_t_r.dist;
+
 %%
 function dist_rssi = resort_dist_rssi(org_data)
     dist_rssi = table();
@@ -238,6 +256,19 @@ function dist_rssi = resort_dist_rssi(org_data)
     for k = 1:length(len_temp_s)
         dist_rssi.dist(k) = len_temp_s(k);
         dist_rssi.rssi(k) = mean_val_temp(len_temp == len_temp_s(k));
+    end
+
+end
+
+%% 根据距离重新排序table
+function table_out = resort_table(table_in)
+    table_out = table_in;
+    len_temp = table_in.len;
+    len_temp = sort(len_temp);
+
+    for k = 1:length(len_temp)
+        index = find(table_in.len == len_temp(k));
+        table_out(k, :) = table_in(index, :);
     end
 
 end
