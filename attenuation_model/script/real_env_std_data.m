@@ -89,27 +89,6 @@ for i = 1:length(anchor_points_s)
 
 end
 
-if false
-    tcf('hs-2');
-    figure('name', 'hs-2', 'color', 'w');
-    hold on
-    plot(x - min(x), y - min(y), '*')
-    text(x - min(x), y - min(y), name)
-    scatter(anchor_points(:, 1), anchor_points(:, 2), ...
-        [], linspace(10, 100, length(anchor_points)), 'filled');
-    text(anchor_points(:, 1), anchor_points(:, 2), L_names);
-
-    for j = 1:length(joint_lines)
-        line([joint_lines(j).x1y1(1), joint_lines(j).x2y2(1)], ...
-            [joint_lines(j).x1y1(2), joint_lines(j).x2y2(2)], 'color', rand(1, 3));
-        text(mean([joint_lines(j).x1y1(1), joint_lines(j).x2y2(1)]), ...
-            mean([joint_lines(j).x1y1(2), joint_lines(j).x2y2(2)]), joint_lines(j).label);
-    end
-
-    grid minor
-    box on
-end
-
 %% Extract standard data
 clc; disp('extract standard data');
 joints_len = length(joint_lines);
@@ -128,7 +107,6 @@ for k = 1:joints_len
 end
 
 joint_lines_t = struct2table(joint_lines);
-
 %% data post processing - distance:rssi by anchor name
 clc; disp('data post processing');
 std_ope_0 = joint_lines_t(joint_lines_t.tail == "ope_0", :);
@@ -145,31 +123,6 @@ std_ope_7_r_t = resort_table(std_ope_7);
 std_ope_8_r_t = resort_table(std_ope_8);
 std_ope_9_r_t = resort_table(std_ope_9);
 
-%% figure-show rssi features
-clc;
-cur_ope = std_ope_0;
-figure_name = 'ope_0_rssi';
-tcf(figure_name);
-f1 = figure('name', figure_name, 'color', 'white', 'Position', [302, 217, 1216, 683]);
-line_marker = ['o', '+', '*', 'x', 's', 'd', '<', '>', 'p', 'h'];
-
-for k = 1:size(cur_ope, 1)
-    subplot(4, 4, k)
-    plot(cell2mat(cur_ope.RSSI(k)), 'color', [43, 207, 49] ./ 255, ...
-        'Marker', line_marker(randi([1, 10])), 'LineStyle', '-');
-    title(cur_ope.header(k))
-end
-
-subplot(4, 4, size(f1.Children, 1) + 1);
-plot(cur_ope.rssi_mean_val)
-title('trend')
-subplot(4, 4, size(f1.Children, 1) + 1);
-temp = regexp(figure_name, '\d', 'match');
-text(0, 1, ['ope', temp{1}], ...
-    'FontSize', 20, 'Color', 'red');
-xlim([0, 2])
-ylim([0, 2])
-
 %% 标准RSSI-DIST数据
 clc; disp('标准数据');
 std_ope_0_r = resort_dist_rssi(std_ope_0);
@@ -178,31 +131,8 @@ std_ope_6_r = resort_dist_rssi(std_ope_6);
 std_ope_7_r = resort_dist_rssi(std_ope_7);
 std_ope_8_r = resort_dist_rssi(std_ope_8);
 std_ope_9_r = resort_dist_rssi(std_ope_9);
-%%
-tcf('std-dist-1'); figure('name', 'std-dist-1', 'color', 'white');
-hold on
-plot(std_ope_0_r.dist, std_ope_0_r.rssi, 'Marker', line_marker(randi([1, 10])), 'LineWidth', 1.6)
-plot(std_ope_1_r.dist, std_ope_1_r.rssi, 'Marker', line_marker(randi([1, 10])), 'LineWidth', 1.6)
-plot(std_ope_6_r.dist, std_ope_6_r.rssi, 'Marker', line_marker(randi([1, 10])), 'LineWidth', 1.6)
-plot(std_ope_7_r.dist, std_ope_7_r.rssi, 'Marker', line_marker(randi([1, 10])), 'LineWidth', 1.6)
-plot(std_ope_8_r.dist, std_ope_8_r.rssi, 'Marker', line_marker(randi([1, 10])), 'LineWidth', 1.6)
-plot(std_ope_9_r.dist, std_ope_9_r.rssi, 'Marker', line_marker(randi([1, 10])), 'LineWidth', 1.6)
-legend('0', '1', '6', '7', '8', '9')
-title('真实环境下不同信标RSSI-DIST对比图')
-xlabel('dist/m')
-ylabel('rssi/dbm')
-box on
 
-%% spcrv
-tcf('std-dist-2'); figure('name', 'std-dist-2', 'color', 'white');
-x_1 = std_ope_9_r.dist';
-y_1 = std_ope_9_r.rssi';
-values = spcrv([[x_1(1) x_1 x_1(end)]; [y_1(1) y_1 y_1(end)]], 3);
-plot(values(1, :), values(2, :), 'g');
-hold on
-plot(x_1, y_1, 'LineStyle', 'None', 'Marker', '*')
 %% 将所有bs dist-rssi合成一组数据,作为一个模型进行处理
-clc; disp('dist rssi cat');
 % table_cat = table()
 dist_all = [...
             reshape(std_ope_0_r.dist, [length(std_ope_0_r.dist), 1]); ...
@@ -225,7 +155,92 @@ dist_rssi_all_t.rssi_mean_val = rssi_all;
 dist_rssi_all_t.len = dist_all;
 dist_rssi_all_t_r = resort_dist_rssi(dist_rssi_all_t);
 
-if true
+%% 获取单个anchor node rssi 统计信息
+std_ope_0_r_t_s = get_single_anchor_node_rssi_statistics(std_ope_0_r_t);
+std_ope_1_r_t_s = get_single_anchor_node_rssi_statistics(std_ope_1_r_t);
+std_ope_6_r_t_s = get_single_anchor_node_rssi_statistics(std_ope_6_r_t);
+std_ope_7_r_t_s = get_single_anchor_node_rssi_statistics(std_ope_7_r_t);
+std_ope_8_r_t_s = get_single_anchor_node_rssi_statistics(std_ope_8_r_t);
+std_ope_9_r_t_s = get_single_anchor_node_rssi_statistics(std_ope_9_r_t);
+%% figure #1 绘制access node 和 anchor nodes测试示意图
+if false
+    tcf('hs-2');
+    figure('name', 'hs-2', 'color', 'w');
+    hold on
+    plot(x - min(x), y - min(y), '*')
+    text(x - min(x), y - min(y), name)
+    scatter(anchor_points(:, 1), anchor_points(:, 2), ...
+        [], linspace(10, 100, length(anchor_points)), 'filled');
+    text(anchor_points(:, 1), anchor_points(:, 2), L_names);
+
+    for j = 1:length(joint_lines)
+        line([joint_lines(j).x1y1(1), joint_lines(j).x2y2(1)], ...
+            [joint_lines(j).x1y1(2), joint_lines(j).x2y2(2)], 'color', rand(1, 3));
+        text(mean([joint_lines(j).x1y1(1), joint_lines(j).x2y2(1)]), ...
+            mean([joint_lines(j).x1y1(2), joint_lines(j).x2y2(2)]), joint_lines(j).label);
+    end
+
+    grid minor
+    box on
+end
+
+%% figure #2 show rssi features
+if false
+    clc;
+    cur_ope = std_ope_0;
+    figure_name = 'ope_0_rssi';
+    tcf(figure_name);
+    f1 = figure('name', figure_name, 'color', 'white', 'Position', [302, 217, 1216, 683]);
+    line_marker = ['o', '+', '*', 'x', 's', 'd', '<', '>', 'p', 'h'];
+
+    for k = 1:size(cur_ope, 1)
+        subplot(4, 4, k)
+        plot(cell2mat(cur_ope.RSSI(k)), 'color', [43, 207, 49] ./ 255, ...
+            'Marker', line_marker(randi([1, 10])), 'LineStyle', '-');
+        title(cur_ope.header(k))
+    end
+
+    subplot(4, 4, size(f1.Children, 1) + 1);
+    plot(cur_ope.rssi_mean_val)
+    title('trend')
+    subplot(4, 4, size(f1.Children, 1) + 1);
+    temp = regexp(figure_name, '\d', 'match');
+    text(0, 1, ['ope', temp{1}], ...
+        'FontSize', 20, 'Color', 'red');
+    xlim([0, 2])
+    ylim([0, 2])
+end
+
+%% 真实环境下不同信标RSSI-DIST对比图
+if false
+    tcf('std-dist-1'); figure('name', 'std-dist-1', 'color', 'white');
+    hold on
+    plot(std_ope_0_r.dist, std_ope_0_r.rssi, 'Marker', line_marker(randi([1, 10])), 'LineWidth', 1.6)
+    plot(std_ope_1_r.dist, std_ope_1_r.rssi, 'Marker', line_marker(randi([1, 10])), 'LineWidth', 1.6)
+    plot(std_ope_6_r.dist, std_ope_6_r.rssi, 'Marker', line_marker(randi([1, 10])), 'LineWidth', 1.6)
+    plot(std_ope_7_r.dist, std_ope_7_r.rssi, 'Marker', line_marker(randi([1, 10])), 'LineWidth', 1.6)
+    plot(std_ope_8_r.dist, std_ope_8_r.rssi, 'Marker', line_marker(randi([1, 10])), 'LineWidth', 1.6)
+    plot(std_ope_9_r.dist, std_ope_9_r.rssi, 'Marker', line_marker(randi([1, 10])), 'LineWidth', 1.6)
+    legend('0', '1', '6', '7', '8', '9')
+    title('真实环境下不同信标RSSI-DIST对比图')
+    xlabel('dist/m')
+    ylabel('rssi/dbm')
+    box on
+end
+
+%% spcrv
+if false
+    tcf('std-dist-2'); figure('name', 'std-dist-2', 'color', 'white');
+    x_1 = std_ope_9_r.dist';
+    y_1 = std_ope_9_r.rssi';
+    values = spcrv([[x_1(1) x_1 x_1(end)]; [y_1(1) y_1 y_1(end)]], 3);
+    plot(values(1, :), values(2, :), 'g');
+    hold on
+    plot(x_1, y_1, 'LineStyle', 'None', 'Marker', '*')
+end
+
+%% spcrv
+if false
     tcf('std-dist-3'); figure('name', 'std-dist-3', 'color', 'white');
     x_1 = (dist_rssi_all_t_r.dist)';
     y_1 = (dist_rssi_all_t_r.rssi)';
@@ -236,15 +251,44 @@ if true
 end
 
 %% 分析ope_x统计特征
-tcf('rssi-statistic'); figure('name', 'rssi-statistic', 'color', 'white')
-hold on
-plot(std_ope_0_r_t.rssi_mean_val, 'LineWidth', 1.5)
-plot(std_ope_0_r_t.rssi_std_val, 'LineWidth', 1.5)
-plot(std_ope_0_r_t.rssi_median_val, 'LineWidth', 1.5)
-legend('mean', 'std', 'median')
-%%
-ch39_real_rssi = dist_rssi_all_t_r.rssi;
-ch39_real_dist = dist_rssi_all_t_r.dist;
+if true
+    tcf('rssi-statistic'); figure('name', 'rssi-statistic', 'color', 'white')
+    temp = std_ope_0_r_t_s.rssi_statistics;
+    %legs = {std_ope_0_r_t_s.label(7, :), std_ope_0_r_t_s.label(12, :)};
+    legs = {'7','12'};
+    index_s = [7, 12];
+    subplot(311)
+    hold on
+
+    for k = 1:2
+        %  median_vals: [1×590 double]k
+        plot(temp(index_s(k)).mean_vals);
+    end
+
+    title('mean')
+    legend(legs)
+
+    subplot(312)
+    hold on
+    % for k = 1:size(std_ope_0_r_t_s, 1)
+    for k = 1:2
+        %  median_vals: [1×590 double]
+        plot(temp(index_s(k)).std_vals);
+    end
+
+    title('std')
+    legend(legs)
+
+    subplot(313)
+    hold on
+
+    for k = 1:2
+        plot(temp(index_s(k)).median_vals);
+    end
+
+    title('median')
+    legend(legs)
+end
 
 %%
 function dist_rssi = resort_dist_rssi(org_data)
@@ -269,6 +313,35 @@ function table_out = resort_table(table_in)
     for k = 1:length(len_temp)
         index = find(table_in.len == len_temp(k));
         table_out(k, :) = table_in(index, :);
+    end
+
+end
+
+%% 单个anchor node 统计特征变化情况
+function std_ope_X_r_t_s = get_single_anchor_node_rssi_statistics(std_ope_X_r_t)
+    std_ope_X_r_t_s = std_ope_X_r_t;
+
+    for j = 1:size(std_ope_X_r_t.RSSI, 1)
+        ope_X_rssi = std_ope_X_r_t.RSSI(j, :);
+        ope_X_rssi = cell2mat(ope_X_rssi);
+        ope_X_rssi_statistics = struct(...
+            'scope', 10, 'mean_vals', [], ...
+            'std_vals', [], 'median_vals', []);
+
+        for k = 1:length(ope_X_rssi)
+
+            if k < ope_X_rssi_statistics.scope
+                rssi_temp = ope_X_rssi(1:k);
+            else
+                rssi_temp = ope_X_rssi(k - ope_X_rssi_statistics.scope + 1:k);
+            end
+
+            ope_X_rssi_statistics.mean_vals = [ope_X_rssi_statistics.mean_vals, mean(rssi_temp)];
+            ope_X_rssi_statistics.std_vals = [ope_X_rssi_statistics.std_vals, std(rssi_temp)];
+            ope_X_rssi_statistics.median_vals = [ope_X_rssi_statistics.median_vals, median(rssi_temp)];
+        end
+
+        std_ope_X_r_t_s.rssi_statistics(j, :) = ope_X_rssi_statistics;
     end
 
 end
