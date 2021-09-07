@@ -3,13 +3,13 @@ clc;
 clear;
 % 经纬度无效值
 null_val = -10000;
-
+t_main = tic();
 if true
     % 根据全站仪修改ap经纬度信息
     % [~, data_file] = modify_geoinfo();
     % 读取待定位数据
-    data_file = ['D:\Code\BlueTooth\pos_bluetooth_matlab\data\7x7静态测试数据-1\', ...
-                'static-P1-1.txt'];
+    data_file = ['D:\Code\BlueTooth\pos_bluetooth_matlab\data\data_beacon_100ms_6\', ...
+                'P6-added_lat_lon.txt'];
     files_data = data_import('datafile', data_file);
 else
     files_data = data_import();
@@ -43,7 +43,8 @@ for i = 1:file_num
     if false
         position{i}.true_pos = files_true_pos{i};
     else
-        true_pos_manual = get_test_point("P1");
+        cfg = get_config_debug();
+        true_pos_manual = get_test_point(cfg(3).truepos);
         true_pos_temp = struct('lat', true_pos_manual{1}.lat, ...
             'lon', true_pos_manual{1}.lon);
 
@@ -59,8 +60,8 @@ for i = 1:file_num
     end
 
 end
-
-%% 静态分析
+toc(t_main);
+% 静态分析
 if true
     draw_type = 'splashes';
     %获取环境特征

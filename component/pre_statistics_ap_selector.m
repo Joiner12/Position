@@ -112,7 +112,7 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
     trilat_table.SELECT_WEIGHT = charc_temp * charac_weight';
 
     % 定位节点最多个数
-    [~, index_temp] = maxk(trilat_table.SELECT_WEIGHT, 4);
+    [~, index_temp] = maxk(trilat_table.SELECT_WEIGHT, 3);
     selected_ap_name = trilat_table.NAME(index_temp);
 
     %%

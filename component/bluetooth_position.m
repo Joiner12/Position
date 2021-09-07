@@ -67,7 +67,10 @@ function [position, debug_param] = bluetooth_position(data)
 
         [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame_ap, ap_selector);
         %% 根据BS(base station)布局进行二次选择
-        trilateration_ap = secondary_selector(trilateration_ap);
+        if false % 关闭二次选择器
+            trilateration_ap = secondary_selector(trilateration_ap);
+        end
+
         %% 对数模型:RSSI转换为距离
         cur_frame_ap = prev_dist_calc(trilateration_ap, ...
             config.dist_calc_type, ...
@@ -95,34 +98,14 @@ function [position, debug_param] = bluetooth_position(data)
         if true &&~isempty(fieldnames(pos_res))
             tcf('Positining'); % todo:异常点处理
             figure('name', 'Positining', 'Color', 'w');
-
-            % draw_positioning_state(gca,'static', cur_frame_ap, 'estimated_positon', [pos_res.lat, pos_res.lon], ...
-                %     'true_pos', [30.54798217, 104.05861620]);
-            % lat:30.547966937307,lon:104.058595105583 static-1
-            % lat:30.547966458202,lon:104.058698530348 static-2
-            % lat:30.547965611298,lon:104.058814724652 static-3
-            true_pos_manual = get_test_point("P1");
+            cfg = get_config_debug();
+            true_pos_manual = get_test_point(cfg(3).truepos);
             draw_positioning_state(gca, 'static', cur_frame_ap, 'estimated_positon', ...
                 [pos_res.lat, pos_res.lon], ...
                 'true_pos', [true_pos_manual{1}.lat, true_pos_manual{1}.lon]);
-            % 生成gif
-            if false
-                frame = getframe(gcf);
-                imind = frame2im(frame);
-                [imind, cm] = rgb2ind(imind, 256);
-
-                if gif_cnt == 1
-                    imwrite(imind, cm, 'D:\Code\BlueTooth\pos_bluetooth_matlab\test.gif', ...
-                        'gif', 'Loopcount', inf, 'DelayTime', 0.5);
-                else
-                    imwrite(imind, cm, 'D:\Code\BlueTooth\pos_bluetooth_matlab\test.gif', ...
-                        'gif', 'WriteMode', 'append', 'DelayTime', 0.5);
-                end
-
-            end
 
             % save png files
-            if true
+            if false
                 pause(0.1);
                 png_file = strcat('location-temp', num2str(gif_cnt), '.png');
                 png_file = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1', png_file);
@@ -131,11 +114,6 @@ function [position, debug_param] = bluetooth_position(data)
             end
 
             gif_cnt = gif_cnt +1;
-
-            if gif_cnt >= 36
-                debugline = 1;
-            end
-
             fprintf('cnt = %.0f\n', gif_cnt);
         end
 

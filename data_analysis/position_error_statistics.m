@@ -24,7 +24,7 @@ function position_error_statistics(position, true_position, varargin)
     %                         位置集中,则运行时警告,并只过滤在位置集中的那部分点位
     %输出：
     %
-    
+
     %% 误差数据统计
     if length(position) ~= length(true_position)
         flag = ['位置信息与其真值个数不同, position:', num2str(length(position)), ...
@@ -96,6 +96,7 @@ function position_error_statistics(position, true_position, varargin)
         error_statistics_dist = dist;
     end
 
+    error_statistics_dist = error_statistics_dist(~isnan(error_statistics_dist));
     max_dist = max(error_statistics_dist);
     min_dist = min(error_statistics_dist);
     std_dist = std(error_statistics_dist);
@@ -132,7 +133,7 @@ function position_error_statistics(position, true_position, varargin)
     end
 
     %% 绘制误差统计图
-    handle = figure();
+    handle = figure('color', 'w');
     set(handle, 'name', '位置误差统计图');
 
     %绘制各个点的误差
