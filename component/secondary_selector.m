@@ -55,6 +55,7 @@ function trilateration_ap = secondary_selector(pre_trilateration_ap, varargin)
         % 三边定位过程中的奇异解,由于奇异解的质心距离和相比较于正常解大,因此不用进行特别处理;
         if abs(cos_theta) >= cosd(5)
             % warning('奇异节点');
+			continue;
         end
 
         centroid_point = mean(ABC_pos);

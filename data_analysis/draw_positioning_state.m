@@ -49,7 +49,7 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
         'Marker', 'v', 'MarkerFaceColor', 'r', 'MarkerSize', 10);
     text(cur_axes, beacon_x_d, beacon_y_d, labels)
     % circle[X;Y]
-    circle_line = [-1, -1, 33, 33, -1; -1, 17, 17, -1, -1];
+    circle_line = [-1, -1, 17, 17, -1; -1, 9, 9, -1, -1];
     line(circle_line(1, :), circle_line(2, :), 'LineWidth', 2);
     title(gca, '定位效果')
     box on
@@ -76,7 +76,7 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
         true_pos_y = true_pos_y - ref_point_xy(2);
         plot(cur_axes, true_pos_x, true_pos_y, 'b*')
         text(cur_axes, true_pos_x, true_pos_y, '真实位置')
-        circles(true_pos_x, true_pos_y, 5, ...
+        circles(true_pos_x, true_pos_y, 3, ...
             'facecolor', [174, 206, 187] ./ 255, 'edgecolor', 'none', 'facealpha', 0.5)
 
     end
@@ -84,9 +84,9 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
     % 动态参考轨迹
     % rectangle('Position', [0.8, 8, 30, 5], ...
     %     'edgecolor', 'g', 'curvature', 0.1);
-    line([2, 23], [10, 10], 'Color', 'r', 'LineWidth', 1.8)
-    line([23, 23], [3, 10], 'Color', 'r', 'LineWidth', 1.8)
-    line([2, 2], [1, 10], 'Color', 'r', 'LineWidth', 1.8)
+    % line([2, 23], [10, 10], 'Color', 'r', 'LineWidth', 1.8)
+    % line([23, 23], [3, 10], 'Color', 'r', 'LineWidth', 1.8)
+    % line([2, 2], [1, 10], 'Color', 'r', 'LineWidth', 1.8)
     %% 绘制动|静图
     if isempty(data)
         warning("绘图数据为空");
