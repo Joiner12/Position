@@ -6,6 +6,7 @@ std_vals = zeros(0);
 fluct_vals = zeros(0);
 C_s = cell(0);
 Clusters = cell(0);
+median_mean_vals = zeros(0);
 
 for k = 1:1:11
     cur_file = ['D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\Beacon\Beacon6-', ...
@@ -19,11 +20,15 @@ for k = 1:1:11
     mean_vals(k) = BeaconRSSI(k).rssi_mean;
     std_vals(k) = BeaconRSSI(k).rssi_std;
     fluct_vals(k) = BeaconRSSI(k).rssi_fluctuation;
+    % 信道聚类
     [org_idx, C] = channel_clustering(BeaconRSSI(k).rssi, 3);
     BeaconRSSI(k).C = C;
     BeaconRSSI(k).clustering = org_idx;
     Clusters{k} = org_idx;
     C_s{k} = C;
+    % 中值滤波 窗口大小21
+    BeaconRSSI(k).rssi_medianfilter = medfilt1(rssi, 21);
+    median_mean_vals(k) = mean(BeaconRSSI(k).rssi_medianfilter);
 end
 
 %% figure 混合信道下 dist-rssi
@@ -82,3 +87,31 @@ set(get(gca, 'YLabel'), 'String', 'RSSI/dBm');
 %%
 clc;
 [org_idx, C] = channel_clustering(BeaconRSSI(4).rssi, 3);
+%% figure median filter vs origin
+clc;
+tcf('beacon-median-1'); f1 = figure('name', 'beacon-median-1', 'color', 'w');
+
+for k = 1:1:6
+    subplot(3, 2, k);
+    plot(BeaconRSSI(k).rssi);
+    hold on
+    plot(BeaconRSSI(k).rssi_medianfilter);
+    legend('origin RSSI', 'median RSSI');
+    title(strcat(num2str(BeaconRSSI(k).dist), 'm'));
+end
+
+tcf('beacon-median-2'); f2 = figure('name', 'beacon-median-2', 'color', 'w');
+
+for k = 7:1:11
+    subplot(3, 2, k - 6);
+    plot(BeaconRSSI(k).rssi);
+    hold on
+    plot(BeaconRSSI(k).rssi_medianfilter);
+    legend('origin RSSI', 'median RSSI');
+    title(strcat(num2str(BeaconRSSI(k).dist), 'm'));
+end
+
+subplot(3, 2, 6)
+plot(linspace(1, length(median_mean_vals), length(median_mean_vals)), median_mean_vals)
+set(get(gca, 'XLabel'), 'String', 'dist/m');
+set(get(gca, 'YLabel'), 'String', 'RSSI/dBm');
