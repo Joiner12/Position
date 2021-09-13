@@ -57,5 +57,7 @@ ${z_k = H_kx_k + v_k}$
 
 ![kalman-filtering-4](img/kalman-filtering-4.png)
 
+## Reference
 
+1. [卡尔曼滤波（Kalman Filter）原理与公式推导 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/48876718)
 

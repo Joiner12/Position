@@ -25,11 +25,14 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             ap_selector.NAME(rows + 1) = name;
             pre_rssi_temp = ap_selector.RECVRSSI(rows + 1, :);
             recv_rssi_len = length(cur_frame_piece.recv_rssi);
+            % fifo(first in fisrt out)
+            recv_rssi_temp = cur_frame_piece.recv_rssi;
+            recv_rssi_temp = fliplr(recv_rssi_temp); % 数组翻转
 
             if recv_rssi_len > length(ap_selector.RECVRSSI(rows + 1, :)) - 1
-                ap_selector.RECVRSSI(rows + 1, :) = cur_frame_piece.recv_rssi(1:length(ap_selector.RECVRSSI(rows + 1, :)));
+                ap_selector.RECVRSSI(rows + 1, :) = recv_rssi_temp(1:length(ap_selector.RECVRSSI(rows + 1, :)));
             else
-                ap_selector.RECVRSSI(rows + 1, :) = [cur_frame_piece.recv_rssi, pre_rssi_temp(1:end - recv_rssi_len)];
+                ap_selector.RECVRSSI(rows + 1, :) = [pre_rssi_temp(recv_rssi_len + 1:end), recv_rssi_temp];
             end
 
             ap_selector.LAT(rows + 1) = cur_frame_piece.lat;
@@ -42,11 +45,14 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             ap_selector.NAME(index) = name;
             pre_rssi_temp = ap_selector.RECVRSSI(index, :);
             recv_rssi_len = length(cur_frame_piece.recv_rssi);
+            % fifo(first in fisrt out)
+            recv_rssi_temp = cur_frame_piece.recv_rssi;
+            recv_rssi_temp = fliplr(recv_rssi_temp); % 数组翻转
 
             if recv_rssi_len > length(ap_selector.RECVRSSI(index, :)) - 1
-                ap_selector.RECVRSSI(index, :) = cur_frame_piece.recv_rssi(1:length(ap_selector.RECVRSSI(index, :)));
+                ap_selector.RECVRSSI(index, :) = recv_rssi_temp(1:length(ap_selector.RECVRSSI(index, :)));
             else
-                ap_selector.RECVRSSI(index, :) = [cur_frame_piece.recv_rssi, pre_rssi_temp(1:end - recv_rssi_len)];
+                ap_selector.RECVRSSI(index, :) = [pre_rssi_temp(recv_rssi_len + 1:end), recv_rssi_temp];
             end
 
             ap_selector.LAT(index) = cur_frame_piece.lat;
@@ -73,44 +79,39 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
     % trilat_table.MEANVAL = zeros(size(trilat_table, 1), 1); % RSSI均值
     % trilat_table.VARVAL = zeros(size(trilat_table, 1), 1); % RSSI方差
 
-    %%
-    % rssi_statictis = zeros()
-    rssi_s = trilat_table.RECVRSSI;
-
-    act_rssi = zeros(0);
-    meanval_rssi = zeros(0);
-    var_rssi = zeros(0);
-
-    for i = 1:1:size(rssi_s, 1)
-        cur_rssi = rssi_s(i, :);
-        cur_rssi = cur_rssi(cur_rssi ~= 0);
-
-        if ~isempty(cur_rssi)
-            act_rssi(i, 1) = length(cur_rssi);
-            meanval_rssi(i, 1) = mean(cur_rssi);
-            var_rssi(i, 1) = var(cur_rssi);
-        end
-
+    for k = 1:size(trilat_table, 1)
+        rssi_s = trilat_table.RECVRSSI(k, :);
+        cur_rssi = rssi_s(rssi_s ~= 0);
+        trilat_table.CHARAC_ACT(k) = ceil(length(cur_rssi) / 2);
+        trilat_table.CHARAC_MEAN(k) = mean(cur_rssi);
+        trilat_table.CHARAC_VAR(k) = var(cur_rssi);
     end
 
-    % 重排序 & 避免使用去重复
-    % 此处存在问题,act_rssi完全相等时,maxk不能达到正确排序的目的；
-    [sort_act_rssi, sort_act_rssi_index] = maxk(act_rssi, 5);
-    [~, sort_meanval_rssi_index] = maxk(meanval_rssi, 5);
-    [~, sort_var_rssi_index] = mink(var_rssi, 5);
+    % mean sort character
+    gen_index_mean = 1:1:length(trilat_table.CHARAC_MEAN);
+    [~, charac_mean_index] = maxk(trilat_table.CHARAC_MEAN, 5);
 
-    % 特征值
-    for j = 1:1:length(sort_act_rssi_index)
-        trilat_table.CHARAC_ACT(sort_act_rssi_index(j)) = int8(sort_act_rssi(j) / 2);
-        trilat_table.CHARAC_MEAN(sort_meanval_rssi_index(j)) = length(sort_meanval_rssi_index) + 1 - j;
-        trilat_table.CHARAC_VAR(sort_var_rssi_index(j)) = length(sort_var_rssi_index) + 1 - j;
+    for k1 = 1:length(charac_mean_index)
+        trilat_table.CHARAC_MEAN(charac_mean_index(k1)) = length(charac_mean_index) + 1 - k1;
     end
+
+    trilat_table.CHARAC_MEAN(gen_index_mean(~ismember(gen_index_mean, charac_mean_index))) = 0;
+    % variance sort character
+    gen_index_var = 1:1:length(trilat_table.CHARAC_VAR);
+    [~, charac_var_index] = mink(trilat_table.CHARAC_VAR, 5);
+
+    for k2 = 1:length(charac_var_index)
+        trilat_table.CHARAC_VAR(charac_var_index(k2)) = length(charac_var_index) + 1 - k2;
+    end
+
+    trilat_table.CHARAC_VAR(gen_index_var(~ismember(gen_index_var, charac_var_index))) = 0;
 
     % 神经元
-    charac_weight = [0.6, 0.3, 0.1]; % 特征值权重
+    charac_weight = [0.3, 0.6, 0.1]; % 特征值权重
     charc_temp = [trilat_table.CHARAC_ACT, trilat_table.CHARAC_MEAN, trilat_table.CHARAC_VAR];
     trilat_table.SELECT_WEIGHT = charc_temp * charac_weight';
 
+    % 定位节点最多个数
     [~, index_temp] = maxk(trilat_table.SELECT_WEIGHT, 3);
     selected_ap_name = trilat_table.NAME(index_temp);
 
@@ -143,11 +144,11 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
                 if isequal(mod(length(rssi_temp_sorted), 2), 1)
                     % 取中值
                     index_temp = ceil(length(rssi_temp) / 2);
-                    trilateration_ap(valid_ap_cnt).rssi = rssi_temp(index_temp);
+                    trilateration_ap(valid_ap_cnt).rssi = rssi_temp_sorted(index_temp);
                 else
                     % 二分插值
                     index_temp = floor(length(rssi_temp) / 2);
-                    trilateration_ap(valid_ap_cnt).rssi = mean(rssi_temp(index_temp:index_temp + 1));
+                    trilateration_ap(valid_ap_cnt).rssi = mean(rssi_temp_sorted(index_temp:index_temp + 1));
                 end
 
             end
@@ -159,7 +160,6 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             valid_ap_cnt = valid_ap_cnt + 1;
         end
 
-        debug_line = 1;
     end
 
 end

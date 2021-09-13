@@ -1330,7 +1330,7 @@ $$
 
 channel 37距离和RSSI对应关系实验结果：
 
-<div>
+<div style="background-color:white;text-align:center;">
     <img src="../figure/单信道37RSSI统计-1.png">
 </div>
 
@@ -1338,13 +1338,13 @@ channel 37距离和RSSI对应关系实验结果：
 
 channel 38距离和RSSI对应关系实验结果：
 
-<div>
+<div style="background-color:white;text-align:center;">
     <img src="../figure/单信道38RSSI统计-1.png">
 </div>
 
 channel 39距离和RSSI对应关系实验结果：
 
-<div>
+<div style="background-color:white;text-align:center;">
     <img src="../figure/单信道39RSSI统计-1.png">
 </div>
 
@@ -1352,7 +1352,7 @@ channel 39距离和RSSI对应关系实验结果：
 
 不同信道RSSI-距离对比结果：
 
-<div style="background-color:white">
+<div style="background-color:white;text-align:center;">
     <img src="../figure/单信道37-38-39对比-1.png">
     <p style="text-align:center">
         不同信道距离-RSSI均值对应关系
@@ -1363,10 +1363,11 @@ channel 39距离和RSSI对应关系实验结果：
     </p>
 </div>
 
+
 - 曲线平滑度：**Ch37>Ch39>Ch38；**
 - 统计方差：**Ch39<Ch38<Ch37；**
 
-<div style="background-color:white">
+<div style="background-color:white;text-align:center;">
     <img src="../figure/单信道37-38-39对比-丢包率-1.png">
     <p style="text-align:center">
         不同信道距离-RSSI均值对应关系
@@ -1389,4 +1390,212 @@ ans(x) = power(10,(a-x)/10/b)
     <p style="text-align:center;"> ch39 1:15米拟合对数模型
     </p>
 </div>
+# 七、无线信道
+
+## 1、路径损耗（path loss）
+
+路径损耗，或称传播损耗，指电波在空间传播所产生的损耗，是由发射功率的辐射扩散及信道的传播特性造成的，反映宏观范围内接收信号功率均值的变化。如下图所示，在自由空间中，电磁辐射的强度根据平方反比定律随着距离的增加而减小，因为同样的能量在一个面积上与距离源的距离平方成正比。
+
+<div style="background-color:white;text-align:center;">
+    <img src="img/天线发射功率路径损耗模型-1.png">
+    <p> 天线发射功率损耗模型
+    </p>
+</div>
+
+不同发射功率增益对路径损耗模型的影响是曲线沿y轴整体偏移。
+
+## 2、衰落叠加综合
+
+综合看传播路径衰落（Path Loss）、遮挡（Shadowing）、多径（Narrowband Fading）对接收信号的影响（如下图）。Path Loss造成信号衰减是均匀的、单调的；Shadowing造成的衰减相对更快（比Path Loss），断崖下跌；Fading造成的衰减是快速变化的（由于频率高），基本呈现零均值高斯分布。
+
+
+
+<div style="background-color:white;text-align:center;">
+    <img src="img/all-together.png">
+    <p> 衰落叠加综合
+    </p><tr>
+    <img src="img/衰落叠加-1.jpg">
+</div>
+
+## 3、瑞利衰落(信道)
+
+**选择性衰落**：在同一位置，由于反射径信号的存在，发射不同频率的信号时，在接收机处接收到信号有的频率是被增强了，有的频率是被削弱了。频率选择性由此产生。
+
+**相干带宽**：把那些受到的影响基本一致的频率范围叫做相干带宽。
+
+**平坦衰落**：假设发射的信号带宽较窄，小于相干带宽，我们可以知道，信号的频带内受到的衰落影响基本是一致的。这时称这样的衰落为平坦衰落。
+
+**瑞利衰落**：当我们把更多反射径的信号基本看作同一径信号时，瑞利衰落由此产生。在存在更多反射径的情况下，各个径到达的方向不一样，相位不一样，可以看作服从同一分布的随机变量。由概率论的知识，多个服从同一分布随机变量的和服从高斯分布。由于实际的信号一般是通过I、Q两路传输，因此I路服从高斯分布，Q路服从高斯分布，包络则服从瑞利分布。
+
+### 3.1 小尺度衰落建模
+
+多径衰落造成信号幅度波动，是因为经过不同路径传播之后，到达信号的“相位”不同，相位差异是由于不同路径的传输距离不同造成的，接收信号幅度的快速波动，其模型通常是服从某种分布的随机变量。
+
+多径衰落最常见的分布是瑞利分布：
+$$
+\begin{align}
+&f(r) = \frac{r}{\sigma^2}exp(-\frac{r^2}{2\sigma^2}).r\ge0\\
+\end{align}
+$$
+
+
+<div style="text-align:center;background-color:#DDE7D2;">
+    <p>
+        瑞利分布概率密度函数
+    </p>
+    <img src="https://img-blog.csdnimg.cn/20210720150434626.png">
+    <p>
+        瑞利分布概率密度图
+    </p>
+    <img src="https://tse1-mm.cn.bing.net/th/id/R-C.832b930ca557ddaa065ac0e9c9ebe5a5?rik=F2RLA1PFkKlXjg&riu=http%3a%2f%2fwww.vue5.com%2fupload%2fstatistics%2fimages%2frayleigh_distribution.jpg&ehk=0VnWkQtGbiUHGF0eloJAsowV4h9HYyNmhV7XFuiFfnY%3d&risl=&pid=ImgRaw">
+</div>
+
+
+
+当存在较强的LOS信号时，随机变量服从莱斯分布：
+
+<div style="text-align:center;background-color:#DDE7D2">
+    <p>莱斯分布</p>
+    <img src="https://img-blog.csdnimg.cn/20210720152413657.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jpc2t5XzEx,size_16,color_FFFFFF,t_70">
+    <p>莱斯分布概率密度图</p>
+    <img src="https://www.researchgate.net/publication/303847147/figure/fig5/AS:372574296002617@1465840043011/Probability-density-function-curves-for-composite-Weibull-Gamma-model-with-varying_Q320.jpg">
+</div>
+
+​    
+
+
+$$
+\begin{align}
+f(r)={\sigma^2}exp(-\frac{r^2+K^2}{2\sigma^2}).I_0(\frac{K_r}{\sigma^2}),r\ge0,K\ge0 \\
+\end{align}
+$$
+
+K是判定LOS信号与其他多径信号相比差别有多大的关系因子。
+
+### 3.2 reference
+
+https://blog.csdn.net/wwws1994/article/details/112346906
+
+### 3.3 统计特征
+
+- 最大、最小值同瑞利分布的关系；
+- ....
+
+# 八、真实环境下标准RSSI-DIST特征
+
+<div style="text-align:center;background-color:white;">
+    <img src="../figure/real_env_std_ope_0.png">
+    <br>
+    <p style="font-size:25px;font-color:gray;">ope0</p>
+</div>
+
+
+
+<div style="text-align:center;background-color:white;">
+    <img src="../figure/real_env_std_ope_1.png">
+    <br>
+    <p style="font-size:25px;font-color:gray;">ope1</p>
+</div>
+
+<div style="text-align:center;background-color:white;">
+    <img src="../figure/real_env_std_ope_6.png">
+    <br>
+    <p style="font-size:25px;font-color:gray;">ope6</p>
+</div>
+
+<div style="text-align:center;background-color:white;">
+    <img src="../figure/real_env_std_ope_7.png">
+    <br>
+    <p style="font-size:25px;font-color:gray;">ope7</p>
+</div>
+
+
+
+<div style="text-align:center;background-color:white;">
+    <img src="../figure/real_env_std_ope_8.png">
+    <br>
+    <p style="font-size:25px;font-color:gray;">ope8</p>
+</div>
+
+<div style="text-align:center;background-color:white;">
+    <img src="../figure/real_env_std_ope_9.png">
+    <br>
+    <p style="font-size:25px;font-color:gray;">ope9</p>
+</div>
+**真实环境下RSSI-DIST特征对比**
+
+<img src="https://gitee.com/RiskyJR/pic-bed/raw/master/20210825110205.png">
+
+- [ ] dist<8，rssi 在[-65,-45]范围内；
+- [ ] fingerprint方法解决；
+- [ ] 将所有的距离重排序，绘制成一条曲线；
+- [ ] 考虑RSSI分布左偏性；
+- [ ] 信噪比较大；
+- [ ] 找出一条中间的曲线；
+- [ ] 什么原因导致的实测曲线和标准对数模型差距如此之大；
+
+# 九、Beacon RSSI-DIST分析
+
+## 1、混合信道特征
+
+<div style="text-align:center;background-color:'white';">
+    <img src="./img/Beacon-std-rssi-1.png"><br>
+    <img src="./img/Beacon-std-rssi-2.png"><br>
+    <img src="./img/Beacon-std-rssi-char-1.png"></div>
+1. 
+
+| dist\m | ch37 | ch38  |ch39|
+| :--: | :--: | :--: | :--: |
+|1|136|136|64|
+|2|261|252|178|
+|3|419|209|133|
+|4|103|64|280|
+|5|184|142|192|
+|6|249|260|210|
+|7|292|215|257|
+|8|321|240|250|
+|9|265|257|204|
+|10|217|230|204|
+|11|220|448|246|
+
+
+
+2. beacon rssi采样结果均值对应距离结果看，beacon使用的是混合信道；
+
+3. beacon rssi-dist整体曲线基本符合对数模型；
+
+4. rssi在不同的固定距离下，其波动情况不一致，距离为1m处整体波动最小，距离为4m处，整体波动最大，最大RSSI和最小RSSI差值为37dBm；
+
+## 2、信道聚类
+
+<div style="text-align:center;background-color:white;">
+    <img src="./img/Beacon-std-rssi-clustering-1.png">
+</div>
+
+1. 不同信道对应的聚类结果数目：
+
+   假设：三信道ch37、ch38、ch39是按照时间进行轮询发送的，则三信道聚类结果应该数量相等。
+
+   | dist\m | ch37 | ch38 | ch39 |
+   | :----: | :--: | :--: | :--: |
+   |   1    | 136  | 136  |  64  |
+   |   2    | 261  | 252  | 178  |
+   |   3    | 419  | 209  | 133  |
+   |   4    | 103  |  64  | 280  |
+   |   5    | 184  | 142  | 192  |
+   |   6    | 249  | 260  | 210  |
+   |   7    | 292  | 215  | 257  |
+   |   8    | 321  | 240  | 250  |
+   |   9    | 265  | 257  | 204  |
+   |   10   | 217  | 230  | 204  |
+   |   11   | 220  | 448  | 246  |
+
+2. 信道聚类可以根据聚类算法，将固定采样序列的RSSI值分成不同的簇，但是不能够将其值与信道对应。
+3. 信道聚类和对数模型的结合方式：方式一，不同信道计算出不同的距离。方式二：对聚类结果根据欧拉距离使用类似查表的方式。
+4. 
+
+# Reference
+
+1. [无线传感器网络实验报告（八）RSSI链路质量检测 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/338223876)
+2. [多径信道理论的直观感受与MATLAB仿真 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/116761401)
 

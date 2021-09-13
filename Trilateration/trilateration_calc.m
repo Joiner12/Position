@@ -51,7 +51,9 @@ function [pos_est, lam] = trilateration_calc(cur_ap, varargin)
                 [pos_est_xy, ~] = trilateration_gn(X, Y, D);
 
             case 'Weighted_Gauss_Newton'
-                [pos_est_xy, ~] = trilateration_wgn(X, Y, D);
+                % 两种不同的加权高斯牛顿实现方式
+                [pos_est_xy, ~] = trilateration_wgn_m(X, Y, D);
+                % [pos_est_xy, ~] = trilateration_wgn(X, Y, D); % 限制为三个点进行定位
 
             case 'Original_Least_Squares'
                 [pos_est_xy, ~] = trilateration_ols(X, Y, D);

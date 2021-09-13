@@ -28,11 +28,11 @@ lon_lift = [104.058569922; 104.058567998; 104.05856792; 104.058569922; 104.05856
 
 tcf('hs');
 figure('name', 'hs', 'color', 'w');
-subplot(311)
+subplot(211)
 plot(x - min(x), y - min(y), '*')
 text(x - min(x), y - min(y), name)
 
-subplot(312)
+subplot(212)
 geoplot(lat, lon);
 text(lat, lon, name);
 hold on
@@ -45,26 +45,7 @@ hold on
 geoplot(lat_lift, lon_lift, 'r')
 text(lat_lift(1), lon_lift(1), 'lift')
 
-subplot(313)
-geoplot(lat_e, lon_e);
-text(lat_e, lon_e, name_e);
-hold on
-geoplot(lat_tolit, lon_tolit, 'g')
-text(lat_tolit(1), lon_tolit(1), 'toilet')
-
-hold on
-geoplot(lat_lift, lon_lift, 'r')
-text(lat_lift(1), lon_lift(1), 'lift')
-
-% figure
-% geoplot(lat, lon);
-% text(lat, lon, name);
-% hold on
-% geoplot(lat_e, lon_e, '*');
-% hold on
-% geoplot(lat_tolit, lon_tolit, 'g')
-% text(lat_tolit(1), lon_tolit(1), 'toilet')
-% 
-% hold on
-% geoplot(lat_lift, lon_lift, 'r')
-% text(lat_lift(1), lon_lift(1), 'lift')
+tcf('hs-1')
+figure('name', 'hs-1', 'color', 'w');
+geoplot(lat, lon);
+text(lat, lon, name);
