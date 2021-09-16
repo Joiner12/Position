@@ -1596,6 +1596,122 @@ https://blog.csdn.net/wwws1994/article/details/112346906
 
 4. 不同环境下RSSI特征不同，按照K-means聚类的方法提取出来的RSSI的信道能否真正匹配得上标准数据聚类结果。
 
+### 2.1、信道聚类检查
+
+<div style="text-align:center;background-color:white;">
+    <img src="./img/clustering-check-1m-20-1.png"><br>
+    <p>距离1m 窗口大小20 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-1m-30-1.png"><br>
+    <p>距离1m 窗口大小30 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-1m-40-1.png"><br>
+    <p>距离1m 窗口大小40 信道聚类结果及残差</p><br>
+</div>
+
+<div style="text-align:center;background-color:white;">
+    <img src="./img/clustering-check-2m-20-1.png"><br>
+    <p>距离2m 窗口大小20 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-2m-30-1.png"><br>
+    <p>距离2m 窗口大小30 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-2m-40-1.png"><br>
+    <p>距离2m 窗口大小40 信道聚类结果及残差</p><br>
+</div>
+
+
+<div style="text-align:center;background-color:white;">
+    <img src="./img/clustering-check-3m-20-1.png"><br>
+    <p>距离3m 窗口大小20 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-3m-30-1.png"><br>
+    <p>距离3m 窗口大小30 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-3m-40-1.png"><br>
+    <p>距离3m 窗口大小40 信道聚类结果及残差</p><br>
+</div>
+
+
+<div style="text-align:center;background-color:white;">
+    <img src="./img/clustering-check-4m-20-1.png"><br>
+    <p>距离4m 窗口大小20 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-4m-30-1.png"><br>
+    <p>距离4m 窗口大小30 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-4m-40-1.png"><br>
+    <p>距离4m 窗口大小40 信道聚类结果及残差</p><br>
+</div>
+
+
+
+
+<div style="text-align:center;background-color:white;">
+    <img src="./img/clustering-check-5m-20-1.png"><br>
+    <p>距离5m 窗口大小20 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-5m-30-1.png"><br>
+    <p>距离5m 窗口大小30 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-5m-40-1.png"><br>
+    <p>距离5m 窗口大小40 信道聚类结果及残差</p><br>
+</div>
+
+
+<div style="text-align:center;background-color:white;">
+    <img src="./img/clustering-check-6m-20-1.png"><br>
+    <p>距离6m 窗口大小20 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-6m-30-1.png"><br>
+    <p>距离6m 窗口大小30 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-6m-40-1.png"><br>
+    <p>距离6m 窗口大小40 信道聚类结果及残差</p><br>
+</div>
+
+
+
+
+<div style="text-align:center;background-color:white;">
+    <img src="./img/clustering-check-7m-20-1.png"><br>
+    <p>距离7m 窗口大小20 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-7m-30-1.png"><br>
+    <p>距离7m 窗口大小30 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-7m-40-1.png"><br>
+    <p>距离7m 窗口大小40 信道聚类结果及残差</p><br>
+</div>
+
+
+
+
+<div style="text-align:center;background-color:white;">
+    <img src="./img/clustering-check-8m-20-1.png"><br>
+    <p>距离8m 窗口大小20 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-8m-30-1.png"><br>
+    <p>距离8m 窗口大小30 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-8m-40-1.png"><br>
+    <p>距离8m 窗口大小40 信道聚类结果及残差</p><br>
+</div>
+
+
+<div style="text-align:center;background-color:white;">
+    <img src="./img/clustering-check-9m-20-1.png"><br>
+    <p>距离9m 窗口大小20 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-9m-30-1.png"><br>
+    <p>距离9m 窗口大小30 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-9m-40-1.png"><br>
+    <p>距离9m 窗口大小40 信道聚类结果及残差</p><br>
+</div>
+
+<div style="text-align:center;background-color:white;">
+    <img src="./img/clustering-check-10m-20-1.png"><br>
+    <p>距离10m 窗口大小20 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-10m-30-1.png"><br>
+    <p>距离10m 窗口大小30 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-10m-40-1.png"><br>
+    <p>距离10m 窗口大小40 信道聚类结果及残差</p><br>
+</div>
+
+<div style="text-align:center;background-color:white;">
+    <img src="./img/clustering-check-11m-20-1.png"><br>
+    <p>距离11m 窗口大小20 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-11m-30-1.png"><br>
+    <p>距离11m 窗口大小30 信道聚类结果及残差</p>
+    <img src="./img/clustering-check-11m-40-1.png"><br>
+    <p>距离11m 窗口大小40 信道聚类结果及残差</p><br>
+</div>
+
+
+
 ## 3、原始数据RSSI中值滤波处理
 
 对不同距离采集的RSSI数据进行中值滤波，对比滤波前后RSSI的值，窗口大小为`21`：
