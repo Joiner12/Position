@@ -1596,120 +1596,15 @@ https://blog.csdn.net/wwws1994/article/details/112346906
 
 4. 不同环境下RSSI特征不同，按照K-means聚类的方法提取出来的RSSI的信道能否真正匹配得上标准数据聚类结果。
 
-### 2.1、信道聚类检查
+### 2.1、信道聚类分析
 
-<div style="text-align:center;background-color:white;">
-    <img src="./img/clustering-check-1m-20-1.png"><br>
-    <p>距离1m 窗口大小20 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-1m-30-1.png"><br>
-    <p>距离1m 窗口大小30 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-1m-40-1.png"><br>
-    <p>距离1m 窗口大小40 信道聚类结果及残差</p><br>
-</div>
+[channle-clustering-analysis](channle-clustering-analysis.html)
 
-<div style="text-align:center;background-color:white;">
-    <img src="./img/clustering-check-2m-20-1.png"><br>
-    <p>距离2m 窗口大小20 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-2m-30-1.png"><br>
-    <p>距离2m 窗口大小30 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-2m-40-1.png"><br>
-    <p>距离2m 窗口大小40 信道聚类结果及残差</p><br>
-</div>
+**测试结论：**
 
-
-<div style="text-align:center;background-color:white;">
-    <img src="./img/clustering-check-3m-20-1.png"><br>
-    <p>距离3m 窗口大小20 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-3m-30-1.png"><br>
-    <p>距离3m 窗口大小30 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-3m-40-1.png"><br>
-    <p>距离3m 窗口大小40 信道聚类结果及残差</p><br>
-</div>
-
-
-<div style="text-align:center;background-color:white;">
-    <img src="./img/clustering-check-4m-20-1.png"><br>
-    <p>距离4m 窗口大小20 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-4m-30-1.png"><br>
-    <p>距离4m 窗口大小30 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-4m-40-1.png"><br>
-    <p>距离4m 窗口大小40 信道聚类结果及残差</p><br>
-</div>
-
-
-
-
-<div style="text-align:center;background-color:white;">
-    <img src="./img/clustering-check-5m-20-1.png"><br>
-    <p>距离5m 窗口大小20 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-5m-30-1.png"><br>
-    <p>距离5m 窗口大小30 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-5m-40-1.png"><br>
-    <p>距离5m 窗口大小40 信道聚类结果及残差</p><br>
-</div>
-
-
-<div style="text-align:center;background-color:white;">
-    <img src="./img/clustering-check-6m-20-1.png"><br>
-    <p>距离6m 窗口大小20 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-6m-30-1.png"><br>
-    <p>距离6m 窗口大小30 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-6m-40-1.png"><br>
-    <p>距离6m 窗口大小40 信道聚类结果及残差</p><br>
-</div>
-
-
-
-
-<div style="text-align:center;background-color:white;">
-    <img src="./img/clustering-check-7m-20-1.png"><br>
-    <p>距离7m 窗口大小20 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-7m-30-1.png"><br>
-    <p>距离7m 窗口大小30 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-7m-40-1.png"><br>
-    <p>距离7m 窗口大小40 信道聚类结果及残差</p><br>
-</div>
-
-
-
-
-<div style="text-align:center;background-color:white;">
-    <img src="./img/clustering-check-8m-20-1.png"><br>
-    <p>距离8m 窗口大小20 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-8m-30-1.png"><br>
-    <p>距离8m 窗口大小30 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-8m-40-1.png"><br>
-    <p>距离8m 窗口大小40 信道聚类结果及残差</p><br>
-</div>
-
-
-<div style="text-align:center;background-color:white;">
-    <img src="./img/clustering-check-9m-20-1.png"><br>
-    <p>距离9m 窗口大小20 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-9m-30-1.png"><br>
-    <p>距离9m 窗口大小30 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-9m-40-1.png"><br>
-    <p>距离9m 窗口大小40 信道聚类结果及残差</p><br>
-</div>
-
-<div style="text-align:center;background-color:white;">
-    <img src="./img/clustering-check-10m-20-1.png"><br>
-    <p>距离10m 窗口大小20 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-10m-30-1.png"><br>
-    <p>距离10m 窗口大小30 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-10m-40-1.png"><br>
-    <p>距离10m 窗口大小40 信道聚类结果及残差</p><br>
-</div>
-
-<div style="text-align:center;background-color:white;">
-    <img src="./img/clustering-check-11m-20-1.png"><br>
-    <p>距离11m 窗口大小20 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-11m-30-1.png"><br>
-    <p>距离11m 窗口大小30 信道聚类结果及残差</p>
-    <img src="./img/clustering-check-11m-40-1.png"><br>
-    <p>距离11m 窗口大小40 信道聚类结果及残差</p><br>
-</div>
-
+1. 首先对固定距离下的所有RSSI数据使用k-means进行聚类（簇中心数：3），然后模拟实际定位过程，设置不同的RSSI窗口，窗口大小分别为20、30、40。窗口大小对聚类结果影响不大，不同窗口大小下聚类结果基本一致。
+2. 在距离分别为4m和7m的情况下，原始RSSI数据波动较大，且呈现非规律波动，聚类结果不稳定。距离为4m，窗口大小20，分段聚类簇中心到所有数据聚类簇中心欧式距离在（4,21）范围内。最小为4.15，最大为20.59。距离为4m，窗口大小30，分段聚类簇中心到所有数据聚类簇中心欧式距离在（6,19）范围内。最小为6.083，最大为18.87。距离为4m，窗口大小40，分段聚类簇中心到所有数据聚类簇中心欧式距离在（2.23,19.72）范围内。最小为2.23，最大为19.72。距离7m情况下，聚类窗口分别设置为20、30、40其分段聚类簇中心到所有数据聚类簇中心欧式距离在10以内。
+3. 分别验证分段聚类簇中心到不同距离标准簇中心欧式距离，基本上所有的分段聚类簇中心结果到标准簇中心距离最小，8m的情况下会出现一定概率误差，导致分类到9m簇中心，引入1m误差。
 
 
 ## 3、原始数据RSSI中值滤波处理
@@ -1721,6 +1616,10 @@ https://blog.csdn.net/wwws1994/article/details/112346906
     <img src="./img/Beacon-std-rssi-median-2.png"><br>
     <p>中值滤波 窗口大小21 滤波前后RSSI数据对比</p>
 </div>
+
+[Beacon median filter-1](D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\figure\Beacon-medianfilter-1.fig>)
+
+[Beacon median filter-2](D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\figure\Beacon-medianfilter-2.fig>)
 
 实验结果分析：
 
@@ -1745,6 +1644,8 @@ https://blog.csdn.net/wwws1994/article/details/112346906
 2. ap-selector滤波方式修改为中值滤波；
 
 3. 中值滤波后RSSI取均值，RSSI和dist(距离)对应关系并不完全满足对数衰减模型，距离远情况下，RSSI会出现增大的情况，相比较于Ch39单信道其曲线更加符合对数形式。
+
+
 
 # Reference
 
