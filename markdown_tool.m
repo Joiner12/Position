@@ -54,7 +54,7 @@ classdef markdown_tool
 
     methods (Static)
 
-        function write_to_markdown(tar_md_file, tar_folder)
+        function write_to_markdown(tar_md_file, tar_folder, varargin)
             % 批量写markdown文件
             % tar_md_file = 'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\定位过程分析.md';
             % tar_folder = 'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1';
@@ -76,32 +76,65 @@ classdef markdown_tool
 
             end
 
-            if true
-                fildId = fopen(tar_md_file, 'w');
-                fprintf(fildId, "**%s** \n", string(datetime('now')));
+            file_model = 'markdown';
+            [file_dir, file_name, file_ext] = fileparts(tar_md_file)
+            file_model = strrep(file_ext, '.', '');
+            % html
+            switch file_model
+                case 'html'
+                    fileId = fopen(tar_md_file, 'w');
+                    fprintf(fileId, '<h1 style="font-size:45px;">定位过程分析</h1>')
+                    fprintf(fileId, "**%s** \n", string(datetime('now')));
+                    fprintf(fileId, '%s\n', '<body style="text-align:center">');
+                    len_pic = length(tar_pic);
 
-                len_pic = length(tar_pic);
+                    for j = 1:len_pic
 
-                for j = 1:len_pic
+                        for k = 1:len_pic
+                            tar_pic_temp = tar_pic{k};
+                            cur_serial = tar_pic_temp{1};
 
-                    for k = 1:len_pic
-                        tar_pic_temp = tar_pic{k};
-                        cur_serial = tar_pic_temp{1};
+                            if isequal(cur_serial, j)
+                                template_temp = '<div><img src="pic-path" style="zoom:110%%;" />\n<p style="font-size:30px;">label</p></div><hr>\n';
+                                template_temp = strrep(template_temp, 'pic-path', strrep(tar_pic_temp{2}, '\', '\\'));
+                                template_temp = strrep(template_temp, 'label', strcat('location-', num2str(cur_serial)));
+                                %template_temp = strcat('wangde',num2str(j),'\n');
+                                fprintf(fileId, template_temp);
+                                fprintf(fileId, '\n');
+                            end
 
-                        if isequal(cur_serial, j)
-                            template_temp = '<div><img src="pic-path" style="zoom:150%%;" />\n<p align="center">label</p></div>\n';
-                            template_temp = strrep(template_temp, 'pic-path', strrep(tar_pic_temp{2}, '\', '\\'));
-                            template_temp = strrep(template_temp, 'label', strcat('location-', num2str(cur_serial)));
-                            %template_temp = strcat('wangde',num2str(j),'\n');
-                            fprintf(fildId, template_temp);
-                            fprintf(fildId, '\n');
                         end
 
                     end
 
-                end
+                    fprintf(fileId, '%s\n', '</body>');
+                    fclose(fileId);
+                otherwise
+                    fileId = fopen(tar_md_file, 'w');
+                    fprintf(fileId, "**%s** \n", string(datetime('now')));
 
-                fclose(fildId);
+                    len_pic = length(tar_pic);
+
+                    for j = 1:len_pic
+
+                        for k = 1:len_pic
+                            tar_pic_temp = tar_pic{k};
+                            cur_serial = tar_pic_temp{1};
+
+                            if isequal(cur_serial, j)
+                                template_temp = '<div><img src="pic-path" style="zoom:150%%;" />\n<p align="center">label</p></div>\n';
+                                template_temp = strrep(template_temp, 'pic-path', strrep(tar_pic_temp{2}, '\', '\\'));
+                                template_temp = strrep(template_temp, 'label', strcat('location-', num2str(cur_serial)));
+                                %template_temp = strcat('wangde',num2str(j),'\n');
+                                fprintf(fileId, template_temp);
+                                fprintf(fileId, '\n');
+                            end
+
+                        end
+
+                    end
+
+                    fclose(fileId);
             end
 
             disp('write finished')

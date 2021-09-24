@@ -25,7 +25,7 @@ function [position, debug_param] = bluetooth_position(data)
     debug_param.frame_id = 0;
     debug_param.config = config;
     %% apselector 初始化
-    ap_selector = init_ap_selector(11);
+    ap_selector = init_ap_selector(21);
     gif_cnt = 1;
 
     % 逐帧处理
@@ -97,7 +97,7 @@ function [position, debug_param] = bluetooth_position(data)
         %% figure
         if true &&~isempty(fieldnames(pos_res))
             tcf('Positining'); % todo:异常点处理
-            figure('name', 'Positining', 'Color', 'w');
+            f1 = figure('name', 'Positining', 'Color', 'w');
             cfg = get_config_debug();
             true_pos_manual = get_test_point(cfg(3).truepos);
             draw_positioning_state(gca, 'static', cur_frame_ap, 'estimated_positon', ...
@@ -105,11 +105,12 @@ function [position, debug_param] = bluetooth_position(data)
                 'true_pos', [true_pos_manual{1}.lat, true_pos_manual{1}.lon]);
 
             % save png files
-            if false
+            if true
                 pause(0.1);
                 png_file = strcat('location-temp', num2str(gif_cnt), '.png');
                 png_file = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1', png_file);
-                imwrite(frame2im(getframe(gcf)), png_file);
+                % imwrite(frame2im(getframe(gcf)), png_file);
+                saveas(f1, png_file);
                 fprintf('save figure as png file:%s\n', png_file);
             end
 

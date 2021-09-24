@@ -27,7 +27,7 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             recv_rssi_len = length(cur_frame_piece.recv_rssi);
             % fifo(first in fisrt out)
             recv_rssi_temp = cur_frame_piece.recv_rssi;
-            recv_rssi_temp = fliplr(recv_rssi_temp); % 数组翻转
+            % recv_rssi_temp = fliplr(recv_rssi_temp); % 数组翻转
 
             if recv_rssi_len > length(ap_selector.RECVRSSI(rows + 1, :)) - 1
                 ap_selector.RECVRSSI(rows + 1, :) = recv_rssi_temp(1:length(ap_selector.RECVRSSI(rows + 1, :)));

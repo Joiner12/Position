@@ -1645,6 +1645,36 @@ https://blog.csdn.net/wwws1994/article/details/112346906
 
 3. 中值滤波后RSSI取均值，RSSI和dist(距离)对应关系并不完全满足对数衰减模型，距离远情况下，RSSI会出现增大的情况，相比较于Ch39单信道其曲线更加符合对数形式。
 
+### 3.1 原始数据中值处理后拟合结果
+
+$$
+\begin{align}
+&General model:\\
+     &f(x) = A+10*n*log10(x)\\
+& Coefficients (with 95\% confidence bounds): \\
+&       A =      -37.08  (-41.74, -32.42)\\
+&       n =      -1.761  (-2.376, -1.145)\\
+
+&Goodness of fit:\\
+&  SSE: 69.84\\
+&  R-square: 0.8229\\
+&  Adjusted R-square: 0.8032\\
+&  RMSE: 2.786\\
+  \end{align}
+$$
+
+
+
+<img src="./img/Beacon median fit -1.png">
+
+ 
+
+结果分析：
+
+1. $RSSI>-50dBm$ ，$f(rssi)<5.5m$ 
+2. $RSSI<=-70dBm$ ，$f(rssi)<15m$
+3. $RSSI<=-50dBm$ ，需要使用信道聚类辅助距离判断；
+
 
 
 # Reference
