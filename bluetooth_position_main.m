@@ -26,7 +26,7 @@ disp('数据初始化成功');
 % 蓝牙定位
 % 初始化定位结果
 % 批量删除缓存文件
-write_markdown_flag = false
+write_markdown_flag = true;
 
 if write_markdown_flag
     markdown_tool.batch_remove('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1');

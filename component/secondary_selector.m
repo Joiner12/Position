@@ -1,10 +1,12 @@
-function trilateration_ap = secondary_selector(pre_trilateration_ap, varargin)
+function trilateration_ap = secondary_selector(pre_trilateration_ap, model_select, varargin)
     % 功能:
-    %       根据BS(base station)的地理位置信息,选择最有可能作为定位BS的三点;
+    %       1.根据BS(base station)的地理位置信息,选择最有可能作为定位BS的三点;
+    %       2.删除三边定位奇异点BS组合;
     % 定义:
     %       trilateration_ap = secondary_selector(pre_trilateration_ap, varargin)
     % 参数:
     %       pre_trilateration_ap,存储BS信息的结构体数组;
+    %       model_select,函数模式选择,'singularvalue'(处理奇异值问题),'selector'(次级选择器+奇异值问题)
     %       varargin,扩展参数
     % 输出:
     %       trilateration_ap,处理后存储BS信息的结构体数组;
@@ -14,12 +16,13 @@ function trilateration_ap = secondary_selector(pre_trilateration_ap, varargin)
     %       2.ap_selector预先选择出四个BS，然后再根据BS的位置信息筛选掉RSSI较大，但真实距离相对较远
     %       的BS.
     %       3.选择依据：任意三点构成一个三角形，所构成三角形三点到质心欧式距离和最小的三角形作为选择点.
+    %       4.奇异值问题:输入的pre_trilateration_ap为有序节点,检查前三个节点是否在一条直线上(近似).
     beacon_s = pre_trilateration_ap;
     trilateration_ap = pre_trilateration_ap;
 
     % 待选BS数目不足，返回
     if length(pre_trilateration_ap) <= 3
-        return
+        return;
     end
 
     x = zeros(0);
@@ -55,7 +58,7 @@ function trilateration_ap = secondary_selector(pre_trilateration_ap, varargin)
         % 三边定位过程中的奇异解,由于奇异解的质心距离和相比较于正常解大,因此不用进行特别处理;
         if abs(cos_theta) >= cosd(5)
             % warning('奇异节点');
-			continue;
+            continue;
         end
 
         centroid_point = mean(ABC_pos);

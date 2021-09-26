@@ -67,7 +67,7 @@ function [position, debug_param] = bluetooth_position(data)
 
         [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame_ap, ap_selector);
         %% 根据BS(base station)布局进行二次选择
-        if false % 关闭二次选择器
+        if true % 关闭二次选择器
             trilateration_ap = secondary_selector(trilateration_ap);
         end
 
@@ -97,7 +97,7 @@ function [position, debug_param] = bluetooth_position(data)
         %% figure
         if true &&~isempty(fieldnames(pos_res))
             tcf('Positining'); % todo:异常点处理
-            f1 = figure('name', 'Positining', 'Color', 'w');
+            f1 = figure('name', 'Positining', 'Color', 'w', 'Visible', 'on');
             cfg = get_config_debug();
             true_pos_manual = get_test_point(cfg(3).truepos);
             draw_positioning_state(gca, 'static', cur_frame_ap, 'estimated_positon', ...
@@ -106,7 +106,7 @@ function [position, debug_param] = bluetooth_position(data)
 
             % save png files
             if true
-                pause(0.1);
+                pause(0.01);
                 png_file = strcat('location-temp', num2str(gif_cnt), '.png');
                 png_file = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1', png_file);
                 % imwrite(frame2im(getframe(gcf)), png_file);
