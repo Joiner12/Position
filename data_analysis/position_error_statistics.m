@@ -200,7 +200,7 @@ function position_error_statistics(position, true_position, varargin)
 
     % 保存结果
     if any(strcmpi('savefig', varargin))
-        figure2img(handle, 'D:\Code\BlueTooth\pos_bluetooth_matlab\静态定位结果-1.png')
+        savefig(handle, 'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\static-p1-1.png')
     end
 
 end

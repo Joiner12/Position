@@ -116,10 +116,6 @@ function [position, debug_param] = bluetooth_position(data)
 
             gif_cnt = gif_cnt +1;
 
-            if gif_cnt >= 160
-                debug_cnt = 0;
-            end
-
             fprintf('cnt = %.0f\n', gif_cnt);
         end
 

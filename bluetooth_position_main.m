@@ -10,7 +10,7 @@ if true
     % [~, data_file] = modify_geoinfo();
     % 读取待定位数据
     data_file = ['D:\Code\BlueTooth\pos_bluetooth_matlab\data\data_beacon_100ms_6\', ...
-                'P6-added_lat_lon.txt'];
+                'P1-added_lat_lon.txt'];
     files_data = data_import('datafile', data_file);
 else
     files_data = data_import();
@@ -27,7 +27,7 @@ disp('数据初始化成功');
 % 蓝牙定位
 % 初始化定位结果
 % 批量删除缓存文件
-write_markdown_flag = false;
+write_markdown_flag = true;
 
 if write_markdown_flag
     markdown_tool.batch_remove('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1');
@@ -71,7 +71,7 @@ if true
 
     %获取信标信息
     beacon = hlk_beacon_location();
-    position_error_statistics(position{1, 1}.pos_res, position{1, 1}.true_pos);
+    position_error_statistics(position{1, 1}.pos_res, position{1, 1}.true_pos, 'savefig');
 
     if false
         draw_trajectory_and_error_diagram(position, ...
