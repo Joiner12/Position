@@ -67,7 +67,7 @@ function [position, debug_param] = bluetooth_position(data)
 
         [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame_ap, ap_selector);
         %% 根据BS(base station)布局进行二次选择
-        if true % 关闭二次选择器
+        if false % 关闭二次选择器
             trilateration_ap = secondary_selector(trilateration_ap);
         end
 
@@ -82,7 +82,7 @@ function [position, debug_param] = bluetooth_position(data)
         [pos_res, ~] = trilateration_calc(cur_frame_ap);
 
         %% 定位后处理-范围滤波
-        if true & false
+        if true
             pos_res = final_scope_filter(pos_res, ...
                 scope_prev_pos, ...
                 config.scope_filter_param);
@@ -97,7 +97,7 @@ function [position, debug_param] = bluetooth_position(data)
         %% figure
         if true &&~isempty(fieldnames(pos_res))
             tcf('Positining'); % todo:异常点处理
-            f1 = figure('name', 'Positining', 'Color', 'w', 'Visible', 'on');
+            f1 = figure('name', 'Positining', 'Color', 'w', 'Visible', 'off');
             cfg = get_config_debug();
             true_pos_manual = get_test_point(cfg(3).truepos);
             draw_positioning_state(gca, 'static', cur_frame_ap, 'estimated_positon', ...
@@ -115,6 +115,11 @@ function [position, debug_param] = bluetooth_position(data)
             end
 
             gif_cnt = gif_cnt +1;
+
+            if gif_cnt >= 160
+                debug_cnt = 0;
+            end
+
             fprintf('cnt = %.0f\n', gif_cnt);
         end
 

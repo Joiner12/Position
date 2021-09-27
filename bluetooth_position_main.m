@@ -4,6 +4,7 @@ clear;
 % 经纬度无效值
 null_val = -10000;
 t_main = tic();
+
 if true
     % 根据全站仪修改ap经纬度信息
     % [~, data_file] = modify_geoinfo();
@@ -26,7 +27,7 @@ disp('数据初始化成功');
 % 蓝牙定位
 % 初始化定位结果
 % 批量删除缓存文件
-write_markdown_flag = true;
+write_markdown_flag = false;
 
 if write_markdown_flag
     markdown_tool.batch_remove('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1');
@@ -60,6 +61,7 @@ for i = 1:file_num
     end
 
 end
+
 toc(t_main);
 % 静态分析
 if true

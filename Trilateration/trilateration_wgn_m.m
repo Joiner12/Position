@@ -50,7 +50,10 @@ function [est_pos_wgn, procss] = trilateration_wgn_m(x_tr, y_tr, d_tr, varargin)
         end
 
         % deltaX = inv(- J' * w * J) * (J' * w * E);
-        deltaX = (- J' * w * J) \ (J' * w * E);
+        % ¹ãÒåÄæ
+        % deltaX = (- J' * w * J) \ (J' * w * E);
+        % Moore-Penrose Î±Äæ
+        deltaX = pinv(- J' * w * J) * (J' * w * E);
         x1 = x0 + deltaX';
         loop_cnt = loop_cnt + 1;
 

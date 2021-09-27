@@ -104,10 +104,11 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
 
     for k = 1:size(trilat_table, 1)
         rssi_s = trilat_table.RECVRSSI(k, :);
-        cur_rssi = rssi_s(rssi_s ~= 0);
-        trilat_table.CHARAC_ACT(k) = ceil(length(cur_rssi) / 2);
-        trilat_table.CHARAC_MEAN(k) = mean(cur_rssi);
-        trilat_table.CHARAC_VAR(k) = var(cur_rssi);
+        valid_rssi = rssi_s(rssi_s ~= 0);
+        % 统一特征值(保证最带为5)
+        trilat_table.CHARAC_ACT(k) = ceil(5 * length(valid_rssi) / length(rssi_s));
+        trilat_table.CHARAC_MEAN(k) = mean(valid_rssi);
+        trilat_table.CHARAC_VAR(k) = var(valid_rssi);
     end
 
     % mean sort character
@@ -135,7 +136,7 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
     trilat_table.SELECT_WEIGHT = charc_temp * charac_weight';
 
     % 定位节点最多个数
-    [~, index_temp] = maxk(trilat_table.SELECT_WEIGHT, 4);
+    [~, index_temp] = maxk(trilat_table.SELECT_WEIGHT, 3);
     selected_ap_name = trilat_table.NAME(index_temp);
 
     %%
