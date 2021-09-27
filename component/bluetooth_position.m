@@ -105,8 +105,8 @@ function [position, debug_param] = bluetooth_position(data)
                 'true_pos', [true_pos_manual{1}.lat, true_pos_manual{1}.lon]);
 
             % save png files
-            if true
-                pause(0.01);
+            if false
+                % pause(0.01);
                 png_file = strcat('location-temp', num2str(gif_cnt), '.png');
                 png_file = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1', png_file);
                 % imwrite(frame2im(getframe(gcf)), png_file);

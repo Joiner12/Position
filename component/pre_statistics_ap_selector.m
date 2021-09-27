@@ -159,9 +159,12 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             % trilateration_ap(valid_ap_cnt).rssi = trilat_table.rssi(table_index);
             rssi_temp = trilat_table.RECVRSSI(table_index, :);
             rssi_temp = rssi_temp(rssi_temp ~= 0);
-            % 考虑将均值滤波替换为中值滤波
+
             if false
                 trilateration_ap(valid_ap_cnt).rssi = mean(rssi_temp); % 均值滤波
+            elseif true
+                % 取max recieved rssi
+                trilateration_ap(valid_ap_cnt).rssi = max(rssi_temp); % 最大值
             else
                 rssi_temp_sorted = sort(rssi_temp); % 对非零RSSI数组进行排序
 

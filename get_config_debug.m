@@ -19,6 +19,6 @@ function config_value = get_config_debug(varargin)
     config_s(2).config_name = 'markdown_file_2';
     config_s(2).config_value = 'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\动静态定位结果分析.md';
 
-    config_s(3).truepos = 'P1';
+    config_s(3).truepos = 'P6';
     config_value = config_s;
 end

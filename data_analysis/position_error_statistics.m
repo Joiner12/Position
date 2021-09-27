@@ -199,8 +199,8 @@ function position_error_statistics(position, true_position, varargin)
     axis auto;
 
     % ±£´æ½á¹û
-    if any(strcmpi('savefig', varargin))
-        savefig(handle, 'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\static-p1-1.png')
+    if true
+        saveas(handle, 'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\static-p6-1.png')
     end
 
 end
