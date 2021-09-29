@@ -9,7 +9,7 @@ if true
     % 根据全站仪修改ap经纬度信息
     % [~, data_file] = modify_geoinfo();
     % 读取待定位数据
-    data_file = ['D:\Code\BlueTooth\pos_bluetooth_matlab\data\data_beacon_100ms_6\', ...
+    data_file = ['D:\Code\BlueTooth\pos_bluetooth_matlab\data\data_beacon_100ms_6_3米\', ...
                 'P6-added_lat_lon.txt'];
     files_data = data_import('datafile', data_file);
 else
