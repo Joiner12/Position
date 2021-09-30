@@ -98,11 +98,10 @@ function [position, debug_param] = bluetooth_position(data)
         if true &&~isempty(fieldnames(pos_res))
             tcf('Positining'); % todo:异常点处理
             f1 = figure('name', 'Positining', 'Color', 'w', 'Visible', 'off');
-            cfg = get_config_debug();
-            true_pos_manual = get_test_point(cfg(3).truepos);
+            system_config = sys_config();
             draw_positioning_state(gca, 'static', cur_frame_ap, 'estimated_positon', ...
                 [pos_res.lat, pos_res.lon], ...
-                'true_pos', [true_pos_manual{1}.lat, true_pos_manual{1}.lon]);
+                'true_pos', [system_config.cur_true_pos.lat, system_config.cur_true_pos.lon]);
 
             % save png files
             if false

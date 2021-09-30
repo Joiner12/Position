@@ -4,13 +4,13 @@ clear;
 % 经纬度无效值
 null_val = -10000;
 t_main = tic();
+system_config = sys_config(); % 读取配置文件
 
 if true
     % 根据全站仪修改ap经纬度信息
     % [~, data_file] = modify_geoinfo();
     % 读取待定位数据
-    data_file = ['D:\Code\BlueTooth\pos_bluetooth_matlab\data\data_beacon_100ms_6_3米\', ...
-                'P6-added_lat_lon.txt'];
+    data_file = system_config.origin_data_file;
     files_data = data_import('datafile', data_file);
 else
     files_data = data_import();
@@ -24,13 +24,9 @@ files_data = init_rssi_reference(files_data, -50.06763);
 
 disp('数据初始化成功');
 
-% 蓝牙定位
-% 初始化定位结果
 % 批量删除缓存文件
-write_markdown_flag = false;
-
-if write_markdown_flag
-    markdown_tool.batch_remove('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1');
+if system_config.write_markdown_flag
+    markdown_tool.batch_remove(system_config.markdown_pic_path);
 end
 
 file_num = length(files_data);
@@ -44,20 +40,17 @@ for i = 1:file_num
     if false
         position{i}.true_pos = files_true_pos{i};
     else
-        cfg = get_config_debug();
-        true_pos_manual = get_test_point(cfg(3).truepos);
-        true_pos_temp = struct('lat', true_pos_manual{1}.lat, ...
-            'lon', true_pos_manual{1}.lon);
-
+        true_pos_temp = struct('lat', system_config.cur_true_pos.lat, ...
+            'lon', system_config.cur_true_pos.lon);
         position{i}.true_pos = repmat(true_pos_temp, ...
             size(position{i}.pos_res, 1), size(position{i}.pos_res, 2));
     end
 
     filter_points{i} = debug{i}.centroid;
 
-    if write_markdown_flag
-        markdown_tool.write_to_markdown('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\定位过程分析.html', ...
-            'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1');
+    if system_config.write_markdown_flag
+        markdown_tool.write_to_markdown(system_config.markdown_file_3, ...
+            system_config.markdown_pic_path);
     end
 
 end
@@ -84,7 +77,8 @@ if true
     end
 
 end
-
+% 调试信息
+debug_info();
 %% 动态分析
 if true
     tcf('dynamic')

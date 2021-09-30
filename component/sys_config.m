@@ -5,7 +5,7 @@ function config = sys_config()
     %
     %输出：
     %    config：配置的参数
-
+    config = struct();
     same_ap_judge_type = 'addr';
 
     %% 整合相同的ap数据
@@ -88,4 +88,58 @@ function config = sys_config()
     %% 通用参数
     %历史数据有效的帧数上限
     config.history_valid_frame_num = config.jump_smooth_filter_param.jump_num_max;
+
+    %% 调试参数
+
+    %% 调试过程信息-markdown
+    % 写markdown文件标志
+    config.write_markdown_flag = false;
+    % markdown图片存贮位置
+    config.markdown_pic_path = 'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1';
+    config.markdown_file_1 = 'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\定位过程分析.md';
+    config.markdown_file_2 = 'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\动静态定位结果分析.md';
+    config.markdown_file_3 = 'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\定位过程分析.html';
+    %% 当前定位真实位置
+    %{
+    {
+        "true_pos_name":P1,
+        "lat":30,
+        "lon":120
+        }
+    %}
+    test_point_1_name = {"P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10"};
+
+    test_point_1_lon = [104.0585719, 104.058615502714, 104.058615850824, ...
+                        104.058615350415, 104.058616007473, 104.058660192224, ...
+                        104.058688771294, 104.058709374097, 104.058709548135, ...
+                        104.0586505];
+    test_point_1_lat = [30.54790401, 30.547931006136, 30.547894930042, ...
+                        30.547946789427, 30.547878695800, 30.547912297694, ...
+                        30.547945353836, 30.547922664987, 30.547904626940, ...
+                        30.54791369];
+
+    % true_pos_p1 = struct('name', "P1", 'lat', test_point_1_lat(1), 'lon', test_point_1_lon(1));
+    % config.true_pos1 = true_pos_p1;
+    % true_pos_p2 = struct('name', "P2", 'lat', test_point_1_lat(2), 'lon', test_point_1_lon(2));
+    % config.true_pos2 = true_pos_p2;
+    % true_pos_p3 = struct('name', "P3", 'lat', test_point_1_lat(3), 'lon', test_point_1_lon(3));
+    % config.true_pos3 = true_pos_p3;
+    % true_pos_p4 = struct('name', "P4", 'lat', test_point_1_lat(4), 'lon', test_point_1_lon(4));
+    % config.true_pos4 = true_pos_p4;
+    % true_pos_p5 = struct('name', "P5", 'lat', test_point_1_lat(5), 'lon', test_point_1_lon(5));
+    % config.true_pos5 = true_pos_p5;
+    % true_pos_p6 = struct('name', "P6", 'lat', test_point_1_lat(6), 'lon', test_point_1_lon(6));
+    % config.true_pos6 = true_pos_p6;
+    true_pos_index = 6;
+    config.cur_true_pos = struct('name', test_point_1_name{true_pos_index}, ...
+        'lat', test_point_1_lat(true_pos_index), 'lon', test_point_1_lon(true_pos_index));
+
+    %% 定位误差结果统计
+    % 静态统计误差图片路径
+    config.save_position_error_statistics_pic = true;
+    config.position_error_statistics_pic = ...
+        'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\static-p6-1.png';
+    % 原始数据文件路径
+    config.origin_data_file = ['D:\Code\BlueTooth\pos_bluetooth_matlab\data\data_beacon_100ms_6_3米\', ...
+                                'P6-added_lat_lon.txt'];
 end
