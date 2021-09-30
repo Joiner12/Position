@@ -245,3 +245,25 @@ subplot(3, 2, 6)
 plot(linspace(1, length(median_mean_vals), length(median_mean_vals)), median_mean_vals)
 set(get(gca, 'XLabel'), 'String', 'dist/m');
 set(get(gca, 'YLabel'), 'String', 'RSSI/dBm');
+
+%% check clusteing is linear
+C_sF = zeros([length(C_s), 3]);
+
+for k = 1:length(C_s)
+    C_sF(k, :) = (C_s{k});
+end
+
+tcf('plot3 clustering')
+figure('name', 'plot3 clustering', 'color', 'w');
+hold on
+plot3(C_sF(:, 1), C_sF(:, 2), C_sF(:, 3))
+plot3(C_sF(:, 1), C_sF(:, 2), C_sF(:, 3), 'LineStyle', 'None', 'Marker', '*')
+
+for k = 1:length(C_s)
+    text(C_sF(k, 1), C_sF(k, 2), C_sF(k, 3), [num2str(k), ' m'], ...
+        'Color', 'b');
+end
+
+grid on
+%% 
+init_ap_selector(21, 'clustering_scope',21)
