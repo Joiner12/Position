@@ -27,9 +27,15 @@ function position_error_statistics(position, true_position, varargin)
 
     %% 误差数据统计
     if length(position) ~= length(true_position)
-        flag = ['位置信息与其真值个数不同, position:', num2str(length(position)), ...
-                ', true_position: ', num2str(length(true_position))];
-        error(flag);
+        % todo:真实标注位置和定位位置数目不一致
+        if false
+            flag = ['位置信息与其真值个数不同, position:', num2str(length(position)), ...
+                    ', true_position: ', num2str(length(true_position))];
+            error(flag);
+        else
+            true_position = true_position(1:length(position));
+        end
+
     end
 
     %处理可变参
@@ -200,6 +206,7 @@ function position_error_statistics(position, true_position, varargin)
 
     % 保存结果
     system_config = sys_config();
+
     if system_config.save_position_error_statistics_pic
         saveas(handle, system_config.position_error_statistics_pic)
     end

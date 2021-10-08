@@ -1,5 +1,6 @@
 %% 控制参数配置
 clc;
+tcf;
 clear;
 % 经纬度无效值
 null_val = -10000;
@@ -37,7 +38,7 @@ debug = cell(file_num, 1);
 for i = 1:file_num
     [position{i}.pos_res, debug{i}] = bluetooth_position(file_ap_msg{i});
 
-    if false
+    if true
         position{i}.true_pos = files_true_pos{i};
     else
         true_pos_temp = struct('lat', system_config.cur_true_pos.lat, ...
@@ -77,8 +78,7 @@ if true
     end
 
 end
-% 调试信息
-debug_info();
+
 %% 动态分析
 if true
     tcf('dynamic')

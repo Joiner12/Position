@@ -77,13 +77,13 @@ classdef markdown_tool
             end
 
             file_model = 'markdown';
-            [file_dir, file_name, file_ext] = fileparts(tar_md_file)
+            [file_dir, file_name, file_ext] = fileparts(tar_md_file);
             file_model = strrep(file_ext, '.', '');
             % html
             switch file_model
                 case 'html'
                     fileId = fopen(tar_md_file, 'w');
-                    fprintf(fileId, '<h1 style="font-size:45px;">定位过程分析</h1>')
+                    fprintf(fileId, '<h1 style="font-size:45px;">定位过程分析</h1>');
                     fprintf(fileId, "**%s** \n", string(datetime('now')));
                     fprintf(fileId, '%s\n', '<body style="text-align:center">');
                     len_pic = length(tar_pic);

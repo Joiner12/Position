@@ -95,17 +95,18 @@ function [position, debug_param] = bluetooth_position(data)
         end
 
         %% figure
-        if true &&~isempty(fieldnames(pos_res))
+        system_config = sys_config();
+        if ~isempty(fieldnames(pos_res))
             tcf('Positining'); % todo:异常点处理
             f1 = figure('name', 'Positining', 'Color', 'w', 'Visible', 'off');
-            system_config = sys_config();
+            
             draw_positioning_state(gca, 'static', cur_frame_ap, 'estimated_positon', ...
                 [pos_res.lat, pos_res.lon], ...
                 'true_pos', [system_config.cur_true_pos.lat, system_config.cur_true_pos.lon]);
 
             % save png files
-            if false
-                % pause(0.01);
+            if system_config.save_procession_figure
+                pause(0.01);
                 png_file = strcat('location-temp', num2str(gif_cnt), '.png');
                 png_file = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1', png_file);
                 % imwrite(frame2im(getframe(gcf)), png_file);

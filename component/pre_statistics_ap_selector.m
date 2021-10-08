@@ -26,7 +26,7 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
 
         if ~any(strcmp(selector_name, name))
             ap_selector.NAME(rows + 1) = name;
-            pre_rssi_temp = ap_selector.RECVRSSI(rows + 1, :);
+            pre_rssi_temp = ap_selector.RECVRSSI(rows + 1, :); % ap_selector rssi
             recv_rssi_len = length(cur_frame_piece.recv_rssi);
             % fifo(first in fisrt out)
             recv_rssi_temp = cur_frame_piece.recv_rssi;
@@ -37,14 +37,15 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             else
                 ap_selector.RECVRSSI(rows + 1, :) = [pre_rssi_temp(recv_rssi_len + 1:end), recv_rssi_temp];
             end
-            pre_rssi_clustering_temp =ap_selector.RECVRSSI(rows + 1, :);
+
+            pre_rssi_clustering_temp = ap_selector.RSSI_FOR_CLUSTERING(rows + 1, :); % rssi for clustering
             % 更新用于聚类的RSSI历史数据ap_selector.RSSI_FOR_CLUSTERING
             if recv_rssi_len > length(ap_selector.RSSI_FOR_CLUSTERING(rows + 1, :)) - 1
                 ap_selector.RSSI_FOR_CLUSTERING(rows + 1, :) = ...
                     recv_rssi_temp(1:length(ap_selector.RSSI_FOR_CLUSTERING(rows + 1, :)));
             else
                 ap_selector.RSSI_FOR_CLUSTERING(rows + 1, :) = ...
-                    [pre_rssi_temp(recv_rssi_len + 1:end), recv_rssi_temp];
+                    [pre_rssi_clustering_temp(recv_rssi_len + 1:end), recv_rssi_temp];
             end
 
             ap_selector.LAT(rows + 1) = cur_frame_piece.lat;
@@ -67,11 +68,12 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
                 ap_selector.RECVRSSI(index, :) = [pre_rssi_temp(recv_rssi_len + 1:end), recv_rssi_temp];
             end
 
+            pre_rssi_clustering_temp = ap_selector.RSSI_FOR_CLUSTERING(index, :); % rssi for clustering
             % 更新用于聚类的RSSI历史数据ap_selector.RSSI_FOR_CLUSTERING
-            if recv_rssi_len > length(ap_selector.RSSI_FOR_CLUSTERING(rows + 1, :)) - 1
+            if recv_rssi_len > length(ap_selector.RSSI_FOR_CLUSTERING(index, :)) - 1
                 ap_selector.RSSI_FOR_CLUSTERING(index, :) = recv_rssi_temp(1:length(ap_selector.RSSI_FOR_CLUSTERING(rows + 1, :)));
             else
-                ap_selector.RSSI_FOR_CLUSTERING(index, :) = [pre_rssi_temp(recv_rssi_len + 1:end), recv_rssi_temp];
+                ap_selector.RSSI_FOR_CLUSTERING(index, :) = [pre_rssi_clustering_temp(recv_rssi_len + 1:end), recv_rssi_temp];
             end
 
             ap_selector.LAT(index) = cur_frame_piece.lat;
