@@ -14,10 +14,16 @@ function [data_idx, C] = channel_clustering(origin_data, clustering_num, varargi
     data_y = reshape(origin_data, [length(origin_data), 1]);
     data_x = 1:1:length(data_y);
     %% k-means THREE clustering
-    clc;
-    opts = statset('Display', 'final');
-    [idx, C] = kmeans(data_y, 3, 'Distance', 'cityblock', ...
-        'Replicates', clustering_num, 'Options', opts);
+    if false
+        % display the final clustering
+        opts = statset('Display', 'final');
+        [idx, C] = kmeans(data_y, 3, 'Distance', 'cityblock', ...
+            'Replicates', clustering_num, 'Options', opts);
+    else
+        [idx, C] = kmeans(data_y, 3, 'Distance', 'cityblock', ...
+            'Replicates', clustering_num);
+    end
+
     idx = reshape(idx, [length(idx), 1]);
     data_idx = [data_y, idx];
     % markers

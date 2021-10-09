@@ -66,9 +66,9 @@ function [position, debug_param] = bluetooth_position(data)
         end
 
         [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame_ap, ap_selector);
-        %% 根据BS(base station)布局进行二次选择
-        if false % 关闭二次选择器
-            trilateration_ap = secondary_selector(trilateration_ap);
+        %% 次级选择器——奇异值问题
+        if true
+            trilateration_ap = secondary_selector(trilateration_ap, 'singularvalue');
         end
 
         %% 对数模型:RSSI转换为距离
@@ -96,10 +96,11 @@ function [position, debug_param] = bluetooth_position(data)
 
         %% figure
         system_config = sys_config();
+
         if ~isempty(fieldnames(pos_res))
             tcf('Positining'); % todo:异常点处理
             f1 = figure('name', 'Positining', 'Color', 'w', 'Visible', 'off');
-            
+
             draw_positioning_state(gca, 'static', cur_frame_ap, 'estimated_positon', ...
                 [pos_res.lat, pos_res.lon], ...
                 'true_pos', [system_config.cur_true_pos.lat, system_config.cur_true_pos.lon]);

@@ -31,6 +31,12 @@ for k = 1:1:11
     median_mean_vals(k) = mean(BeaconRSSI(k).rssi_medianfilter);
 end
 
+%%
+for k = 1:length(C_s)
+    temp = C_s{k}
+    C_s{k} = sort(temp);
+end
+
 %% check for part clustering
 disp('check for part clustering');
 
@@ -265,5 +271,5 @@ for k = 1:length(C_s)
 end
 
 grid on
-%% 
-init_ap_selector(21, 'clustering_scope',21)
+%%
+init_ap_selector(21, 'clustering_scope', 21)

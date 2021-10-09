@@ -39,41 +39,69 @@ function trilateration_ap = secondary_selector(pre_trilateration_ap, model_selec
     end
 
     beacon_t = struct2table(beacon_s);
-    table_cnt = 0;
-    min_centroid = struct('sum_dist', intmax('uint32'), 'bs_index', [1, 2, 3]); % 最小质心距离和BS
+
+    %  nchoosek,按照的是先后循序进行组合输出
     select_beacon_index = nchoosek(1:length(pre_trilateration_ap), 3); % 可能的三角形组合
 
-    for j = 1:size(select_beacon_index, 1)
-        t_indextemp = select_beacon_index(j, :);
-        table_cnt = table_cnt + 1;
-        ABC_pos = [beacon_t.rel_x(t_indextemp(1), :), beacon_t.rel_y(t_indextemp(1), :); ...
-                    beacon_t.rel_x(t_indextemp(2), :), beacon_t.rel_y(t_indextemp(2), :); ...
-                    beacon_t.rel_x(t_indextemp(3), :), beacon_t.rel_y(t_indextemp(3), :); ];
+    switch model_select
+            %次级选择器+奇异值问题
+        case 'selector'
+            min_centroid = struct('sum_dist', intmax('uint32'), 'bs_index', [1, 2, 3]); % 最小质心距离和BS
 
-        cos_theta = dot(ABC_pos(1, :) - ABC_pos(2, :), ABC_pos(3, :) - ABC_pos(1, :));
-        cos_theta = cos_theta ...
-            / norm(ABC_pos(1, :) - ABC_pos(2, :)) ...
-            / norm(ABC_pos(3, :) - ABC_pos(1, :));
-        % θ < 5° 为近似同一条直线上点
-        % 三边定位过程中的奇异解,由于奇异解的质心距离和相比较于正常解大,因此不用进行特别处理;
-        if abs(cos_theta) >= cosd(5)
-            % warning('奇异节点');
-            continue;
-        end
+            for j = 1:size(select_beacon_index, 1)
+                t_indextemp = select_beacon_index(j, :);
+                ABC_pos = [beacon_t.rel_x(t_indextemp(1), :), beacon_t.rel_y(t_indextemp(1), :); ...
+                            beacon_t.rel_x(t_indextemp(2), :), beacon_t.rel_y(t_indextemp(2), :); ...
+                            beacon_t.rel_x(t_indextemp(3), :), beacon_t.rel_y(t_indextemp(3), :); ];
 
-        centroid_point = mean(ABC_pos);
-        centroid_dist = zeros(0);
+                cos_theta = dot(ABC_pos(1, :) - ABC_pos(2, :), ABC_pos(3, :) - ABC_pos(1, :));
+                cos_theta = cos_theta ...
+                    / norm(ABC_pos(1, :) - ABC_pos(2, :)) ...
+                    / norm(ABC_pos(3, :) - ABC_pos(1, :));
+                % θ < 5° 为近似同一条直线上点
+                % 三边定位过程中的奇异解,由于奇异解的质心距离和相比较于正常解大,因此不用进行特别处理;
+                if abs(cos_theta) >= cosd(5)
+                    % warning('奇异节点');
+                    continue;
+                end
 
-        for k_1 = 1:3
-            centroid_dist(k_1) = norm(ABC_pos(k_1, :) - centroid_point);
-        end
+                centroid_point = mean(ABC_pos);
+                centroid_dist = zeros(0);
 
-        if sum(centroid_dist) < min_centroid.sum_dist
-            min_centroid.bs_index = t_indextemp;
-            min_centroid.sum_dist = sum(centroid_dist);
-        end
+                for k_1 = 1:3
+                    centroid_dist(k_1) = norm(ABC_pos(k_1, :) - centroid_point);
+                end
 
+                if sum(centroid_dist) < min_centroid.sum_dist
+                    min_centroid.bs_index = t_indextemp;
+                    min_centroid.sum_dist = sum(centroid_dist);
+                end
+
+            end
+
+            trilateration_ap = beacon_s(min_centroid.bs_index);
+        otherwise
+            loop_cnt = 0;
+
+            while true
+                loop_cnt = loop_cnt + 1;
+                t_indextemp = select_beacon_index(loop_cnt, :);
+                ABC_pos = [beacon_t.rel_x(t_indextemp(1), :), beacon_t.rel_y(t_indextemp(1), :); ...
+                            beacon_t.rel_x(t_indextemp(2), :), beacon_t.rel_y(t_indextemp(2), :); ...
+                            beacon_t.rel_x(t_indextemp(3), :), beacon_t.rel_y(t_indextemp(3), :); ];
+
+                cos_theta = dot(ABC_pos(1, :) - ABC_pos(2, :), ABC_pos(3, :) - ABC_pos(1, :));
+                cos_theta = cos_theta ...
+                    / norm(ABC_pos(1, :) - ABC_pos(2, :)) ...
+                    / norm(ABC_pos(3, :) - ABC_pos(1, :));
+                % θ < 5° 为近似同一条直线上点
+                if abs(cos_theta) < cosd(5) || loop_cnt > length(select_beacon_index) - 1
+                    break;
+                end
+
+            end
+
+            trilateration_ap = beacon_s(t_indextemp);
     end
 
-    trilateration_ap = beacon_s(min_centroid.bs_index);
 end

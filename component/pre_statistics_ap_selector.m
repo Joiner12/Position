@@ -154,7 +154,7 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
     trilat_table.SELECT_WEIGHT = charc_temp * charac_weight';
 
     % 定位节点最多个数
-    [~, index_temp] = maxk(trilat_table.SELECT_WEIGHT, 3);
+    [~, index_temp] = maxk(trilat_table.SELECT_WEIGHT, 4);
     selected_ap_name = trilat_table.NAME(index_temp);
 
     %%
@@ -202,6 +202,18 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             trilateration_ap(valid_ap_cnt).rssi_gf = trilat_table.RSSI(table_index);
             trilateration_ap(valid_ap_cnt).rssi_kf = trilat_table.RSSI(table_index);
             trilateration_ap(valid_ap_cnt).dist = 0; % with a hammer dist
+            % rssi clustering
+            rssi_clustering_temp = trilat_table.RSSI_FOR_CLUSTERING(table_index, :);
+            rssi_clustering_temp = rssi_clustering_temp(rssi_clustering_temp ~= 0);
+
+            if length(rssi_clustering_temp) > int16(length(rssi_clustering_temp) / 2) ...
+                    && length(rssi_clustering_temp) > 3
+                % [~, C] = cluster_ble_channle(rssi_clustering_temp);
+                [~, C] = channel_clustering(rssi_clustering_temp, 3);
+                C = sort(C);
+                trilateration_ap(valid_ap_cnt).rssi_clustering = C;
+            end
+
             valid_ap_cnt = valid_ap_cnt + 1;
         end
 
