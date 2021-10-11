@@ -271,5 +271,7 @@ for k = 1:length(C_s)
 end
 
 grid on
+
 %%
-init_ap_selector(21, 'clustering_scope', 21)
+clc;
+dist = calc_distance_based_on_rssi_clustering([2, 3, 1]');
