@@ -34,5 +34,12 @@ function dist = calc_distance_based_on_rssi_clustering(rssi_clustering, varargin
         errs(k) = vecnorm(cur_rssi_clustering - Beacon_RSSI_Clustering(k, :));
     end
 
-    disp(errs);
+    dist_index = find(min(errs) == errs);
+
+    if length(dist_index) > 1
+        dist = dist_index(1);
+    else
+        dist = dist_index;
+    end
+
 end

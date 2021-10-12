@@ -93,7 +93,7 @@ function config = sys_config()
 
     %% 调试过程信息-markdown
     % 写markdown文件标志
-    config.write_markdown_flag = false;
+    config.write_markdown_flag = true;
     % markdown图片存贮位置
     config.save_procession_figure = config.write_markdown_flag;
     config.markdown_pic_path = 'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1';
@@ -132,7 +132,7 @@ function config = sys_config()
                         104.0586259, 104.0585998, 104.0586258, ...
                         104.0585847, 104.0585846, 104.0585844, ...
                         104.0585842, 104.0585842];
-    true_pos_index = 21;
+    true_pos_index = 13;
     config.cur_true_pos = struct('name', test_point_1_name{true_pos_index}, ...
         'lat', test_point_1_lat(true_pos_index), 'lon', test_point_1_lon(true_pos_index));
 
@@ -140,10 +140,10 @@ function config = sys_config()
     % 静态统计误差图片路径
     config.save_position_error_statistics_pic = false;
     config.position_error_statistics_pic = ...
-        'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\static-P21-2.png';
+        'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\static-P12-2.png';
     % 原始数据文件路径
     % config.origin_data_file = ['D:\Code\BlueTooth\pos_bluetooth_matlab\data\data_beacon_100ms_6_3米\', ...
         %                             'P6-added_lat_lon.txt'];
     config.origin_data_file = ['D:\Code\BlueTooth\pos_bluetooth_matlab\data\data_100ms_6_3米_9月测试报告\', ...
-                                'P21-added_lat_lon.txt'];
+                                'P12-added_lat_lon.txt'];
 end

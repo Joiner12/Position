@@ -41,15 +41,15 @@ function distance = calc_distance_based_on_rssi(ap, varargin)
         'n', 3.363);
     env_factor = -0;
     Beacon1 = struct('Name', 'Beacon1', 'A', -37.08 + env_factor, ...
-        'n', 1.761);
+        'n', 2);
     Beacon2 = struct('Name', 'Beacon2', 'A', -37.08 + env_factor, ...
-        'n', 1.761);
+        'n', 2);
     Beacon3 = struct('Name', 'Beacon3', 'A', -37.08 + env_factor, ...
-        'n', 1.761);
+        'n', 2);
     Beacon4 = struct('Name', 'Beacon4', 'A', -37.08 + env_factor, ...
-        'n', 1.761);
+        'n', 2);
     Beacon5 = struct('Name', 'Beacon5', 'A', -37.08 + env_factor, ...
-        'n', 1.761);
+        'n', 2);
     ap_params = {ope_0, ope_1, ope_2, ope_3, ope_4, ...
                 ope_5, ope_6, ope_7, ope_8, ope_9, Beacon1, ...
                 Beacon2, Beacon3, Beacon4, Beacon5};
@@ -75,6 +75,17 @@ function distance = calc_distance_based_on_rssi(ap, varargin)
             end
 
             dist = rssi_to_distance_logarithmic(A, n, ap.rssi);
+            dist_clustering = -1;
+
+            if ~isempty(ap.rssi_clustering) && any(ap.rssi_clustering ~= 0)
+                dist_clustering = calc_distance_based_on_rssi_clustering(ap.rssi_clustering);
+            end
+
+            if ~isequal(dist_clustering, -1) && false
+                dist = dist_clustering * 0.5 + dist * 0.5;
+            end
+
+            fprintf('distance calc,logar:%.2f,clustering:%.2f\n', dist, dist_clustering);
         case 'piecewise_logarithmic' % 分段对数模型
             % 查表
             % dist = rssi_to_distance_piecewise_logarithmic(...

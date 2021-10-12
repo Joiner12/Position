@@ -149,7 +149,7 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
     trilat_table.CHARAC_VAR(gen_index_var(~ismember(gen_index_var, charac_var_index))) = 0;
 
     % 神经元
-    charac_weight = [0.3, 0.6, 0.1]; % 特征值权重
+    charac_weight = [0.3, 0.7, 0]; % 特征值权重
     charc_temp = [trilat_table.CHARAC_ACT, trilat_table.CHARAC_MEAN, trilat_table.CHARAC_VAR];
     trilat_table.SELECT_WEIGHT = charc_temp * charac_weight';
 
@@ -205,15 +205,16 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             % rssi clustering
             rssi_clustering_temp = trilat_table.RSSI_FOR_CLUSTERING(table_index, :);
             rssi_clustering_temp = rssi_clustering_temp(rssi_clustering_temp ~= 0);
+            C = zeros(1, 3);
 
             if length(rssi_clustering_temp) > int16(length(rssi_clustering_temp) / 2) ...
                     && length(rssi_clustering_temp) > 3
                 % [~, C] = cluster_ble_channle(rssi_clustering_temp);
                 [~, C] = channel_clustering(rssi_clustering_temp, 3);
                 C = sort(C);
-                trilateration_ap(valid_ap_cnt).rssi_clustering = C;
             end
 
+            trilateration_ap(valid_ap_cnt).rssi_clustering = C;
             valid_ap_cnt = valid_ap_cnt + 1;
         end
 

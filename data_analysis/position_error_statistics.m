@@ -139,7 +139,8 @@ function position_error_statistics(position, true_position, varargin)
     end
 
     %% 绘制误差统计图
-    handle = figure('color', 'w');
+    tcf('errorstatic');
+    handle = figure('color', 'w', 'name', 'errorstatic');
     set(handle, 'name', '位置误差统计图');
 
     %绘制各个点的误差

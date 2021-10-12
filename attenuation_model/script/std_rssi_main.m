@@ -274,4 +274,4 @@ grid on
 
 %%
 clc;
-dist = calc_distance_based_on_rssi_clustering([2, 3, 1]');
+dist = calc_distance_based_on_rssi_clustering([-45, -52, -43]')
