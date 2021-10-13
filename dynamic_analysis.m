@@ -90,4 +90,4 @@ legend(rssi_data_1(index).name, rssi_data_1_new(index).name)
 title(strcat('ope-', num2str(index)));
 %%
 clc;
-a = error_statistics_dist(~isnan(error_statistics_dist));
+show_figure()

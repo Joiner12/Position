@@ -166,7 +166,7 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
         table_index = find(strcmp(trilat_table.NAME, selected_ap_name(j)));
         rssi_temp = trilat_table.RECVRSSI(table_index, :);
 
-        if ~isempty(find(rssi_temp))
+        if ~isempty(find(rssi_temp, 1))
             trilateration_ap(valid_ap_cnt).name = trilat_table.NAME(table_index);
             trilateration_ap(valid_ap_cnt).mac = trilat_table.MAC(table_index);
             trilateration_ap(valid_ap_cnt).lat = trilat_table.LAT(table_index);
@@ -178,9 +178,9 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             rssi_temp = trilat_table.RECVRSSI(table_index, :);
             rssi_temp = rssi_temp(rssi_temp ~= 0);
 
-            if false
+            if true
                 trilateration_ap(valid_ap_cnt).rssi = mean(rssi_temp); % 均值滤波
-            elseif true
+            elseif false
                 % 取max recieved rssi
                 trilateration_ap(valid_ap_cnt).rssi = max(rssi_temp); % 最大值
             else

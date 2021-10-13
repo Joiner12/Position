@@ -80,7 +80,7 @@ function trilateration_ap = secondary_selector(pre_trilateration_ap, model_selec
             end
 
             trilateration_ap = beacon_s(min_centroid.bs_index);
-        otherwise
+        case 'singularvalue'
             loop_cnt = 0;
 
             while true
@@ -95,13 +95,20 @@ function trilateration_ap = secondary_selector(pre_trilateration_ap, model_selec
                     / norm(ABC_pos(1, :) - ABC_pos(2, :)) ...
                     / norm(ABC_pos(3, :) - ABC_pos(1, :));
                 % θ < 5° 为近似同一条直线上点
-                if abs(cos_theta) < cosd(5) || loop_cnt > length(select_beacon_index) - 1
+                if abs(cos_theta) <= cosd(5) || loop_cnt > length(select_beacon_index) - 1
                     break;
+                end
+
+                if loop_cnt > 1
+                    t_indextemp = linspace(1, 4, 4);
                 end
 
             end
 
-            trilateration_ap = beacon_s(t_indextemp);
+        otherwise
+            t_indextemp = linspace(1, length(pre_trilateration_ap), length(pre_trilateration_ap));
     end
+
+    trilateration_ap = beacon_s(t_indextemp);
 
 end

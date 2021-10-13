@@ -2,8 +2,6 @@
 clc;
 tcf;
 clear;
-% 经纬度无效值 
-null_val = -10000;
 t_main = tic();
 system_config = sys_config(); % 读取配置文件
 
@@ -21,7 +19,7 @@ end
 files_data = init_rssi_reference(files_data, -50.06763);
 
 % 提取各文件的信标数据及真值
-[file_ap_msg, files_true_pos] = extract_files_apmsg_truepos(files_data, null_val);
+[file_ap_msg, files_true_pos] = extract_files_apmsg_truepos(files_data, -10000);
 
 disp('数据初始化成功');
 
@@ -80,7 +78,7 @@ if true
 end
 
 %% 动态分析
-if true
+if false
     tcf('dynamic')
     f1 = figure('name', 'dynamic', 'color', 'w');
     % dynamic_point | dynamic_line
