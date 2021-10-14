@@ -1,8 +1,8 @@
-function draw_positioning_state(cur_axes, drawmode, data, varargin)
+function f1 = draw_positioning_state(drawmode, data, varargin)
     % 功能:
     %       绘制三边定位过程图
     % 定义:
-    %       function draw_positioning_state(cur_ap,varargin)
+    %       f1 = draw_positioning_state(drawmode, data, varargin)
     % 输入:
     %       drawmode：绘图类型('dynamic_point'|'static'|'dynamic_line')
     %       选择'static',绘图数据为：
@@ -18,13 +18,24 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
     %       选择'dynamic'，绘图数据为：
     %       dynamic_data(struct{lat,lon,x,y})
     % 输出:
-    %       none
+    %       f1,figure
     % varargin(key:value):
     % 'estimated_positon':定位结果(latitude,longitude)|(x,y)
     % 'true_pos':真实位置(latitude,longitude)|(x,y)
+    % 'visible',是否显示figure
+    % 'pic_file',保存当前figure为其他文件格式
 
-    %% beacon
+    %% Visible
+    visible_flag = true;
+
+    if any(strcmpi(varargin, 'visible'))
+        visible_flag = varargin{find(strcmpi(varargin, 'visible'), 1) + 1};
+    end
+
+    tcf('Positining');
+    f1 = figure('name', 'Positining', 'Color', 'w', 'Visible', visible_flag);
     hold on
+    %% beacon
     beacon = hlk_beacon_location();
     beacon_x = zeros(0);
     beacon_y = zeros(0);
@@ -45,9 +56,9 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
 
     beacon_x_d = beacon_x - ref_point_xy(1);
     beacon_y_d = beacon_y - ref_point_xy(2);
-    plot(cur_axes, beacon_x_d, beacon_y_d, 'LineStyle', 'none', ...
+    plot(beacon_x_d, beacon_y_d, 'LineStyle', 'none', ...
         'Marker', 'v', 'MarkerFaceColor', 'r', 'MarkerSize', 10);
-    text(cur_axes, beacon_x_d, beacon_y_d, labels)
+    text(beacon_x_d, beacon_y_d, labels)
     % circle[X;Y]
     circle_line = [-1, -1, 17, 17, -1; -1, 9, 9, -1, -1];
     line(circle_line(1, :), circle_line(2, :), 'LineWidth', 2);
@@ -63,9 +74,9 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
         [est_pos_x, est_pos_y, ~] = latlon_to_xy(est_pos(1), est_pos(2));
         est_pos_x = est_pos_x - ref_point_xy(1);
         est_pos_y = est_pos_y - ref_point_xy(2);
-        plot(cur_axes, est_pos_x, est_pos_y, 'Marker', '*', ...
+        plot(est_pos_x, est_pos_y, 'Marker', '*', ...
             'MarkerSize', 10, 'Color', 'r');
-        text(cur_axes, est_pos_x, est_pos_y, '定位位置')
+        text(est_pos_x, est_pos_y, '定位位置')
     end
 
     % 'true_pos':真实位置(latitude,longitude)|(x,y)
@@ -74,8 +85,8 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
         [true_pos_x, true_pos_y, ~] = latlon_to_xy(vartemp(1), vartemp(2));
         true_pos_x = true_pos_x - ref_point_xy(1);
         true_pos_y = true_pos_y - ref_point_xy(2);
-        plot(cur_axes, true_pos_x, true_pos_y, 'b*')
-        text(cur_axes, true_pos_x, true_pos_y, '真实位置')
+        plot(true_pos_x, true_pos_y, 'b*')
+        text(true_pos_x, true_pos_y, '真实位置')
         circles(true_pos_x, true_pos_y, 3, ...
             'facecolor', [174, 206, 187] ./ 255, 'edgecolor', 'none', 'facealpha', 0.5)
 
@@ -83,7 +94,7 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
 
     % 动态参考轨迹
     % rectangle('Position', [0.8, 8, 30, 5], ...
-    %     'edgecolor', 'g', 'curvature', 0.1);
+        %     'edgecolor', 'g', 'curvature', 0.1);
     % line([2, 23], [10, 10], 'Color', 'r', 'LineWidth', 1.8)
     % line([23, 23], [3, 10], 'Color', 'r', 'LineWidth', 1.8)
     % line([2, 2], [1, 10], 'Color', 'r', 'LineWidth', 1.8)
@@ -166,4 +177,12 @@ function draw_positioning_state(cur_axes, drawmode, data, varargin)
     end
 
     hold off
+    %% saveflag parameter
+
+    if any(strcmpi(varargin, 'target_pic'))
+        pic_file = varargin{find(strcmpi(varargin, 'target_pic'), 1) + 1};
+        saveas(f1, pic_file);
+        fprintf('save figure to:%s\n', pic_file);
+    end
+
 end

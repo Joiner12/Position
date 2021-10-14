@@ -34,7 +34,6 @@ filter_points = cell(file_num, 1);
 debug = cell(file_num, 1);
 %逐个文件处理
 for i = 1:file_num
-    [position{i}.pos_res, debug{i}] = bluetooth_position(file_ap_msg{i});
 
     if true
         position{i}.true_pos = files_true_pos{i};
@@ -44,6 +43,10 @@ for i = 1:file_num
         position{i}.true_pos = repmat(true_pos_temp, ...
             size(position{i}.pos_res, 1), size(position{i}.pos_res, 2));
     end
+
+    true_pos_temp = position{i}.true_pos;
+    [position{i}.pos_res, debug{i}] = bluetooth_position(file_ap_msg{i}, ...
+        'true_pos', true_pos_temp(1));
 
     filter_points{i} = debug{i}.centroid;
 

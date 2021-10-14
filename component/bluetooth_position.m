@@ -1,4 +1,4 @@
-function [position, debug_param] = bluetooth_position(data)
+function [position, debug_param] = bluetooth_position(data, varargin)
     %功能：蓝牙定位
     %定义：[position, debug_param] = bluetooth_position(data)
     %参数：
@@ -95,34 +95,29 @@ function [position, debug_param] = bluetooth_position(data)
         end
 
         %% figure
+
+        true_pos = struct();
+
+        if any(strcmpi(varargin, 'true_pos'))
+            true_pos = varargin{find(strcmpi(varargin, 'true_pos')) + 1};
+        end
+
         system_config = sys_config();
+        % save png files
+        if ~isempty(fieldnames(pos_res)) ...
+                && ~isempty(fieldnames(true_pos)) ...
+                && system_config.save_procession_figure
 
-        if ~isempty(fieldnames(pos_res))
-            tcf('Positining'); % todo:异常点处理
-            f1 = figure('name', 'Positining', 'Color', 'w', 'Visible', 'off');
-
-            draw_positioning_state(gca, 'static', cur_frame_ap, 'estimated_positon', ...
+            pause(0.01);
+            png_file = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1', ...
+                strcat('location-temp', num2str(gif_cnt), '.png'));
+            draw_positioning_state('static', cur_frame_ap, 'estimated_positon', ...
                 [pos_res.lat, pos_res.lon], ...
-                'true_pos', [system_config.cur_true_pos.lat, system_config.cur_true_pos.lon]);
-
-            % save png files
-            if system_config.save_procession_figure
-                pause(0.01);
-                png_file = strcat('location-temp', num2str(gif_cnt), '.png');
-                png_file = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1', png_file);
-                % imwrite(frame2im(getframe(gcf)), png_file);
-                saveas(f1, png_file);
-                fprintf('save figure as png file:%s\n', png_file);
-            end
-
-            gif_cnt = gif_cnt +1;
-
-            if gif_cnt >= 27
-                randi(6);
-            end
+                'true_pos', [true_pos.lat, true_pos.lon], 'target_pic', png_file);
 
         end
 
+        gif_cnt = gif_cnt +1;
     end
 
 end

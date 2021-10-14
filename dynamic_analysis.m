@@ -88,6 +88,3 @@ hold on
 plot(rssi_data_1_new(index).rssi, 'marker', '.');
 legend(rssi_data_1(index).name, rssi_data_1_new(index).name)
 title(strcat('ope-', num2str(index)));
-%%
-clc;
-show_figure()
