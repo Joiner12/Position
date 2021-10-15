@@ -93,7 +93,7 @@ function config = sys_config()
 
     %% 调试过程信息-markdown
     % 写markdown文件标志
-    config.write_markdown_flag = true;
+    config.write_markdown_flag = false;
     % markdown图片存贮位置
     config.save_procession_figure = config.write_markdown_flag;
     config.markdown_pic_path = 'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1';

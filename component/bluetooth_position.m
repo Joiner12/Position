@@ -102,18 +102,24 @@ function [position, debug_param] = bluetooth_position(data, varargin)
             true_pos = varargin{find(strcmpi(varargin, 'true_pos')) + 1};
         end
 
-        system_config = sys_config();
         % save png files
+        save_process_pic = false;
+
+        if any(strcmpi(varargin, 'save_process_pic'))
+            save_process_pic = varargin{find(strcmpi(varargin, 'save_process_pic'), 1) + 1};
+        end
+
         if ~isempty(fieldnames(pos_res)) ...
                 && ~isempty(fieldnames(true_pos)) ...
-                && system_config.save_procession_figure
+                && save_process_pic
 
-            pause(0.01);
+            pause(0.01); % save failed
             png_file = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1', ...
                 strcat('location-temp', num2str(gif_cnt), '.png'));
             draw_positioning_state('static', cur_frame_ap, 'estimated_positon', ...
                 [pos_res.lat, pos_res.lon], ...
-                'true_pos', [true_pos.lat, true_pos.lon], 'target_pic', png_file);
+                'true_pos', [true_pos.lat, true_pos.lon], 'target_pic', png_file, ...
+                'visible', false);
 
         end
 

@@ -26,7 +26,7 @@ with doc.body:
         curDiv = div()
         imgFileName = r"D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\static-" + \
             str(k)+r"-2.png"
-        curDiv.add(p(k+"定位结果", style="font-size:30px;color:#6D7F7D"))
+        curDiv.add(p(k+"定位结果", style="font-size:30px;color:black"))
         curDiv.add(img(src=imgFileName, style="zoom:120%"))
 
 with open(r'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\静态点定位结果-1.html', 'w', encoding='utf-8') as f:
