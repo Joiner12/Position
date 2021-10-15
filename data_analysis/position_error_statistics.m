@@ -206,10 +206,12 @@ function position_error_statistics(position, true_position, varargin)
     axis auto;
 
     % ±£´æ½á¹û
-    system_config = sys_config();
+    %% save picture
 
-    if system_config.save_position_error_statistics_pic
-        saveas(handle, system_config.position_error_statistics_pic)
+    if any(strcmpi(varargin, 'target_pic'))
+        pic_file = varargin{find(strcmpi(varargin, 'target_pic'), 1) + 1};
+        saveas(handle, pic_file);
+        fprintf('save figure to:%s\n', pic_file);
     end
 
 end
