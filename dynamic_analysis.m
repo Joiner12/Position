@@ -88,3 +88,48 @@ hold on
 plot(rssi_data_1_new(index).rssi, 'marker', '.');
 legend(rssi_data_1(index).name, rssi_data_1_new(index).name)
 title(strcat('ope-', num2str(index)));
+
+%%
+clc;
+filename = 'testdata.xlsx';
+test_point_1_name = {'P0', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', ...
+                    'P11', 'P12', 'P13', 'P14', ...
+                    'P15', 'P16', 'P17', 'P18', 'P19', 'P20', 'P21', ...
+                    'P22', 'P23', 'P24', 'P25'};
+
+for k = 1:1:22
+    sheet = test_point_1_name{k};
+    % filename = ['testdata-', test_point_1_name{k}, '.xlsx'];
+    temp = position{k}.true_pos;
+    temp_lat = cell(0);
+    temp_lon = cell(0);
+    temp_lat{1} = 'true_lat';
+    temp_lon{1} = 'true_lon';
+
+    for i_1 = 1:length(temp)
+        temp_lat{length(temp_lat) + 1} = temp(i_1).lat;
+        temp_lon{length(temp_lon) + 1} = temp(i_1).lon;
+    end
+
+    if true
+        xlswrite(filename, temp_lat', sheet, 'A');
+        xlswrite(filename, temp_lon', sheet, 'B');
+    end
+
+    temp_1 = position{k}.pos_res;
+    temp_1_lat = cell(0);
+    temp_1_lon = cell(0);
+    temp_1_lat{1} = 'res_lat';
+    temp_1_lon{1} = 'res_lon';
+
+    for i_2 = 1:length(temp_1)
+        temp_1_lat{length(temp_1_lat) + 1} = temp_1{i_2}.lat;
+        temp_1_lon{length(temp_1_lon) + 1} = temp_1{i_2}.lon;
+    end
+
+    if true
+        xlswrite(filename, temp_1_lat', sheet, 'C');
+        xlswrite(filename, temp_1_lon', sheet, 'D');
+    end
+
+end
