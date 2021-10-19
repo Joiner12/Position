@@ -133,3 +133,11 @@ for k = 1:1:22
     end
 
 end
+
+%%
+system(['python ', ...
+            'D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool\test.py']);
+if true 
+system(['python ', ...
+            'D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool\PositionMarkdown_Static.py']);
+end

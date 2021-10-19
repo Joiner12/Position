@@ -85,7 +85,7 @@ function distance = calc_distance_based_on_rssi(ap, varargin)
                 dist = dist_clustering * 0.5 + dist * 0.5;
             end
 
-            fprintf('distance calc,logar:%.2f,clustering:%.2f\n', dist, dist_clustering);
+            % fprintf('distance calc,logar:%.2f,clustering:%.2f\n', dist, dist_clustering);
         case 'piecewise_logarithmic' % 分段对数模型
             % 查表
             % dist = rssi_to_distance_piecewise_logarithmic(...

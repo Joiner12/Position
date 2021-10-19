@@ -29,6 +29,6 @@ with doc.body:
         curDiv.add(p(k+"定位结果", style="font-size:30px;color:black"))
         curDiv.add(img(src=imgFileName, style="zoom:120%"))
 
-with open(r'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\静态点定位结果-1.html', 'w', encoding='utf-8') as f:
+with open(r'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\静态点定位结果.html', 'w', encoding='utf-8') as f:
     f.write(doc.render())
 print('Update static positioning', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))

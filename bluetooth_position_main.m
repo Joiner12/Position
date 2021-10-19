@@ -53,8 +53,10 @@ for i = 1:1:file_num
     filter_points{i} = debug{i}.centroid;
 
     if save_process_pic
-        markdown_tool.write_to_markdown('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\定位过程分析.html', ...
-            'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1');
+        system(['python',' ' , ...
+                'D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool\MarkDownProcess.py']);
+        % markdown_tool.write_to_markdown('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\定位过程分析.html', ...
+            %     'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1');
     end
 
     % 静态分析
@@ -71,11 +73,17 @@ for i = 1:1:file_num
                                 'P11', 'P12', 'P13', 'P14', ...
                                 'P15', 'P16', 'P17', 'P18', 'P19', 'P20', 'P21', ...
                                 'P22', 'P23', 'P24', 'P25'};
-            % D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\static-P3-2.png
-            position_error_statistics(position{i, 1}.pos_res, position{i, 1}.true_pos, ...
-                'target_pic', ['D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\static-', ...
-                    test_point_1_name{i}, '-2.png'], ...
-                'figure_visible', 'off');
+
+            if false
+                position_error_statistics(position{i, 1}.pos_res, position{i, 1}.true_pos, ...
+                    'figure_visible', 'on');
+            else
+                position_error_statistics(position{i, 1}.pos_res, position{i, 1}.true_pos, ...
+                    'target_pic', ['D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\static-', ...
+                        test_point_1_name{i}, '-2.png'], ...
+                    'figure_visible', 'off');
+            end
+
         end
 
         if false
@@ -104,11 +112,15 @@ for i = 1:1:file_num
     toc(t_main);
 end
 
-if false
-    system(['python', ...
-            'D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool\PositionMarkdown_Static.py'])
+if true
+    system(['python',' ' ...
+            'D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool\PositionMarkdown_Static.py']);
 end
-
+%% 
 if true
     debegshow();
 end
+
+%% switch schemer
+% schemer_import('solarized-light.prf');
+% schemer_import('darksteel.prf');

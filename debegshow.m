@@ -39,6 +39,6 @@ function debegshow()
 
     set(get(gca, 'XAxis'), 'visible', 'off');
     set(get(gca, 'YAxis'), 'visible', 'off');
-    text(0, 0, lrc(1:int32(length(lrc) / 2)))
-    text(pi * 1.2, 0, lrc(int32(length(lrc) / 2) + 1:end))
+    % text(0, 0, lrc(1:int32(length(lrc) / 2)))
+    % text(pi * 1.2, 0, lrc(int32(length(lrc) / 2) + 1:end))
 end

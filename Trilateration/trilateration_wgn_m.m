@@ -26,10 +26,10 @@ function [est_pos_wgn, procss] = trilateration_wgn_m(x_tr, y_tr, d_tr, varargin)
     loop_cnt = 0; % 限制搜索次数
     procss = cell(0);
     % 权重系数
-    if true
+    if false
         w = (D').^2;
     else
-        w = (D').^2 ./ norm(D);
+        w = (D').^2 ./ sum(D.^2);
     end
 
     w = diag(w);
