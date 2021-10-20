@@ -30,6 +30,7 @@ function [est_pos_wgn, procss] = trilateration_wgn_m(x_tr, y_tr, d_tr, varargin)
         w = (D').^2;
     else
         w = (D').^2 ./ sum(D.^2);
+        w = 1./w;
     end
 
     w = diag(w);
