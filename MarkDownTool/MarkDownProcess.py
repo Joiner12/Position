@@ -15,7 +15,6 @@ targetHtmlFile = r'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\定位过程分析
 
 
 def generatepage():
-    mainpage = dominate.document(title="🛴Process Handle")
     pics = list()
     dirs = os.listdir(srcpicFolder)
     for k in dirs:
@@ -26,6 +25,7 @@ def generatepage():
 
     if len(pics) == 0:
         return
+    mainpage = dominate.document(title="🛴Process Handle")
     with mainpage.head:
         meta(charset="UTF-8")
         style("""

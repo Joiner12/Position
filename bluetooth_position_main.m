@@ -3,16 +3,7 @@ clc;
 tcf;
 clear;
 system_config = sys_config(); % 读取配置文件
-
-if false
-    % 根据全站仪修改ap经纬度信息
-    % [~, data_file] = modify_geoinfo();
-    % 读取待定位数据
-    data_file = system_config.origin_data_file;
-    files_data = data_import('datafile', data_file);
-else
-    files_data = data_import();
-end
+[files_data, test_file_name] = data_import();
 
 % 初始化1米处rssi值（实际工程中由蓝牙信标广播出来）
 files_data = init_rssi_reference(files_data, -50.06763);
@@ -25,18 +16,12 @@ file_num = length(files_data);
 position = cell(file_num, 1);
 filter_points = cell(file_num, 1);
 debug = cell(file_num, 1);
-%% 逐个文件处理
+% return;
+% 逐个文件处理
 for i = 1:1:file_num
     t_main = tic();
 
-    if true
-        position{i}.true_pos = files_true_pos{i};
-    else
-        true_pos_temp = struct('lat', system_config.cur_true_pos.lat, ...
-            'lon', system_config.cur_true_pos.lon);
-        position{i}.true_pos = repmat(true_pos_temp, ...
-            size(position{i}.pos_res, 1), size(position{i}.pos_res, 2));
-    end
+    position{i}.true_pos = files_true_pos{i};
 
     true_pos_temp = position{i}.true_pos;
     % debug block
@@ -53,10 +38,8 @@ for i = 1:1:file_num
     filter_points{i} = debug{i}.centroid;
 
     if save_process_pic
-        system(['python',' ' , ...
+        system(['python', ' ', ...
                 'D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool\MarkDownProcess.py']);
-        % markdown_tool.write_to_markdown('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\定位过程分析.html', ...
-            %     'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1');
     end
 
     % 静态分析
@@ -69,10 +52,10 @@ for i = 1:1:file_num
         beacon = hlk_beacon_location();
 
         if true
-            test_point_1_name = {'P0', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', ...
-                                'P11', 'P12', 'P13', 'P14', ...
-                                'P15', 'P16', 'P17', 'P18', 'P19', 'P20', 'P21', ...
-                                'P22', 'P23', 'P24', 'P25'};
+            % 测试数据头命名
+            test_point_1_name = test_file_name{i};
+            [dirname, filename, ext] = fileparts(test_point_1_name);
+            regname = regexp(filename, '^P\d{1,}', 'match');
 
             if false
                 position_error_statistics(position{i, 1}.pos_res, position{i, 1}.true_pos, ...
@@ -80,7 +63,7 @@ for i = 1:1:file_num
             else
                 position_error_statistics(position{i, 1}.pos_res, position{i, 1}.true_pos, ...
                     'target_pic', ['D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\static-', ...
-                        test_point_1_name{i}, '-2.png'], ...
+                        regname{1}, '-2.png'], ...
                     'figure_visible', 'off');
             end
 
@@ -112,11 +95,12 @@ for i = 1:1:file_num
     toc(t_main);
 end
 
-if true
-    system(['python',' ' ...
+if false
+    system(['python', ' ' ...
             'D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool\PositionMarkdown_Static.py']);
 end
-%% 
+
+%%
 if true
     debegshow();
 end

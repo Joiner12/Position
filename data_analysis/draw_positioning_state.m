@@ -60,7 +60,8 @@ function f1 = draw_positioning_state(drawmode, data, varargin)
         'Marker', 'v', 'MarkerFaceColor', 'r', 'MarkerSize', 10);
     text(beacon_x_d, beacon_y_d, labels)
     % circle[X;Y]
-    circle_line = [-1, -1, 17, 17, -1; -1, 9, 9, -1, -1];
+    % circle_line = [-1, -1, 17, 17, -1; -1, 9, 9, -1, -1];
+    circle_line = [-1, -1, 33, 33, -1; -1, 17, 17, -1, -1];
     line(circle_line(1, :), circle_line(2, :), 'LineWidth', 2);
     title(gca, '定位效果')
     box on

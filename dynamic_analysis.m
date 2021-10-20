@@ -136,8 +136,15 @@ end
 
 %%
 system(['python ', ...
-            'D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool\test.py']);
-if true 
-system(['python ', ...
+        'D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool\test.py']);
+
+if true
+    system(['python ', ...
             'D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool\PositionMarkdown_Static.py']);
 end
+
+%%
+clc;
+test_point_1_name = test_file_name{21};
+[dirname, filename, ext] = fileparts(test_point_1_name);
+regexp(filename, '^P\d{1,}', 'match')
