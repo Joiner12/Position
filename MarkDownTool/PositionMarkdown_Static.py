@@ -18,27 +18,17 @@ targetHtmlFile = r'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\定位过程分析
 
 
 def CheckValidPic(srcfolder, *pk, **pkw):
-    bValidFlag = False
-    pics = list()
+    fullPathPics = list()
     dirs = os.listdir(srcfolder)
     for k in dirs:
         b = re.findall(r'static-P\d{1,}-\d.png', k)
         if b:
             print(b[0])
-            pics.append(b[0])
-
-    if pics:
-        bValidFlag = True
-        return bValidFlag
-    else:
-        fullPathPics = list()
-        for j in pics:
-            fullPathPics.append(os.path.join(srcpicFolder, j))
-        print(fullPathPics)
-        return fullPathPics
+            fullPathPics.append(os.path.join(srcpicFolder, b[0]))
+    return fullPathPics
 
 
-def generatepage(*pk, **pkw):
+def generatepage(targetHtmlFile, *pk, **pkw):
     picName = ['P0', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P11', 'P12', 'P13', 'P14',
                'P15', 'P16', 'P17', 'P18', 'P19', 'P20', 'P21', 'P22', 'P23', 'P24', 'P25']
     doc = dominate.document(title=r"static positioning ")
@@ -59,7 +49,7 @@ def generatepage(*pk, **pkw):
             curDiv.add(p(k+"定位结果", style="font-size:30px;color:black"))
             curDiv.add(img(src=imgFileName, style="zoom:120%"))
 
-    with open(r'D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\静态点定位结果.html', 'w', encoding='utf-8') as f:
+    with open(targetHtmlFile, 'w', encoding='utf-8') as f:
         f.write(doc.render())
     print('Update static positioning',
           datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
