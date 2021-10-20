@@ -72,3 +72,6 @@ pos_bluetooth.rar
 !attenuation_model/data/std_*.mat
 
 !attenuation_model/script/std_*.mat
+
+# image temp
+Doc/img/temp-location-1/
