@@ -190,13 +190,21 @@ function position_error_statistics(position, true_position, varargin)
     ylabel('误差点个数百分比');
     axis auto;
 
-    % 保存结果
-    %% save picture
+    %% saveflag parameter
+    save_figure_flag = false;
 
-    if any(strcmpi(varargin, 'target_pic'))
-        pic_file = varargin{find(strcmpi(varargin, 'target_pic'), 1) + 1};
-        saveas(handle, pic_file);
-        fprintf('save figure to:%s\n', pic_file);
+    if any(strcmpi(varargin, 'save_figure'))
+        save_figure_flag = varargin{find(strcmpi(varargin, 'save_figure'), 1) + 1};
+    end
+
+    if save_figure_flag
+
+        if any(strcmpi(varargin, 'target_pic'))
+            pic_file = varargin{find(strcmpi(varargin, 'target_pic'), 1) + 1};
+            saveas(handle, pic_file);
+            fprintf('save figure to:%s\n', pic_file);
+        end
+
     end
 
 end

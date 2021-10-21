@@ -145,6 +145,13 @@ end
 
 %%
 clc;
-test_point_1_name = test_file_name{21};
-[dirname, filename, ext] = fileparts(test_point_1_name);
-regexp(filename, '^P\d{1,}', 'match')
+X = [9, 12, 16];
+X = reshape(X, [length(X), 1]);
+Y = [9, 4, 9];
+Y = reshape(Y, [length(Y), 1]);
+D = [3, 2, 3];
+D = reshape(D, [length(D), 1]);
+w = [X - mean(X), Y - mean(Y)];
+w = abs(vecnorm(w, 2, 2) - D)
+w = w ./ norm(w, 1);
+w = diag(1 ./ D)

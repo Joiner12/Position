@@ -56,16 +56,10 @@ for i = 1:1:file_num
             test_point_1_name = test_file_name{i};
             [dirname, filename, ext] = fileparts(test_point_1_name);
             regname = regexp(filename, '^P\d{1,}', 'match');
-
-            if false
-                position_error_statistics(position{i, 1}.pos_res, position{i, 1}.true_pos, ...
-                    'figure_visible', 'on');
-            else
-                position_error_statistics(position{i, 1}.pos_res, position{i, 1}.true_pos, ...
-                    'target_pic', ['D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\static-', ...
-                        regname{1}, '-2.png'], ...
-                    'figure_visible', 'off');
-            end
+            position_error_statistics(position{i, 1}.pos_res, position{i, 1}.true_pos, ...
+                'target_pic', ['D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\static-', ...
+                    regname{1}, '-2L.png'], ...
+                'figure_visible', 'on', 'save_figure', true);
 
         end
 
@@ -88,7 +82,6 @@ for i = 1:1:file_num
         % dynamic_point | dynamic_line
         draw_positioning_state(gca, 'dynamic_line', position{1}.pos_res)
         disp('绘图完成')
-        % figure2img(f1, 'D:\Code\BlueTooth\pos_bluetooth_matlab\动态定位效果-2.png')
     end
 
     disp('定位处理结束');
@@ -98,11 +91,6 @@ end
 if false
     system(['python', ' ' ...
             'D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool\PositionMarkdown_Static.py']);
-end
-
-%%
-if true
-    debegshow();
 end
 
 %% switch schemer

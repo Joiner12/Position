@@ -28,7 +28,15 @@ def CheckValidPic(srcfolder, *pk, **pkw):
     return fullPathPics
 
 
-def generatepage(targetHtmlFile, *pk, **pkw):
+def generatepage(targetHtmlFile, PicFiles, *pk, **pkw):
+    # D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\static-P36-2L.png
+    # D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\static-P0-2.png
+    picNameNum = list()
+    for pic in PicFiles:
+        b = re.findall(r'static-P(\d{1,})-\d.png', pic)
+        if b:
+            picNameNum.append(int(b[0]))
+    picNameNum = picNameNum.sort()
     picName = ['P0', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P11', 'P12', 'P13', 'P14',
                'P15', 'P16', 'P17', 'P18', 'P19', 'P20', 'P21', 'P22', 'P23', 'P24', 'P25']
     doc = dominate.document(title=r"static positioning ")
@@ -56,4 +64,6 @@ def generatepage(targetHtmlFile, *pk, **pkw):
 
 
 if __name__ == "__main__":
-    CheckValidPic(srcpicFolder)
+    fullPathPics = CheckValidPic(srcpicFolder)
+    if fullPathPics:
+        generatepage(targetHtmlFile, fullPathPics)

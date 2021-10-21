@@ -179,11 +179,20 @@ function f1 = draw_positioning_state(drawmode, data, varargin)
 
     hold off
     %% saveflag parameter
+    save_figure_flag = false;
 
-    if any(strcmpi(varargin, 'target_pic'))
-        pic_file = varargin{find(strcmpi(varargin, 'target_pic'), 1) + 1};
-        saveas(f1, pic_file);
-        fprintf('save figure to:%s\n', pic_file);
+    if any(strcmpi(varargin, 'save_figure'))
+        save_figure_flag = varargin{find(strcmpi(varargin, 'save_figure'), 1) + 1};
+    end
+
+    if save_figure_flag
+
+        if any(strcmpi(varargin, 'target_pic'))
+            pic_file = varargin{find(strcmpi(varargin, 'target_pic'), 1) + 1};
+            saveas(f1, pic_file);
+            fprintf('save figure to:%s\n', pic_file);
+        end
+
     end
 
 end

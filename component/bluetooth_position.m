@@ -119,13 +119,10 @@ function [position, debug_param] = bluetooth_position(data, varargin)
             draw_positioning_state('static', cur_frame_ap, 'estimated_positon', ...
                 [pos_res.lat, pos_res.lon], ...
                 'true_pos', [true_pos.lat, true_pos.lon], 'target_pic', png_file, ...
-                'visible', true);
+                'visible', false, 'save_figure', save_process_pic);
 
         end
 
-        if isequal(mod(gif_cnt,50),0)
-            disp('debug');
-        end
         gif_cnt = gif_cnt +1;
     end
 
