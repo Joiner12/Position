@@ -25,15 +25,11 @@ function [est_pos_wgn, procss] = trilateration_wgn_m(x_tr, y_tr, d_tr, varargin)
     x0 = [mean(X), mean(Y)];
     loop_cnt = 0; % 限制搜索次数
     procss = cell(0);
-    % 权重系数
-    if false
-        w = (D').^2;
-    else
-        w = (D').^2 ./ sum(D.^2);
-        w = 1./w;
-    end
-
-    w = diag(w);
+    % 权重系数——质心半径距离差
+    w = [X - mean(X), Y - mean(Y)];
+    w = abs(vecnorm(w, 2, 2) - D);
+    w = w ./ norm(w, 1);
+    w = diag(1 ./ (D.^1));
 
     while true
         % 误差矩阵

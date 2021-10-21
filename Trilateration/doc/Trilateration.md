@@ -41,6 +41,14 @@ $$
 
 ![](figure/理想三边定位计算方法-1.png)
 
+## 三边定位+1
+
+考虑以下情形，当测距结果$R_i$ 存在误差的情况。最小二乘问题由求解$Ax=b$ 变为${Ax+N=b}$ 。其中$N$ 表示随机向量误差。 $W$是加权矩阵, 为保证WLS是无偏估计或最小方差无偏估计, 加权矩阵$W$有特殊的要求, 在实际应用中一般要求$W$为对称正定矩阵。利用许瓦兹不等式可以证明, 在测距误差与距离之比为独立分布的高斯随机变量的条件下, 当${W=R^{-1}}$时, WLS的估计均方误差最小，$R$为测距误差的方差矩阵$R=E\{NN^T\}$。
+
+<img src="./figure/wls-21.png">
+
+
+
 ## 线性化方法
 
 在估计点附近进行泰勒展开，忽略高阶项：
@@ -388,4 +396,5 @@ $$
 31. [最优化理论与算法------牛顿法（附Matlab实现）： - YuhuaStone - 博客园 (cnblogs.com)](https://www.cnblogs.com/yuhuastone/p/12814752.html)
 32. [数字信号处理４——高斯牛顿法与matlab实例_qinze5857的博客-CSDN博客](https://blog.csdn.net/qinze5857/article/details/109483432)
 33. [rssi [Bluetooth® LE Wiki\] (bluetoothle.wiki)](https://www.bluetoothle.wiki/rssi)
+34. [加权最小二乘估计在无线传感器网络定位中的应用 - 百度学术 (baidu.com)](https://xueshu.baidu.com/usercenter/paper/show?paperid=71959eb3f55b113ff2fa48150e49e46a)
 
