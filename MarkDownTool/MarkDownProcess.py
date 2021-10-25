@@ -72,14 +72,16 @@ def generatepage():
     mainpage.body += partDiv
     with partDiv:
         for k in range(len(pics)):
-            with div(cls="analyseItem"):
-                src = r"location-temp"+str(k+1)+r".png"
-                src = os.path.join(srcpicFolder, src)
-                p('location:'+str(k+1), style="font-size:30px;")
-                img(src=src)
+            src = r"location-temp"+str(k+1)+r".png"
+            src = os.path.join(srcpicFolder, src)
+            if os.path.isfile(src):
+                with div(cls="analyseItem"):
+                    p('location:'+str(k+1), style="font-size:30px;")
+                    img(src=src)
     if True:
         with open(targetHtmlFile, 'w', encoding='utf-8') as f:
             f.write(mainpage.render())
+
 
 if __name__ == "__main__":
     generatepage()
