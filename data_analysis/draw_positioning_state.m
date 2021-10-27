@@ -112,7 +112,8 @@ function f1 = draw_positioning_state(drawmode, data, varargin)
 
             for ii = 1:1:length(cur_ap)
                 ap_temp = cur_ap(ii);
-                cur_color = rand(1, 3);
+                % cur_color = rand(1, 3);
+                cur_color = [231, 184, 98]./255;
                 [c_x, c_y, ~] = latlon_to_xy(ap_temp.lat, ap_temp.lon);
                 c_x = c_x - ref_point_xy(1);
                 c_y = c_y - ref_point_xy(2);
