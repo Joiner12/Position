@@ -25,7 +25,7 @@ for i = 1:1:file_num
 
     true_pos_temp = position{i}.true_pos;
     % debug block
-    save_process_pic = true;
+    save_process_pic = false;
 
     if save_process_pic
         % delete procession pictures
@@ -59,7 +59,7 @@ for i = 1:1:file_num
             position_error_statistics(position{i, 1}.pos_res, position{i, 1}.true_pos, ...
                 'target_pic', ['D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\static-', ...
                     regname{1}, '-2L.png'], ...
-                'figure_visible', 'on', 'save_figure', false);
+                'figure_visible', 'on', 'save_figure', true);
 
         end
 
@@ -92,7 +92,6 @@ if false
     system(['python', ' ' ...
             'D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool\PositionMarkdown_Static.py']);
 end
-
 %% switch schemer
 % schemer_import('solarized-light.prf');
 % schemer_import('darksteel.prf');
