@@ -39,7 +39,7 @@ for i = 1:1:file_num
 
     if save_process_pic
         system(['python', ' ', ...
-                'D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool\MarkDownProcess.py']);
+            'D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool\MarkDownProcess.py']);
     end
 
     % ¾²Ì¬·ÖÎö
@@ -58,8 +58,8 @@ for i = 1:1:file_num
             regname = regexp(filename, '^P\d{1,}', 'match');
             position_error_statistics(position{i, 1}.pos_res, position{i, 1}.true_pos, ...
                 'target_pic', ['D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\static-', ...
-                    regname{1}, '-2L.png'], ...
-                'figure_visible', 'on', 'save_figure', true);
+                    regname{1}, '-2.png'], ...
+                'figure_visible', 'off', 'save_figure', true);
 
         end
 
@@ -90,8 +90,16 @@ end
 
 if false
     system(['python', ' ' ...
-            'D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool\PositionMarkdown_Static.py']);
+        'D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool\PositionMarkdown_Static.py']);
 end
+
+if true
+    opts = struct('WindowStyle', 'modal', ...
+        'Interpreter', 'tex');
+    f = warndlg('\fontsize{15} \color{red} Finished', ...
+        'Running', opts);
+end
+
 %% switch schemer
 % schemer_import('solarized-light.prf');
 % schemer_import('darksteel.prf');
