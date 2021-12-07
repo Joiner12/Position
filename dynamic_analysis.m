@@ -10,40 +10,40 @@ norm([x_2 - x_1, y_2 - y_1])
 
 %%
 clc;
-ble1 = [30.5478754, 104.0585674];
-ble2 = [30.5479455, 104.0585715];
-ble3 = [30.5478776, 104.0586508];
-ble4 = [30.5479471, 104.0586529];
-ble_dots = [ble1; ble2; ble3; ble4];
+ble5 = [30.547872167734, 104.058567643123]; % ope_1
+ble6 = [30.548014837274, 104.058567183453]; % ope_2
+ble7 = [30.548018797743, 104.058730768827]; % ope_3
+ble8 = [30.547880364315, 104.058728300713]; % ope_6
+ble_dots = [ble5; ble6; ble7; ble8];
 
 if false
     tcf('ble');
     figure('name', 'ble');
     geoscatter(ble_dots(:, 1), ble_dots(:, 2));
-    text(ble1(1), ble1(2), '11');
-    text(ble2(1), ble2(2), '22');
-    text(ble3(1), ble3(2), '33');
-    text(ble4(1), ble4(2), '44');
+    text(ble5(1), ble5(2), '11');
+    text(ble6(1), ble6(2), '22');
+    text(ble7(1), ble7(2), '33');
+    text(ble8(1), ble8(2), '44');
 end
 
 % dist = utm_distance(lat1, lon1, lat2, lon2)
-dist12 = utm_distance(ble1(1), ble1(2), ble2(1), ble2(2));
-dist13 = utm_distance(ble1(1), ble1(2), ble3(1), ble3(2));
-dist24 = utm_distance(ble2(1), ble2(2), ble4(1), ble4(2));
-dist34 = utm_distance(ble3(1), ble3(2), ble4(1), ble4(2));
+dist12 = utm_distance(ble5(1), ble5(2), ble6(1), ble6(2));
+dist13 = utm_distance(ble5(1), ble5(2), ble7(1), ble7(2));
+dist14 = utm_distance(ble5(1), ble5(2), ble8(1), ble8(2));
+dist34 = utm_distance(ble7(1), ble7(2), ble8(1), ble8(2));
 
 Pble1 = [0, 0];
-Pble2 = [7.78, 0];
-Pble3 = [0, -8];
-Pble4 = [7.71, -7.81];
+Pble2 = [dist12, 0];
+Pble3 = [0, -1 * dist14];
+Pble4 = [dist12, -1 * dist14];
 Pbles = [Pble1; Pble2; Pble3; Pble4];
 % fingerprintint points
-grid_gap = 1;
+grid_gap = 2;
 fpps_xy = cell(0);
 
-for i = 0:grid_gap:8
+for i = 0:grid_gap:dist12
 
-    for j = 0:-1 * grid_gap:-8
+    for j = 0:-1 * grid_gap:-1 * dist14
         fpps_xy{i / grid_gap + 1, -1 * j / grid_gap + 1} = [i, j];
     end
 
@@ -65,7 +65,7 @@ for i1 = 1:size(fpps_xy, 1)
 end
 
 fprintf('radio map size:%.0f*%.0f=%.0f\n', ...
-    size(fpps_xy, 1), size(fpps_xy, 2), size(fpps_xy, 1) * size(fpps_xy, 2));
+    dist12, dist14, dist12 * dist14);
 title(sprintf('radio map size:%.0f*%.0f=%.0f\n', ...
-    size(fpps_xy, 1), size(fpps_xy, 2), size(fpps_xy, 1) * size(fpps_xy, 2)));
+    dist12, dist14, dist12 * dist14));
 hold off
