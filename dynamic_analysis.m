@@ -69,3 +69,6 @@ fprintf('radio map size:%.0f*%.0f=%.0f\n', ...
 title(sprintf('radio map size:%.0f*%.0f=%.0f\n', ...
     dist12, dist14, dist12 * dist14));
 hold off
+%% 
+clc;
+[x,y,lambo]=latlon_to_xy(30.4547, 120.4455)
