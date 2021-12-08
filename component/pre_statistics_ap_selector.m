@@ -12,22 +12,25 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
     %       ap_selector: ap_selector数据，用以保存历史数据
 
     %%
+    % 已有节点中当前帧无蓝牙数据的节点
+    updated_node_names = strings(0);
+
     for i = 1:1:length(cur_frame)
         rows = size(ap_selector, 1);
 
         cur_frame_piece = cur_frame(i);
         name = string(cur_frame_piece.name);
         selector_name = ap_selector.NAME;
-
+        updated_node_names(length(updated_node_names) + 1) = name;
         % 新节点
 
         if ~any(strcmp(selector_name, name))
             ap_selector.NAME(rows + 1) = name;
-            pre_rssi_temp = ap_selector.RECVRSSI(rows + 1, :);
+            pre_rssi_temp = ap_selector.RECVRSSI(rows + 1, :); % ap_selector rssi
             recv_rssi_len = length(cur_frame_piece.recv_rssi);
             % fifo(first in fisrt out)
             recv_rssi_temp = cur_frame_piece.recv_rssi;
-            recv_rssi_temp = fliplr(recv_rssi_temp); % 数组翻转
+            % recv_rssi_temp = fliplr(recv_rssi_temp); % 数组翻转
 
             if recv_rssi_len > length(ap_selector.RECVRSSI(rows + 1, :)) - 1
                 ap_selector.RECVRSSI(rows + 1, :) = recv_rssi_temp(1:length(ap_selector.RECVRSSI(rows + 1, :)));
@@ -35,19 +38,29 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
                 ap_selector.RECVRSSI(rows + 1, :) = [pre_rssi_temp(recv_rssi_len + 1:end), recv_rssi_temp];
             end
 
+            pre_rssi_clustering_temp = ap_selector.RSSI_FOR_CLUSTERING(rows + 1, :); % rssi for clustering
+            % 更新用于聚类的RSSI历史数据ap_selector.RSSI_FOR_CLUSTERING
+            if recv_rssi_len > length(ap_selector.RSSI_FOR_CLUSTERING(rows + 1, :)) - 1
+                ap_selector.RSSI_FOR_CLUSTERING(rows + 1, :) = ...
+                    recv_rssi_temp(1:length(ap_selector.RSSI_FOR_CLUSTERING(rows + 1, :)));
+            else
+                ap_selector.RSSI_FOR_CLUSTERING(rows + 1, :) = ...
+                    [pre_rssi_clustering_temp(recv_rssi_len + 1:end), recv_rssi_temp];
+            end
+
             ap_selector.LAT(rows + 1) = cur_frame_piece.lat;
             ap_selector.LON(rows + 1) = cur_frame_piece.lon;
             ap_selector.MAC(rows + 1) = cur_frame_piece.mac;
             ap_selector.RSSI(rows + 1) = cur_frame_piece.rssi;
             ap_selector.RSSI_REF(rows + 1) = cur_frame_piece.rssi_reference;
-        else % 更新已有节点
+        else % 已有节点中当前帧有蓝牙数据
             index = find(strcmp(selector_name, name));
             ap_selector.NAME(index) = name;
             pre_rssi_temp = ap_selector.RECVRSSI(index, :);
             recv_rssi_len = length(cur_frame_piece.recv_rssi);
             % fifo(first in fisrt out)
             recv_rssi_temp = cur_frame_piece.recv_rssi;
-            recv_rssi_temp = fliplr(recv_rssi_temp); % 数组翻转
+            % recv_rssi_temp = fliplr(recv_rssi_temp); % 数组翻转
 
             if recv_rssi_len > length(ap_selector.RECVRSSI(index, :)) - 1
                 ap_selector.RECVRSSI(index, :) = recv_rssi_temp(1:length(ap_selector.RECVRSSI(index, :)));
@@ -55,11 +68,39 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
                 ap_selector.RECVRSSI(index, :) = [pre_rssi_temp(recv_rssi_len + 1:end), recv_rssi_temp];
             end
 
+            pre_rssi_clustering_temp = ap_selector.RSSI_FOR_CLUSTERING(index, :); % rssi for clustering
+            % 更新用于聚类的RSSI历史数据ap_selector.RSSI_FOR_CLUSTERING
+            if recv_rssi_len > length(ap_selector.RSSI_FOR_CLUSTERING(index, :)) - 1
+                ap_selector.RSSI_FOR_CLUSTERING(index, :) = recv_rssi_temp(1:length(ap_selector.RSSI_FOR_CLUSTERING(rows + 1, :)));
+            else
+                ap_selector.RSSI_FOR_CLUSTERING(index, :) = [pre_rssi_clustering_temp(recv_rssi_len + 1:end), recv_rssi_temp];
+            end
+
             ap_selector.LAT(index) = cur_frame_piece.lat;
             ap_selector.LON(index) = cur_frame_piece.lon;
             ap_selector.MAC(index) = cur_frame_piece.mac;
             ap_selector.RSSI(index) = cur_frame_piece.rssi;
             ap_selector.RSSI_REF(index) = cur_frame_piece.rssi_reference;
+        end
+
+    end
+
+    % 更新ap_selector中已有记录但当前帧无数据的节点
+    selector_name_temp = ap_selector.NAME(2:end);
+    %selector_name_temp = selector_name(2:end); % 删除首行空数据
+    index_temp = find(~contains(selector_name_temp, updated_node_names));
+
+    if ~isempty(index_temp)
+
+        for k_2 = 1:length(index_temp)
+            name = selector_name_temp(index_temp(k_2));
+            selector_name = ap_selector.NAME;
+            index = find(strcmp(selector_name, name)); %ap_selector中的地址
+            pre_rssi_temp = ap_selector.RECVRSSI(index, :);
+            recv_rssi_len = 1;
+            % fifo(first in fisrt out)
+            recv_rssi_temp = 0;
+            ap_selector.RECVRSSI(index, :) = [pre_rssi_temp(recv_rssi_len + 1:end), recv_rssi_temp];
         end
 
     end
@@ -81,10 +122,11 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
 
     for k = 1:size(trilat_table, 1)
         rssi_s = trilat_table.RECVRSSI(k, :);
-        cur_rssi = rssi_s(rssi_s ~= 0);
-        trilat_table.CHARAC_ACT(k) = ceil(length(cur_rssi) / 2);
-        trilat_table.CHARAC_MEAN(k) = mean(cur_rssi);
-        trilat_table.CHARAC_VAR(k) = var(cur_rssi);
+        valid_rssi = rssi_s(rssi_s ~= 0);
+        % 统一特征值(保证最带为5)
+        trilat_table.CHARAC_ACT(k) = ceil(5 * length(valid_rssi) / length(rssi_s));
+        trilat_table.CHARAC_MEAN(k) = mean(valid_rssi);
+        trilat_table.CHARAC_VAR(k) = var(valid_rssi);
     end
 
     % mean sort character
@@ -107,12 +149,12 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
     trilat_table.CHARAC_VAR(gen_index_var(~ismember(gen_index_var, charac_var_index))) = 0;
 
     % 神经元
-    charac_weight = [0.3, 0.6, 0.1]; % 特征值权重
+    charac_weight = [0.3, 0.7, 0]; % 特征值权重
     charc_temp = [trilat_table.CHARAC_ACT, trilat_table.CHARAC_MEAN, trilat_table.CHARAC_VAR];
     trilat_table.SELECT_WEIGHT = charc_temp * charac_weight';
 
     % 定位节点最多个数
-    [~, index_temp] = maxk(trilat_table.SELECT_WEIGHT, 3);
+    [~, index_temp] = maxk(trilat_table.SELECT_WEIGHT, 4);
     selected_ap_name = trilat_table.NAME(index_temp);
 
     %%
@@ -124,7 +166,7 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
         table_index = find(strcmp(trilat_table.NAME, selected_ap_name(j)));
         rssi_temp = trilat_table.RECVRSSI(table_index, :);
 
-        if ~isempty(find(rssi_temp))
+        if ~isempty(find(rssi_temp, 1))
             trilateration_ap(valid_ap_cnt).name = trilat_table.NAME(table_index);
             trilateration_ap(valid_ap_cnt).mac = trilat_table.MAC(table_index);
             trilateration_ap(valid_ap_cnt).lat = trilat_table.LAT(table_index);
@@ -135,9 +177,12 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             % trilateration_ap(valid_ap_cnt).rssi = trilat_table.rssi(table_index);
             rssi_temp = trilat_table.RECVRSSI(table_index, :);
             rssi_temp = rssi_temp(rssi_temp ~= 0);
-            % 考虑将均值滤波替换为中值滤波
-            if false
+
+            if true
                 trilateration_ap(valid_ap_cnt).rssi = mean(rssi_temp); % 均值滤波
+            elseif false
+                % 取max recieved rssi
+                trilateration_ap(valid_ap_cnt).rssi = max(rssi_temp); % 最大值
             else
                 rssi_temp_sorted = sort(rssi_temp); % 对非零RSSI数组进行排序
 
@@ -157,6 +202,19 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             trilateration_ap(valid_ap_cnt).rssi_gf = trilat_table.RSSI(table_index);
             trilateration_ap(valid_ap_cnt).rssi_kf = trilat_table.RSSI(table_index);
             trilateration_ap(valid_ap_cnt).dist = 0; % with a hammer dist
+            % rssi clustering
+            rssi_clustering_temp = trilat_table.RSSI_FOR_CLUSTERING(table_index, :);
+            rssi_clustering_temp = rssi_clustering_temp(rssi_clustering_temp ~= 0);
+            C = zeros(1, 3);
+
+            if length(rssi_clustering_temp) > int16(length(rssi_clustering_temp) / 2) ...
+                    && length(rssi_clustering_temp) > 3
+                % [~, C] = cluster_ble_channle(rssi_clustering_temp);
+                [~, C] = channel_clustering(rssi_clustering_temp, 3);
+                C = sort(C);
+            end
+
+            trilateration_ap(valid_ap_cnt).rssi_clustering = C;
             valid_ap_cnt = valid_ap_cnt + 1;
         end
 

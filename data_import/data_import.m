@@ -1,4 +1,4 @@
-function data = data_import(varargin)
+function [data, file_names] = data_import(varargin)
     %功能：从文件夹中选择数据文件，导入数据文件中的数据，可同时导入多份数据文件
     %定义：data = data_import()
     %参数：
@@ -38,6 +38,7 @@ function data = data_import(varargin)
         file{i} = fullfile(path, file_name{i});
     end
 
+    file_names = file;
     %解析数据
     data = cell(length(file), 1);
 

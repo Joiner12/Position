@@ -1,4 +1,4 @@
-function [position, debug_param] = bluetooth_position(data)
+function [position, debug_param] = bluetooth_position(data, varargin)
     %功能：蓝牙定位
     %定义：[position, debug_param] = bluetooth_position(data)
     %参数：
@@ -25,7 +25,7 @@ function [position, debug_param] = bluetooth_position(data)
     debug_param.frame_id = 0;
     debug_param.config = config;
     %% apselector 初始化
-    ap_selector = init_ap_selector(11);
+    ap_selector = init_ap_selector(21);
     gif_cnt = 1;
 
     % 逐帧处理
@@ -66,9 +66,9 @@ function [position, debug_param] = bluetooth_position(data)
         end
 
         [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame_ap, ap_selector);
-        %% 根据BS(base station)布局进行二次选择
-        if false % 关闭二次选择器
-            trilateration_ap = secondary_selector(trilateration_ap);
+        %% 次级选择器——奇异值问题
+        if true
+            trilateration_ap = secondary_selector(trilateration_ap, 'singularvalue');
         end
 
         %% 对数模型:RSSI转换为距离
@@ -82,7 +82,7 @@ function [position, debug_param] = bluetooth_position(data)
         [pos_res, ~] = trilateration_calc(cur_frame_ap);
 
         %% 定位后处理-范围滤波
-        if true & false
+        if true
             pos_res = final_scope_filter(pos_res, ...
                 scope_prev_pos, ...
                 config.scope_filter_param);
@@ -95,28 +95,35 @@ function [position, debug_param] = bluetooth_position(data)
         end
 
         %% figure
-        if true &&~isempty(fieldnames(pos_res))
-            tcf('Positining'); % todo:异常点处理
-            figure('name', 'Positining', 'Color', 'w');
-            cfg = get_config_debug();
-            true_pos_manual = get_test_point(cfg(3).truepos);
-            draw_positioning_state(gca, 'static', cur_frame_ap, 'estimated_positon', ...
-                [pos_res.lat, pos_res.lon], ...
-                'true_pos', [true_pos_manual{1}.lat, true_pos_manual{1}.lon]);
 
-            % save png files
-            if false
-                pause(0.1);
-                png_file = strcat('location-temp', num2str(gif_cnt), '.png');
-                png_file = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1', png_file);
-                imwrite(frame2im(getframe(gcf)), png_file);
-                fprintf('save figure as png file:%s\n', png_file);
-            end
+        true_pos = struct();
 
-            gif_cnt = gif_cnt +1;
-            fprintf('cnt = %.0f\n', gif_cnt);
+        if any(strcmpi(varargin, 'true_pos'))
+            true_pos = varargin{find(strcmpi(varargin, 'true_pos')) + 1};
         end
 
+        % save png files
+        save_process_pic = false;
+
+        if any(strcmpi(varargin, 'save_process_pic'))
+            save_process_pic = varargin{find(strcmpi(varargin, 'save_process_pic'), 1) + 1};
+        end
+
+        if ~isempty(fieldnames(pos_res)) ...
+                && ~isempty(fieldnames(true_pos)) ...
+                && true
+
+            % pause(0.01); % save failed
+            png_file = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1', ...
+                strcat('location-temp', num2str(gif_cnt), '.png'));
+            draw_positioning_state('static', cur_frame_ap, 'estimated_positon', ...
+                [pos_res.lat, pos_res.lon], ...
+                'true_pos', [true_pos.lat, true_pos.lon], 'target_pic', png_file, ...
+                'visible', false, 'save_figure', save_process_pic);
+
+        end
+
+        gif_cnt = gif_cnt +1;
     end
 
 end

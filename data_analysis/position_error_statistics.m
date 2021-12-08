@@ -27,53 +27,37 @@ function position_error_statistics(position, true_position, varargin)
 
     %% 误差数据统计
     if length(position) ~= length(true_position)
-        flag = ['位置信息与其真值个数不同, position:', num2str(length(position)), ...
-                ', true_position: ', num2str(length(true_position))];
-        error(flag);
+        % todo:真实标注位置和定位位置数目不一致
+        if false
+            flag = ['位置信息与其真值个数不同, position:', num2str(length(position)), ...
+                    ', true_position: ', num2str(length(true_position))];
+            error(flag);
+        else
+            true_position = true_position(1:length(position));
+        end
+
     end
 
-    %处理可变参
+    % 滤点
     filter_flag = 0;
 
-    if ~isempty(varargin)
-        var_num = length(varargin);
+    if any(strcmpi(varargin, 'filter_point'))
+        filter_idx = varargin{find(strcmpi(varargin, 'filter_point'), 1) + 1};
+        filter_dist_var = -1;
+        filter_flag = 1;
+        all_idx = 1:length(position);
 
-        if mod(var_num, 2) ~= 0
-            error('可变参传入个数错误');
+        if isempty(filter_idx)
+            filter_idx = [];
+            statistics_idx = all_idx;
         end
 
-        var_type = cell(var_num / 2, 1);
-        var_param = cell(var_num / 2, 1);
-        var_type(:) = varargin(1:2:end);
-        var_param(:) = varargin(2:2:end);
-
-        for i = 1:(var_num / 2)
-
-            switch var_type{i}
-                case 'filter_point'
-                    filter_dist_var = -1;
-                    filter_flag = 1;
-                    all_idx = 1:length(position);
-                    filter_idx = var_param{i};
-
-                    if isempty(filter_idx)
-                        filter_idx = [];
-                        statistics_idx = all_idx;
-                        continue;
-                    end
-
-                    if ~isempty(find(ismember(filter_idx, all_idx) == 0, length(filter_idx)))
-                        warning('输入的过滤点中,存在点不在位置集内');
-                    end
-
-                    filter_idx = filter_idx(ismember(filter_idx, all_idx) == 1);
-                    statistics_idx = all_idx(ismember(all_idx, filter_idx) == 0);
-                otherwise
-                    error(['不支持', var_type{i}, '类型的功能']);
-            end
-
+        if ~isempty(find(ismember(filter_idx, all_idx) == 0, length(filter_idx)))
+            warning('输入的过滤点中,存在点不在位置集内');
         end
 
+        filter_idx = filter_idx(ismember(filter_idx, all_idx) == 1);
+        statistics_idx = all_idx(ismember(all_idx, filter_idx) == 0);
     end
 
     %统计个点的位置误差及最大误差、最小误差、误差的标准差、误差的方差、误差的均方根
@@ -133,7 +117,15 @@ function position_error_statistics(position, true_position, varargin)
     end
 
     %% 绘制误差统计图
-    handle = figure('color', 'w');
+    tcf('errorstatic');
+    figure_visible = 'on';
+
+    if any(strcmpi(varargin, 'figure_visible'))
+        figure_visible = varargin{find(strcmpi(varargin, 'figure_visible'), 1) + 1};
+    end
+
+    % if visibleflag
+    handle = figure('Color', 'w', 'Name', 'errorstatic', 'Visible', figure_visible);
     set(handle, 'name', '位置误差统计图');
 
     %绘制各个点的误差
@@ -198,9 +190,21 @@ function position_error_statistics(position, true_position, varargin)
     ylabel('误差点个数百分比');
     axis auto;
 
-    % 保存结果
-    if any(strcmpi('savefig', varargin))
-        figure2img(handle, 'D:\Code\BlueTooth\pos_bluetooth_matlab\静态定位结果-1.png')
+    %% saveflag parameter
+    save_figure_flag = false;
+
+    if any(strcmpi(varargin, 'save_figure'))
+        save_figure_flag = varargin{find(strcmpi(varargin, 'save_figure'), 1) + 1};
+    end
+
+    if save_figure_flag
+
+        if any(strcmpi(varargin, 'target_pic'))
+            pic_file = varargin{find(strcmpi(varargin, 'target_pic'), 1) + 1};
+            saveas(handle, pic_file);
+            fprintf('save figure to:%s\n', pic_file);
+        end
+
     end
 
 end

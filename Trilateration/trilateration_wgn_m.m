@@ -25,14 +25,11 @@ function [est_pos_wgn, procss] = trilateration_wgn_m(x_tr, y_tr, d_tr, varargin)
     x0 = [mean(X), mean(Y)];
     loop_cnt = 0; % 限制搜索次数
     procss = cell(0);
-    % 权重系数
-    if true
-        w = (D').^2;
-    else
-        w = (D').^2 ./ norm(D);
-    end
-
-    w = diag(w);
+    % 权重系数——质心半径距离差
+    w = [X - mean(X), Y - mean(Y)];
+    w = abs(vecnorm(w, 2, 2) - D);
+    w = w ./ norm(w, 1);
+    w = diag(1 ./ (D.^1));
 
     while true
         % 误差矩阵
@@ -50,7 +47,10 @@ function [est_pos_wgn, procss] = trilateration_wgn_m(x_tr, y_tr, d_tr, varargin)
         end
 
         % deltaX = inv(- J' * w * J) * (J' * w * E);
-        deltaX = (- J' * w * J) \ (J' * w * E);
+        % 广义逆
+        % deltaX = (- J' * w * J) \ (J' * w * E);
+        % Moore-Penrose 伪逆
+        deltaX = pinv(- J' * w * J) * (J' * w * E);
         x1 = x0 + deltaX';
         loop_cnt = loop_cnt + 1;
 

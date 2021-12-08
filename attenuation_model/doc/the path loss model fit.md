@@ -1591,8 +1591,91 @@ https://blog.csdn.net/wwws1994/article/details/112346906
    |   11   | 220  | 448  | 246  |
 
 2. 信道聚类可以根据聚类算法，将固定采样序列的RSSI值分成不同的簇，但是不能够将其值与信道对应。
+
 3. 信道聚类和对数模型的结合方式：方式一，不同信道计算出不同的距离。方式二：对聚类结果根据欧拉距离使用类似查表的方式。
-4. 
+
+4. 不同环境下RSSI特征不同，按照K-means聚类的方法提取出来的RSSI的信道能否真正匹配得上标准数据聚类结果。
+
+### 2.1、信道聚类分析
+
+[channle-clustering-analysis](channle-clustering-analysis.html)
+
+**测试结论：**
+
+1. 首先对固定距离下的所有RSSI数据使用k-means进行聚类（簇中心数：3），然后模拟实际定位过程，设置不同的RSSI窗口，窗口大小分别为20、30、40。窗口大小对聚类结果影响不大，不同窗口大小下聚类结果基本一致。
+2. 在距离分别为4m和7m的情况下，原始RSSI数据波动较大，且呈现非规律波动，聚类结果不稳定。距离为4m，窗口大小20，分段聚类簇中心到所有数据聚类簇中心欧式距离在（4,21）范围内。最小为4.15，最大为20.59。距离为4m，窗口大小30，分段聚类簇中心到所有数据聚类簇中心欧式距离在（6,19）范围内。最小为6.083，最大为18.87。距离为4m，窗口大小40，分段聚类簇中心到所有数据聚类簇中心欧式距离在（2.23,19.72）范围内。最小为2.23，最大为19.72。距离7m情况下，聚类窗口分别设置为20、30、40其分段聚类簇中心到所有数据聚类簇中心欧式距离在10以内。
+3. 分别验证分段聚类簇中心到不同距离标准簇中心欧式距离，基本上所有的分段聚类簇中心结果到标准簇中心距离最小，8m的情况下会出现一定概率误差，导致分类到9m簇中心，引入1m误差。
+
+
+## 3、原始数据RSSI中值滤波处理
+
+对不同距离采集的RSSI数据进行中值滤波，对比滤波前后RSSI的值，窗口大小为`21`：
+
+<div style="text-align:center;background-color:white;">
+    <img src="./img/Beacon-std-rssi-median-1.png"><br>
+    <img src="./img/Beacon-std-rssi-median-2.png"><br>
+    <p>中值滤波 窗口大小21 滤波前后RSSI数据对比</p>
+</div>
+
+[Beacon median filter-1](D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\figure\Beacon-medianfilter-1.fig>)
+
+[Beacon median filter-2](D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\figure\Beacon-medianfilter-2.fig>)
+
+实验结果分析：
+
+1. 滤波后的RSSI数据基本为固定大小值，中值滤波能够有效地克服RSSI波动问题。但不能完全滤掉波动较大的RSSI值，不考虑中值滤波起始时间序列异常值对整个滤波结果的影响，不同距离RSSI中值滤波后均值及波动值(MaxRSSI-MinRSSI)如下：
+
+   | 距离(m) | RSSI均值(dBm) | RSSI波动(dBm) |
+   | :-----: | :-----------: | :-----------: |
+   |    1    |    -37.45     |       2       |
+   |    2    |    -43.32     |       3       |
+   |    3    |    -43.32     |       3       |
+   |    4    |    -49.08     |       0       |
+   |    5    |    -46.60     |       2       |
+   |    6    |    -49.77     |       4       |
+   |    7    |    -57.07     |       9       |
+   |    8    |    -52.76     |       3       |
+   |    9    |     -53.0     |       2       |
+   |   10    |    -50.65     |       5       |
+   |   11    |    -58.61     |       4       |
+
+   
+
+2. ap-selector滤波方式修改为中值滤波；
+
+3. 中值滤波后RSSI取均值，RSSI和dist(距离)对应关系并不完全满足对数衰减模型，距离远情况下，RSSI会出现增大的情况，相比较于Ch39单信道其曲线更加符合对数形式。
+
+### 3.1 原始数据中值处理后拟合结果
+
+$$
+\begin{align}
+&General model:\\
+     &f(x) = A+10*n*log10(x)\\
+& Coefficients (with 95\% confidence bounds): \\
+&       A =      -37.08  (-41.74, -32.42)\\
+&       n =      -1.761  (-2.376, -1.145)\\
+
+&Goodness of fit:\\
+&  SSE: 69.84\\
+&  R-square: 0.8229\\
+&  Adjusted R-square: 0.8032\\
+&  RMSE: 2.786\\
+  \end{align}
+$$
+
+
+
+<img src="./img/Beacon median fit -1.png">
+
+ 
+
+结果分析：
+
+1. $RSSI>-50dBm$ ，$f(rssi)<5.5m$ 
+2. $RSSI<=-70dBm$ ，$f(rssi)<15m$
+3. $RSSI<=-50dBm$ ，需要使用信道聚类辅助距离判断；
+
+
 
 # Reference
 
