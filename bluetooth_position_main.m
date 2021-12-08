@@ -1,3 +1,24 @@
+%% 蓝牙定位主程序，调试前需要添加相应文件夹及子文件夹到matlab路径中。
+% matlab不能定位脚本文件，路径设置为绝对路径，使用前需要检查相关路径设置.
+% D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model
+% D:\Code\BlueTooth\pos_bluetooth_matlab\component
+% D:\Code\BlueTooth\pos_bluetooth_matlab\data_import
+% D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool
+% D:\Code\BlueTooth\pos_bluetooth_matlab\Trilateration
+% D:\Code\BlueTooth\pos_bluetooth_matlab\data_analysis
+clc;
+workspace_folder = 'D:\Code\BlueTooth\pos_bluetooth_matlab';
+scripts_folder = {'attenuation_model', 'component', 'data_import', ...
+                'MarkDownTool', 'Trilateration', 'data_analysis'};
+
+for k = 1:length(scripts_folder)
+    cur_folder = fullfile(workspace_folder, scripts_folder{k});
+    addpath(genpath(cur_folder), '-end');
+end
+
+% 保存路径文件
+% savepath matlab/myfiles/pathdef.m
+
 %% 控制参数配置
 clc;
 tcf;
@@ -5,7 +26,7 @@ clear;
 system_config = sys_config(); % 读取配置文件
 [files_data, test_file_name] = data_import();
 
-% 初始化1米处rssi值（实际工程中由蓝牙信标广播出来）
+% 初始化1米处rssi值(实际工程中由蓝牙信标广播出来)
 files_data = init_rssi_reference(files_data, -50.06763);
 
 % 提取各文件的信标数据及真值
@@ -36,11 +57,6 @@ for i = 1:1:file_num
         'true_pos', true_pos_temp(1), 'save_process_pic', save_process_pic);
 
     filter_points{i} = debug{i}.centroid;
-
-    if save_process_pic
-        system(['python', ' ', ...
-            'D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool\MarkDownProcess.py']);
-    end
 
     % 静态分析
     if true
@@ -88,18 +104,9 @@ for i = 1:1:file_num
     toc(t_main);
 end
 
-if false
-    system(['python', ' ' ...
-        'D:\Code\BlueTooth\pos_bluetooth_matlab\MarkDownTool\PositionMarkdown_Static.py']);
-end
-
 if true
     opts = struct('WindowStyle', 'modal', ...
         'Interpreter', 'tex');
-    f = warndlg('\fontsize{15} \color{red} Finished', ...
-        'Running', opts);
+    f = warndlg('\fontsize{15} \color{gray} this is a alert window', ...
+        'this is a alert window', opts);
 end
-
-%% switch schemer
-% schemer_import('solarized-light.prf');
-% schemer_import('darksteel.prf');
