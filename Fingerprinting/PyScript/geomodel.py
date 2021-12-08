@@ -10,15 +10,14 @@ import numpy as np
 from math import pow
 
 # 自然常数
-earth_long_axis = 6378137.0    # 地球长轴
-earth_short_axis = 6356752.314  # 地球短轴
-utm_scale_factor = 0.9996      # 横轴墨卡托到UTM的比例系数
-north_factor = 500000.0        # 北半球比例因子
+EARTH_LONG_AXIS = 6378137.0    # 地球长轴
+ERATH_SHORT_AXIS = 6356752.314  # 地球短轴
+UTM_SCALE_FACTOR = 0.9996      # 横轴墨卡托到UTM的比例系数
+NORTH_FACTOR = 500000.0        # 北半球比例因子
 
 
 def latlon_to_xy(lat: float, lon: float, *args, **kwargs):
     """ 横轴墨卡托投影，将地图经纬度转换为平面直角坐标(BL to UTM)
-    这里是具体描述.
 
     参数
     ----------
@@ -41,9 +40,9 @@ def latlon_to_xy(lat: float, lon: float, *args, **kwargs):
     phi = lat * np.pi / 180
     lam = lon * np.pi / 180
 
-    n = (earth_long_axis - earth_short_axis) / \
-        (earth_long_axis + earth_short_axis)
-    alpha = ((earth_long_axis + earth_short_axis) / 2.0) * \
+    n = (EARTH_LONG_AXIS - ERATH_SHORT_AXIS) / \
+        (EARTH_LONG_AXIS + ERATH_SHORT_AXIS)
+    alpha = ((EARTH_LONG_AXIS + ERATH_SHORT_AXIS) / 2.0) * \
         (1.0 + pow(n, 2) / 4.0 + pow(n, 4) / 64.0)
     beta = (-3.0 * n / 2.0) + (9.0 * pow(n, 3) / 16.0) + \
         (-3.0 * pow(n, 5) / 32.0)
@@ -55,11 +54,11 @@ def latlon_to_xy(lat: float, lon: float, *args, **kwargs):
                     (delta * np.sin(6.0 * phi)) +
                     (epsilon * np.sin(8.0 * phi)))
 
-    ep2 = (pow(earth_long_axis, 2) - pow(earth_short_axis, 2)) / \
-        pow(earth_short_axis, 2)
+    ep2 = (pow(EARTH_LONG_AXIS, 2) - pow(ERATH_SHORT_AXIS, 2)) / \
+        pow(ERATH_SHORT_AXIS, 2)
     nu2 = ep2 * pow(np.cos(phi), 2)
-    n = pow(earth_long_axis, 2) / np.sqrt(pow(earth_long_axis, 2) * pow(np.cos(phi), 2)
-                                          + pow(earth_short_axis, 2) * pow(np.sin(phi), 2))
+    n = pow(EARTH_LONG_AXIS, 2) / np.sqrt(pow(EARTH_LONG_AXIS, 2) * pow(np.cos(phi), 2)
+                                          + pow(ERATH_SHORT_AXIS, 2) * pow(np.sin(phi), 2))
     t = np.tan(phi)
     t2 = t * t
     l = lam - lam0
@@ -80,8 +79,8 @@ def latlon_to_xy(lat: float, lon: float, *args, **kwargs):
         + (t / 720.0 * n * pow(np.cos(phi), 6) * l6coef * pow(l, 6)) \
         + (t / 40320.0 * n * pow(np.cos(phi), 2) * l8coef * pow(l, 8))
 
-    x = x * utm_scale_factor + north_factor
-    y = y * utm_scale_factor
+    x = x * UTM_SCALE_FACTOR + NORTH_FACTOR
+    y = y * UTM_SCALE_FACTOR
     if y < 0.0:
         y = y + 10000000.0
     return (x, y, lam0)
@@ -106,13 +105,13 @@ def xy_to_latlon(x: float, y: float, lam0: float, *args, **kwargs):
             longitude 经度
     """
 
-    n = (earth_long_axis - earth_short_axis) \
-        / (earth_long_axis + earth_short_axis)
-    x = x - north_factor
-    x = x / utm_scale_factor
-    y = y / utm_scale_factor
+    n = (EARTH_LONG_AXIS - ERATH_SHORT_AXIS) \
+        / (EARTH_LONG_AXIS + ERATH_SHORT_AXIS)
+    x = x - NORTH_FACTOR
+    x = x / UTM_SCALE_FACTOR
+    y = y / UTM_SCALE_FACTOR
 
-    alpha_ = ((earth_long_axis + earth_short_axis) / 2)  \
+    alpha_ = ((EARTH_LONG_AXIS + ERATH_SHORT_AXIS) / 2)  \
         * (1 + 1 / 4 * pow(n, 2) + 1 / 64 * pow(n, 4))
     y_ = y / alpha_
     beta_ = (3.0 * n / 2.0) + (-27.0 * pow(n, 3) / 32.0) + \
@@ -123,12 +122,12 @@ def xy_to_latlon(x: float, y: float, lam0: float, *args, **kwargs):
     phif = y_ + (beta_ * np.sin(2.0 * y_)) + (gamma_ * np.sin(4.0 * y_)) \
               + (delta_ * np.sin(6.0 * y_)) + (epsilon_ * np.sin(8.0 * y_))
 
-    ep2 = (pow(earth_long_axis, 2) - pow(earth_short_axis, 2)) / \
-        pow(earth_short_axis, 2)
+    ep2 = (pow(EARTH_LONG_AXIS, 2) - pow(ERATH_SHORT_AXIS, 2)) / \
+        pow(ERATH_SHORT_AXIS, 2)
     cf = np.cos(phif)
     nuf2 = ep2 * pow(cf, 2)
-    nf = pow(earth_long_axis, 2) / np.sqrt(pow(earth_long_axis, 2) * pow(np.cos(phif), 2)
-                                           + pow(earth_short_axis, 2) * pow(np.sin(phif), 2))
+    nf = pow(EARTH_LONG_AXIS, 2) / np.sqrt(pow(EARTH_LONG_AXIS, 2) * pow(np.cos(phif), 2)
+                                           + pow(ERATH_SHORT_AXIS, 2) * pow(np.sin(phif), 2))
     tf = np.tan(phif)
 
     x1frac = 1 / (nf * cf)
