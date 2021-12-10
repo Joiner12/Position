@@ -72,3 +72,49 @@ hold off
 %% 
 clc;
 [x,y,lambo]=latlon_to_xy(30.4547, 120.4455)
+%%
+% 生成一维高斯滤波模板
+clc;
+r = 2;sigma=1;
+GaussTemp = ones(1,r*2-1);
+for i=1 : r*2-1
+    GaussTemp(i) = exp(-(i-r)^2/(2*sigma^2))/(sigma*sqrt(2*pi));
+end
+% 测试数据
+x = 1:50;
+y = x + rand(1,50)*10;
+
+% 设置高斯模板大小和标准差
+r        = 3;
+sigma    = 1;
+[y_filted,y_filted_1] = Gaussianfilter(r, sigma, y);
+
+% 作图对比
+plot(x, y, x, y_filted,x,y_filted_1);
+title('高斯滤波');
+legend('滤波前','滤波后','滤波后-1','Location','northwest')
+
+% 功能：对一维信号的高斯滤波，头尾r/2的信号不进行滤波
+% r     :高斯模板的大小推荐奇数
+% sigma :标准差
+% y     :需要进行高斯滤波的序列
+function [y_filted,y_filted_1] = Gaussianfilter(r, sigma, y)
+
+% 生成一维高斯滤波模板
+GaussTemp = ones(1,r*2-1);
+for i=1 : r*2-1
+    GaussTemp(i) = exp(-(i-r)^2/(2*sigma^2))/(sigma*sqrt(2*pi));
+end
+
+% 高斯滤波
+y_filted = y;
+for i = r : length(y)-r
+    y_filted(i) = y(i-r+1 : i+r-1)*GaussTemp';
+end
+y_filted_1=y;
+GaussTemp
+GaussTemp = GaussTemp/sum(GaussTemp)
+for i = r : length(y)-r
+    y_filted(i) = y(i-r+1 : i+r-1)*GaussTemp';
+end
+end
