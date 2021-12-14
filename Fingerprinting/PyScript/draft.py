@@ -218,12 +218,18 @@ a = np.arange(5)
 a[0] = 4
 
 # %%
-df = pd.DataFrame(columns=list('AB'))
+import pandas as pd
 
-df2 = pd.DataFrame([[5, 6], [7, 8]], columns=list('AB'), index=['x', 'y'])
-df = pd.concat([df,df2], ignore_index=True)
-# df.append(df2)
 
-# With ignore_index set to True:
-
-df.append(df2, ignore_index=True)
+df_aa = pd.DataFrame({'zh':['zhang','li','wang','zhao'],
+                      'hero':['达摩','典韦','曹操','李白'],
+                      'score':['85','73','66','81']})
+df_zz = pd.DataFrame({'en':['wang','zhao','Trump','Obama'],
+                      'hero':['曹操','墨子','曹操','李白'],
+                      'level':['青铜','白银','黄金','钻石']})
+df_concat = pd.concat([df_aa,df_zz])         # 默认沿axis=0，join=‘out’的方式进行concat
+df_igno_idx = pd.concat([df_aa,df_zz], ignore_index=True)
+'''
+# 重新设定index(效果类似于pd.concat([df1,df2]).reset_index(drop=True))
+'''
+df_col = pd.concat([df_aa,df_zz], axis=1)

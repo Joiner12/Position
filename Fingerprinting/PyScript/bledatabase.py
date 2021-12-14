@@ -170,12 +170,13 @@ def extract_fingerprinting_from_dirs(*args, **kwargs):
         print(pos, os.path.join(src_folder, k))
     #
     # 提取所有指纹数据
-    for data_file in src_data_file:
+    for (pos, data_file) in zip(pos_s, src_data_file):
         ble_data = get_valid_data(data_file,
                                   beacon_filter=['Beacon0', 'Beacon1', 'Beacon6', 'Beacon7'])
         ble_fingerprints = generate_ble_fingerprintings_v1(ble_data, pos=pos)
-        print(data_file)
-        print(ble_fingerprints_all)
+        if False:
+            print(data_file)
+            print(ble_fingerprints_all)
         ble_fingerprints_all = pd.concat(
             [ble_fingerprints_all, ble_fingerprints], ignore_index=True)
     ble_fingerprints_all.to_csv(r'../Data/BLE_FINGERPRTING.csv')
