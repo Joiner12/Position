@@ -233,3 +233,15 @@ df_igno_idx = pd.concat([df_aa,df_zz], ignore_index=True)
 # 重新设定index(效果类似于pd.concat([df1,df2]).reset_index(drop=True))
 '''
 df_col = pd.concat([df_aa,df_zz], axis=1)
+#%% 
+import numpy as np
+
+from scipy import io
+
+a=np.mat('1,2,3;4,5,6')
+
+b=np.array([[1,1,1],[2,2,2]])
+
+io.savemat('a.mat', {'matrix': a})
+
+io.savemat('b.mat', {'array': b})

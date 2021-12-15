@@ -6,9 +6,11 @@ Created on Wed Dec  8 16:26:56 2021
 """
 
 import pandas as pd
+import numpy as np
 import os
 from itertools import product
 import re
+from scipy import io
 
 
 def get_valid_data(file_path: str, beacon_filter=[], * args, **kwargs):
@@ -131,29 +133,31 @@ def generate_ble_fingerprintings_v1(ble_data, pos: float = [0, 0], *args, **kwar
         # 保存到指纹数据库中
         for k_3 in possible_fingerprinting:
             ble_rssis = ble_fingerprints['RSSI_FG']
-            if not k_3 in ble_rssis:
-                ble_fingerprints.at[len(ble_rssis), 'RSSI_FG'] = k_3
-                ble_fingerprints.at[len(ble_rssis), 'POS'] = pos
+            # 非重复且有效RSSI(不全为0)
+            if not k_3 in ble_rssis and np.any(np.array(k_3)):
+                ble_fingerprints.at[len(ble_rssis), 'RSSI_FG'] = np.array(k_3)
+                ble_fingerprints.at[len(ble_rssis), 'POS'] = np.array(pos)
 
     return ble_fingerprints
 
 
-def extract_fingerprinting_from_dirs(*args, **kwargs):
+def extract_fingerprinting_from_dirs(src_folder='../Data/BLE-FINGERPRING/', *args, **kwargs):
     ble_fingerprints_all = pd.DataFrame(columns=['RSSI_FG', 'POS'])
     """ 从指纹原始数据文件夹中提取所有的指纹数据,并输出为特定格式保存
     -----
     参数
-    None
+    src_folder:str
+        源数据文件夹路径
     -----
     输出
-    None
+    ble_fingerprints_all:DataFrame
+        蓝牙指纹数据
     说明
         原始指纹数据保存再../Data/BLE-FINGERPRING/中,文件名为x-y.txt,
         其中x表示相对于水平轴的偏移量，y表示相对于垂直轴偏移量。具体位置
         及坐标定义参考../Doc/BLE-Fingerprinting.drawio
     """
     #
-    src_folder = '../Data/BLE-FINGERPRING/'
     dirs = os.listdir(src_folder)
     src_data_file = list()
     pos_s = list()
@@ -174,13 +178,61 @@ def extract_fingerprinting_from_dirs(*args, **kwargs):
         ble_data = get_valid_data(data_file,
                                   beacon_filter=['Beacon0', 'Beacon1', 'Beacon6', 'Beacon7'])
         ble_fingerprints = generate_ble_fingerprintings_v1(ble_data, pos=pos)
-        if False:
-            print(data_file)
-            print(ble_fingerprints_all)
+        print(data_file)
         ble_fingerprints_all = pd.concat(
             [ble_fingerprints_all, ble_fingerprints], ignore_index=True)
-    ble_fingerprints_all.to_csv(r'../Data/BLE_FINGERPRTING.csv')
-    print('----finished----')
+    # return ble_fingerprints_all
+    ble_fingerprints_all.to_csv(r'../Data/BLE_FINGERPRTING.txt')
+    print('extract ble rssi fingerprintings from %s,stored in %s' %
+          (src_folder, r'../Data/BLE_FINGERPRTING.txt'))
+
+
+def read_ble_fingerprinting_from_file(datafile=r'../Data/BLE_FINGERPRTING.txt', *args, **kwargs):
+    """从datafile文件中读取指纹数据
+    -----
+    参数
+    datafile:str
+        数据文件文件路径
+    -----
+    返回
+    ble_fingerprinting:DataFrame
+        ble指纹数据
+    """
+    ble_fingerprinting = pd.DataFrame(
+        columns=['Beacon0', 'Beacon1', 'Beacon6', 'Beacon7', 'POS'])
+    # beacon's name = [Beacon0,Beacons1,Beacons6,Beacons7]
+    data_temp = pd.read_csv(datafile, usecols=['RSSI_FG', 'POS'])
+    for i_index, j_index in zip(data_temp['RSSI_FG'], data_temp['POS']):
+        rssi_temp = np.array([float(val)
+                             for val in re.findall(r'[-\d|\d]{1,}\.', i_index)])
+        pos_temp = np.array([float(val)
+                            for val in re.findall(r'[-\d|\d]{1,}', j_index)])
+        data_temp_index = len(ble_fingerprinting)
+        ble_fingerprinting.at[data_temp_index, 'Beacon0'] = rssi_temp[0]
+        ble_fingerprinting.at[data_temp_index, 'Beacon1'] = rssi_temp[1]
+        ble_fingerprinting.at[data_temp_index, 'Beacon6'] = rssi_temp[2]
+        ble_fingerprinting.at[data_temp_index, 'Beacon7'] = rssi_temp[3]
+        ble_fingerprinting.at[data_temp_index, 'POS'] = pos_temp
+    print('load data from %s succeed.' % (datafile))
+    return ble_fingerprinting
+
+
+def save_ble_fingerprint_to_mat(ble_data, matfile=r'../Data/ble_data_base.mat', *args, **kwargs):
+    """保存蓝牙指纹数据到mat文件
+    -----
+    参数
+    ble_data:DataFrame
+        待保存数据
+    matfile:str
+        mat文件路径
+    -----
+    返回
+    None
+    """
+    ind = list(ble_data.index)
+    col = list(ble_data.columns)
+    io.savemat(matfile, {'data': ble_data.values, 'index': ind, 'cols': col})
+    print('save to mat file %s' % (matfile))
 
 
 if __name__ == "__main__":
@@ -189,4 +241,10 @@ if __name__ == "__main__":
             r'../Data/BLE-FINGERPRING/0-0.txt',
             beacon_filter=['Beacon0', 'Beacon1', 'Beacon6', 'Beacon7'])
         ble_fingerprints = generate_ble_fingerprintings_v1(ble_data)
-    extract_fingerprinting_from_dirs()
+    if False:
+        # extract_fingerprinting_from_dirs()
+        data_temp = read_ble_fingerprinting_from_file()
+        save_ble_fingerprint_to_mat(data_temp)
+    if True:
+        testdata = io.loadmat(r'../Data/ble_data_base.mat')
+        b = testdata['data']
