@@ -11,59 +11,122 @@ from bledatabase import read_ble_fingerprinting_from_file
 from sklearn.model_selection import train_test_split
 import numpy as np
 from scipy import io
+import matplotlib.pyplot as plt
 
 
-def ble_fingerprinting_find_best_k(ble_fingerprinting_data, *args, **kwargs):
-    """根据蓝牙指纹数据寻找KNN算法的K值
+def data_preprocessing(data_file=r'../Data/ble_data_base.mat', *args, **kwargs):
+    """读取mat格式中保存的蓝牙指纹数据并处理为rssi和lable标签返回
     -----
     参数
-    ble_fingerprinting_data: DataFrame
-        蓝牙指纹数据
+    data_file:str
+        数据文件路径，默认../Data/ble_data_base.mat
+    -----
+    x_data:array
+        RSSI指纹特征向量
+    y_data:array
+        RSSI指纹特征向量对应的位置标签(向量)
+    """
+    #
+    ble_fingerprinting_data = io.loadmat(data_file)
+    #
+    ble_fingerprinting_data = ble_fingerprinting_data['data']
+    # rssi特征向量
+    x_data = ble_fingerprinting_data[:, 0:4].astype(np.float)
+    # 位置标签(向量)
+    y_data_temp = ble_fingerprinting_data[:, 4]
+    y_data = np.zeros([len(y_data_temp), 2])
+    for i in range(len(y_data)):
+        y_data[i] = y_data_temp[i].astype(np.float)
+    return x_data, y_data
+
+
+def prediction_err(predictions, labels, *args, **kwargs):
+    """计算KNN定位误差(数组欧式距离)
+    -----
+    参数
+    predictions:array
+        预测结果
+    labels:array
+        标注结果
     -----
     输出
     k:float
         knn算法k
     """
     #
+    err = np.mean(np.sqrt(np.sum((predictions - labels)**2, 1)))
+    return err
+
+
+def ble_fingerprinting_find_best_n_neighbors(data_file=r'../Data/ble_data_base.mat', *args, **kwargs):
+    """根据蓝牙指纹数据寻找KNN算法的K值
+    -----
+    参数
+    data_file:str
+        数据文件路径，默认../Data/ble_data_base.mat
+    -----
+    输出
+    k:float
+        knn算法最佳k值
+    """
+    #
     k = 3  # 初始化k为3
-    x_data = (ble_fingerprinting_data.drop('POS', axis=1)).values
-    y_data = np.array(ble_fingerprinting_data['POS'])
+    x_data, y_data = data_preprocessing(data_file)
     x_train, x_test, y_train, y_test = train_test_split(
-        x_data, y_data, test_size=0.5, random_state=12345)
+        x_data, y_data, test_size=0.8, random_state=1)
     parameters = {"n_neighbors": range(1, 50)}
     gridsearch = GridSearchCV(KNeighborsRegressor(), parameters)
     gridsearch.fit(x_train, y_train)
-    k = gridsearch.best_params_
+    scores = gridsearch.cv_results_['mean_test_score']
+    k = np.argmax(scores)  # 选择score最大的k
+    if 'show_figure' in kwargs.keys() and kwargs['show_figure']:
+        # 绘制超参数k与score的关系曲线
+        plt.plot(range(1, scores.shape[0] + 1), scores, '-o', linewidth=2.0)
+        plt.plot(k+1, scores[k], color='red', marker='o')
+        plt.text(k+2, scores[k]*1.01, 'k:'+str(k), fontsize=15)
+        plt.xlabel("k")
+        plt.ylabel("score")
+        plt.grid(True)
+        plt.title("不同K值拟合效果")
+        plt.show()
     return k
 
 
-def test():
-    ble_fingerprinting_data = read_ble_fingerprinting_from_file()
-    k = ble_fingerprinting_find_best_k(ble_fingerprinting_data)
-    print(k)
-    # ble_fingerprinting_find_best_k(ble_fingerprinting_data)
-
-
-def ble_fingerprinting_knn(*args, **kwargs):
-    # load data from *.mat file
-    ble_fingerprinting_data = io.loadmat(r'../Data/ble_data_base.mat')
-
-    ble_fingerprinting_data = ble_fingerprinting_data['data']
-    # rssi matrix
-    x_data = ble_fingerprinting_data[:, 0:4].astype(np.float)
-    # pos grid
-    y_data_temp = ble_fingerprinting_data[:, 4]
-    y_data = np.zeros([len(y_data_temp), 2])
-    for i in range(len(y_data)):
-        y_data[i] = y_data_temp[i].astype(np.float)
-    #
-    x_train, x_test, y_train, y_test = train_test_split(
-        x_data, y_data, test_size=0.5, random_state=12345)
-    knn_model = KNeighborsRegressor(
-        n_neighbors=3, weights='uniform', metric='euclidean')
-    knn_model.fit(x_train, y_train)
-    knn_model.predict(x_test)
+def ble_fingerprinting_knn(ble_data_point, true_lable=None, data_file=r'../Data/ble_data_base.mat',
+                           n_neigherbors=9, *args, **kwargs):
+    """knn匹配蓝牙指纹
+    -----
+    参数
+    ble_data_point:array
+        待匹配蓝牙指纹
+    data_file:str
+        蓝牙指纹离线数据库mat文件
+    n_neigherbors:float
+        KNN临近点数
+    -----
+    输出
+    prediction:array
+        指纹库匹配结果
+    """
+    x_data, y_data = data_preprocessing(data_file)
+    # todo:验证sklearn库
+    if False:
+        knn_model = KNeighborsRegressor(
+            n_neighbors=n_neigherbors, weights='uniform', metric='euclidean')
+        knn_model.fit(x_data, y_data)
+        knn_model.predict(ble_data_point)
+    distances = np.linalg.norm(x_data - ble_data_point, axis=1)
+    nearest_neighbor_ids = distances.argsort()[:n_neigherbors]
+    nearest_neighbor_rings = y_data[nearest_neighbor_ids]
+    prediction = nearest_neighbor_rings.mean()
+    plt.scatter(nearest_neighbor_rings[:, 0], nearest_neighbor_rings[:, 1])
+    if not true_lable is None:
+        plt.plot(true_lable[0], true_lable[1], 'r*')
+    plt.show()
+    return prediction
 
 
 if __name__ == "__main__":
-    ble_fingerprinting_knn()
+    # ble_fingerprinting_find_best_n_neighbors(show_figure=True)
+    test_point = np.array([-53., 0., -70., -68.])
+    y_pos = ble_fingerprinting_knn(test_point, [13, 0], n_neigherbors=3)

@@ -141,6 +141,42 @@ def generate_ble_fingerprintings_v1(ble_data, pos: float = [0, 0], *args, **kwar
     return ble_fingerprints
 
 
+def generate_ble_fingerprintings_v2(ble_data, pos: float = [0, 0], *args, **kwargs):
+    """ 生成蓝牙指纹数据(最小指纹库)
+    ---------
+    说明:
+        1.每一帧数据生成多条指纹，全部组合
+        2.单帧有多条beancon数据取
+        比如,单帧数据如下:
+          HEAD         NAME                MAC        RSSI      LAT                  LON            
+        ------ -------------------- ----------------- ---- -------------------- --------------------
+        $APMSG Beacon6              3d:79:8c:3f:23:ac -66  30.5480148           104.0585672         
+        $APMSG Beacon6              3d:79:8c:3f:23:ac -68  30.5480148           104.0585672         
+        $APMSG Beacon6              3d:79:8c:3f:23:ac -61  30.5480148           104.0585672         
+        $APMSG Beacon7              c0:74:8c:3f:23:ac -63  30.5480188           104.0587308         
+        $APMSG Beacon1              c5:74:8c:3f:23:ac -43  30.5478754           104.0585674         
+        指纹结果:
+        F = [beacon0,beacon1,beacon6,beacon7]
+
+        F1 = [0,-43,-61,-63] 
+        F2 = [0,-43,-66,-63]
+        F3 = [0,-43,-68,-63]
+
+    ----
+    参数
+    ----
+    ble_data:DataFrame
+        提取后的蓝牙数据
+    pos:float
+        [x,y]|[lat,lon]
+    ----
+    返回
+    ble_fingerprints:DataFrame
+        单点对应的指纹数据
+    """
+    pass
+
+
 def extract_fingerprinting_from_dirs(src_folder='../Data/BLE-FINGERPRING/', *args, **kwargs):
     ble_fingerprints_all = pd.DataFrame(columns=['RSSI_FG', 'POS'])
     """ 从指纹原始数据文件夹中提取所有的指纹数据,并输出为特定格式保存
@@ -236,15 +272,6 @@ def save_ble_fingerprint_to_mat(ble_data, matfile=r'../Data/ble_data_base.mat', 
 
 
 if __name__ == "__main__":
-    if False:
-        ble_data = get_valid_data(
-            r'../Data/BLE-FINGERPRING/0-0.txt',
-            beacon_filter=['Beacon0', 'Beacon1', 'Beacon6', 'Beacon7'])
-        ble_fingerprints = generate_ble_fingerprintings_v1(ble_data)
-    if False:
-        # extract_fingerprinting_from_dirs()
-        data_temp = read_ble_fingerprinting_from_file()
-        save_ble_fingerprint_to_mat(data_temp)
-    if True:
-        testdata = io.loadmat(r'../Data/ble_data_base.mat')
-        b = testdata['data']
+    extract_fingerprinting_from_dirs()
+    data_temp = read_ble_fingerprinting_from_file()
+    save_ble_fingerprint_to_mat(data_temp)
