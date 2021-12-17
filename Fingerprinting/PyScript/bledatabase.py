@@ -145,23 +145,41 @@ def generate_ble_fingerprintings_v2(ble_data, pos: float = [0, 0], *args, **kwar
     """ 生成蓝牙指纹数据(最小指纹库)
     ---------
     说明:
-        1.每一帧数据生成多条指纹，全部组合
-        2.单帧有多条beancon数据取
-        比如,单帧数据如下:
-          HEAD         NAME                MAC        RSSI      LAT                  LON            
+        1.每个测试点生成一条指纹数据
+        2.不同信标对应的rssi取均值
+        比如,测试数据如下:
+        HEAD         NAME                MAC        RSSI      LAT                  LON            
         ------ -------------------- ----------------- ---- -------------------- --------------------
-        $APMSG Beacon6              3d:79:8c:3f:23:ac -66  30.5480148           104.0585672         
-        $APMSG Beacon6              3d:79:8c:3f:23:ac -68  30.5480148           104.0585672         
-        $APMSG Beacon6              3d:79:8c:3f:23:ac -61  30.5480148           104.0585672         
-        $APMSG Beacon7              c0:74:8c:3f:23:ac -63  30.5480188           104.0587308         
-        $APMSG Beacon1              c5:74:8c:3f:23:ac -43  30.5478754           104.0585674         
+        $APMSG Beacon1              c5:74:8c:3f:23:ac -53  30.5478754           104.0585674         
+        $APMSG Beacon1              c5:74:8c:3f:23:ac -49  30.5478754           104.0585674         
+        $APMSG Beacon7              c0:74:8c:3f:23:ac -70  30.5480188           104.0587308         
+        $APMSG Beacon6              3d:79:8c:3f:23:ac -58  30.5480148           104.0585672         
+        $APMSG Beacon1              c5:74:8c:3f:23:ac -47  30.5478754           104.0585674         
+        $APMSG Beacon1              c5:74:8c:3f:23:ac -50  30.5478754           104.0585674         
+        $APMSG Beacon0              c3:74:8c:3f:23:ac -61  30.5478767           104.0587312         
+
+        HEAD         NAME                MAC        RSSI      LAT                  LON            
+        ------ -------------------- ----------------- ---- -------------------- --------------------
+        $APMSG Beacon1              c5:74:8c:3f:23:ac -59  30.5478754           104.0585674         
+
+        HEAD         NAME                MAC        RSSI      LAT                  LON            
+        ------ -------------------- ----------------- ---- -------------------- --------------------
+        $APMSG Beacon0              c3:74:8c:3f:23:ac -61  30.5478767           104.0587312         
+        $APMSG Beacon6              3d:79:8c:3f:23:ac -63  30.5480148           104.0585672         
+
+        HEAD         NAME                MAC        RSSI      LAT                  LON            
+        ------ -------------------- ----------------- ---- -------------------- --------------------
+        $APMSG Beacon0              c3:74:8c:3f:23:ac -62  30.5478767           104.0587312         
+        $APMSG Beacon6              3d:79:8c:3f:23:ac -56  30.5480148           104.0585672         
+        $APMSG Beacon1              c5:74:8c:3f:23:ac -58  30.5478754           104.0585674         
+        $APMSG Beacon0              c3:74:8c:3f:23:ac -57  30.5478767           104.0587312         
         指纹结果:
+        beacon0所有RSSI数组 r1=[-61,-63,-57]
+        beacon1所有RSSI数组 r2=[-58,-59,-50,-47,-49,-53]
+        beacon6所有RSSI数组 r3=[-58,-63,-56]
+        beacon7所有RSSI数组 r4=[-70,]
         F = [beacon0,beacon1,beacon6,beacon7]
-
-        F1 = [0,-43,-61,-63] 
-        F2 = [0,-43,-66,-63]
-        F3 = [0,-43,-68,-63]
-
+        F = [mean(r1),mean(r2),mean(r3),mean(r4)]
     ----
     参数
     ----
@@ -174,16 +192,44 @@ def generate_ble_fingerprintings_v2(ble_data, pos: float = [0, 0], *args, **kwar
     ble_fingerprints:DataFrame
         单点对应的指纹数据
     """
-    pass
+    # 所有锚节点(NAME)
+    ble_fingerprints = pd.DataFrame(columns=['RSSI_FG', 'POS'])
+    beacons = []
+    for k in ble_data.loc[:, 'NAME']:
+        if not k in beacons:
+            beacons.append(k)
+    beacons.sort()  # beacon命名统一sort能实现对字符串排序
+    #
+    # 初始化beacon rssi字典
+    beacons_rssi = dict()
+    for name in beacons:
+        rssi_temp = ble_data[ble_data['NAME'] == name]
+        rssi_temp = rssi_temp['RSSI'].mean()
+        beacons_rssi[name] = rssi_temp
+    # 不同beacon对应的RSSI均值拼接成指纹
+    # 例如[Beacon0,Beacon1,Beacon6,Beacon7] = [-64,-56,-63,-59]
+
+    ble_rssis = ble_fingerprints['RSSI_FG']
+    # 有效RSSI(不全为0)
+    if np.any(np.array(beacons_rssi.values())):
+        # 将存储在dict中的rssi转换为array
+        fingerprinting_rssi_temp = np.array([x for x in beacons_rssi.values()])
+        ble_fingerprints.at[len(ble_rssis),
+                            'RSSI_FG'] = fingerprinting_rssi_temp
+        ble_fingerprints.at[len(ble_rssis), 'POS'] = np.array(pos)
+
+    return ble_fingerprints
 
 
-def extract_fingerprinting_from_dirs(src_folder='../Data/BLE-FINGERPRING/', *args, **kwargs):
+def extract_fingerprinting_from_dirs(src_folder='../Data/BLE-FINGERPRING/', extract_mean=0, * args, **kwargs):
     ble_fingerprints_all = pd.DataFrame(columns=['RSSI_FG', 'POS'])
     """ 从指纹原始数据文件夹中提取所有的指纹数据,并输出为特定格式保存
     -----
     参数
     src_folder:str
         源数据文件夹路径
+    extract_mean:int
+        指纹提取方式选择,默认0表示使用V1,1表示使用V2
     -----
     输出
     ble_fingerprints_all:DataFrame
@@ -213,10 +259,19 @@ def extract_fingerprinting_from_dirs(src_folder='../Data/BLE-FINGERPRING/', *arg
     for (pos, data_file) in zip(pos_s, src_data_file):
         ble_data = get_valid_data(data_file,
                                   beacon_filter=['Beacon0', 'Beacon1', 'Beacon6', 'Beacon7'])
-        ble_fingerprints = generate_ble_fingerprintings_v1(ble_data, pos=pos)
-        print(data_file)
-        ble_fingerprints_all = pd.concat(
-            [ble_fingerprints_all, ble_fingerprints], ignore_index=True)
+        # 指纹提取方式设置
+        if extract_mean == 0:
+            ble_fingerprints = generate_ble_fingerprintings_v1(
+                ble_data, pos=pos)
+            print(data_file)
+            ble_fingerprints_all = pd.concat(
+                [ble_fingerprints_all, ble_fingerprints], ignore_index=True)
+        if extract_mean == 1:
+            ble_fingerprints = generate_ble_fingerprintings_v2(
+                ble_data, pos=pos)
+            print(data_file)
+            ble_fingerprints_all = pd.concat(
+                [ble_fingerprints_all, ble_fingerprints], ignore_index=True)
     # return ble_fingerprints_all
     ble_fingerprints_all.to_csv(r'../Data/BLE_FINGERPRTING.txt')
     print('extract ble rssi fingerprintings from %s,stored in %s' %
@@ -271,7 +326,24 @@ def save_ble_fingerprint_to_mat(ble_data, matfile=r'../Data/ble_data_base.mat', 
     print('save to mat file %s' % (matfile))
 
 
-if __name__ == "__main__":
+def extract_ble_fingerprinting_run():
+    """运行指纹提取
+    -----
+    参数
+    None
+    -----
+    返回
+    None
+    """
+    # 1.从指定文件夹提取指纹并保存到文件中
     extract_fingerprinting_from_dirs()
+    # 2.从文件中提取指纹数据
+    data_temp = read_ble_fingerprinting_from_file()
+    # 3.将文件中提取的指纹数据保留为mat格式方便调用
+    save_ble_fingerprint_to_mat(data_temp)
+
+
+if __name__ == "__main__":
+    extract_fingerprinting_from_dirs(extract_mean=1)
     data_temp = read_ble_fingerprinting_from_file()
     save_ble_fingerprint_to_mat(data_temp)

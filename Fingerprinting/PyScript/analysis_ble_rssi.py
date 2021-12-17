@@ -106,15 +106,42 @@ for file in files:
     # plt.show()
 
 # %%%
+ble_data = get_valid_data(
+    r'../Data/BLE-FINGERPRING/5-2.txt', beacon_filter=['Beacon0', 'Beacon1', 'Beacon6', 'Beacon7'])
+beacon0_rssi = ble_data.loc[ble_data['NAME'] == 'Beacon0', 'RSSI']
+beacon1_rssi = ble_data.loc[ble_data['NAME'] == 'Beacon1', 'RSSI']
+beacon6_rssi = ble_data.loc[ble_data['NAME'] == 'Beacon6', 'RSSI']
+beacon7_rssi = ble_data.loc[ble_data['NAME'] == 'Beacon7', 'RSSI']
 fig = plt.figure()
-# plt.gray()  # show the filtered result in grayscale
-ax1 = fig.add_subplot(111)  # left side
+#
+ax0 = fig.add_subplot(221)  # left side
 result = gaussian_filter(list(beacon0_rssi), sigma=2)
-ax1.plot(list(beacon0_rssi), label='origin')
+ax0.plot(list(beacon0_rssi), label='origin')
+ax0.plot(result, label='gaussian filter')
+ax0.legend()
+ax0.set(title='beacon0')
+#
+ax1 = fig.add_subplot(222)  # left side
+result = gaussian_filter(list(beacon1_rssi), sigma=2)
+ax1.plot(list(beacon1_rssi), label='origin')
 ax1.plot(result, label='gaussian filter')
 ax1.legend()
+ax1.set(title='beacon1')
+ax2 = fig.add_subplot(223)  # left side
+#
+result = gaussian_filter(list(beacon6_rssi), sigma=2)
+ax2.plot(list(beacon6_rssi), label='origin')
+ax2.plot(result, label='gaussian filter')
+ax2.legend()
+ax2.set(title='beacon6')
+#
+ax3 = fig.add_subplot(224)  # left side
+result = gaussian_filter(list(beacon7_rssi), sigma=2)
+ax3.plot(list(beacon7_rssi), label='origin')
+ax3.plot(result, label='gaussian filter')
+ax3.legend()
+ax3.set(title='beacon7')
 plt.show()
-
 
 # %%%
 # Generate some data for this demonstration.
@@ -159,3 +186,27 @@ xmin, xmax = ax7.get_xlim()
 ax7.plot(np.linspace(xmin, xmax, 100), norm.pdf(
     np.linspace(xmin, xmax, 100), mu7, std7),  linewidth=2)
 plt.show()
+# %% 正态分布μ和样本平均值分析
+
+
+def mean_fit_analysis(data):
+    mu0, std0 = norm.fit(list(data))
+    fit_data = data[(data >= mu0-std0) & (data <= mu0+std0)]
+    ax = plt.figure().add_subplot()
+    ax.hist(list(fit_data), bins=10, density=False, alpha=0.6)
+    ax.hist(list(data), bins=10, density=False, alpha=0.6)
+    mean_1 = np.mean(list(fit_data))
+    mean_2 = np.mean(data)
+    print(mu0, mean_1, mean_2)
+
+
+# load data
+ble_data = get_valid_data(
+    r'../Data/BLE-FINGERPRING/5-2.txt', beacon_filter=['Beacon0', 'Beacon1', 'Beacon6', 'Beacon7'])
+beacon0_rssi = ble_data.loc[ble_data['NAME'] == 'Beacon0', 'RSSI']
+beacon1_rssi = ble_data.loc[ble_data['NAME'] == 'Beacon1', 'RSSI']
+beacon6_rssi = ble_data.loc[ble_data['NAME'] == 'Beacon6', 'RSSI']
+beacon7_rssi = ble_data.loc[ble_data['NAME'] == 'Beacon7', 'RSSI']
+mean_fit_analysis(beacon1_rssi)
+# print(mu0, mean_1, mean_2)
+# -54.25333333333333 -52.71111111111111 -54.25333333333333
