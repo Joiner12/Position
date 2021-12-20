@@ -136,5 +136,6 @@ dist_1 = utm_distance(beacon_latlon_1[0], beacon_latlon_1[1],
 print(dist_1)
 
 # %%
-test_value = {'Beacon1':[1,2,3,4,5]}
-values = np.array([ x for x in test_value.values()])
+fig = plt.figure()
+ax = fig.subplots()
+ax.plot(1, 1, linestyle='--')

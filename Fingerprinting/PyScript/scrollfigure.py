@@ -28,14 +28,14 @@ fig.canvas.mpl_connect('scroll_event', call_back)
 fig.canvas.mpl_connect('button_press_event', call_back)
 
 ax1 = plt.subplot(3, 1, 1)  # 截取幕布的一部分
-ax1.xaxis.set_major_formatter(plt.NullFormatter())  # 取消x轴坐标
+#ax1.xaxis.set_major_formatter(plt.NullFormatter())  # 取消x轴坐标
 x = np.linspace(-5, 5, 10)
 y = x ** 2 + 1
 plt.ylabel('first')
 plt.plot(x, y)
 plt.grid()
 ax2 = plt.subplot(3, 1, 2)
-ax2.xaxis.set_major_formatter(plt.NullFormatter())  # 取消x轴坐标
+#ax2.xaxis.set_major_formatter(plt.NullFormatter())  # 取消x轴坐标
 y1 = -x**2+1
 plt.plot(x, y1)
 

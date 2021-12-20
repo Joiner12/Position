@@ -5,9 +5,7 @@ Created on Tue Dec 14 17:04:17 2021
 @author: W-H
 """
 from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import mean_squared_error
 from sklearn.neighbors import KNeighborsRegressor
-from bledatabase import read_ble_fingerprinting_from_file
 from sklearn.model_selection import train_test_split
 import numpy as np
 from scipy import io
@@ -118,15 +116,34 @@ def ble_fingerprinting_knn(ble_data_point, true_lable=None, data_file=r'../Data/
     distances = np.linalg.norm(x_data - ble_data_point, axis=1)
     nearest_neighbor_ids = distances.argsort()[:n_neigherbors]
     nearest_neighbor_rings = y_data[nearest_neighbor_ids]
-    prediction = nearest_neighbor_rings.mean()
-    plt.scatter(nearest_neighbor_rings[:, 0], nearest_neighbor_rings[:, 1])
-    if not true_lable is None:
-        plt.plot(true_lable[0], true_lable[1], 'r*')
-    plt.show()
+    prediction = nearest_neighbor_rings.mean(axis=0)
+    show_figure_flag = False
+    try:
+        show_figure_flag = kwargs['show_figure']
+    except:
+        pass
+    if show_figure_flag:
+        fig_1 = plt.figure()
+        ax = fig_1.subplots()
+        # k-neighbors位置
+        for i in range(n_neigherbors):
+            ax.scatter(nearest_neighbor_rings[i, 0],
+                       nearest_neighbor_rings[i, 1])
+            ax.text(nearest_neighbor_rings[i, 0],
+                    nearest_neighbor_rings[i, 1], str(i))
+        # 匹配结果
+        ax.plot(prediction[0], prediction[1], marker='v')
+        ax.text(prediction[0], prediction[1], 'prediction pos')
+        # 真实位置
+        if not true_lable is None:
+            ax.plot(true_lable[0], true_lable[1], 'r*')
+            ax.text(true_lable[0], true_lable[1], 'true_pos')
+        plt.show()
     return prediction
 
 
 if __name__ == "__main__":
-    # ble_fingerprinting_find_best_n_neighbors(show_figure=True)
     test_point = np.array([-53., 0., -70., -68.])
-    y_pos = ble_fingerprinting_knn(test_point, [13, 0], n_neigherbors=3)
+    y_pos = ble_fingerprinting_knn(test_point, [13, 0],
+                                   data_file=r'../Data/ble_data_base_least.mat',
+                                   n_neigherbors=3, show_figure=True)

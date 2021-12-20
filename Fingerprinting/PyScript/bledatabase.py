@@ -221,7 +221,9 @@ def generate_ble_fingerprintings_v2(ble_data, pos: float = [0, 0], *args, **kwar
     return ble_fingerprints
 
 
-def extract_fingerprinting_from_dirs(src_folder='../Data/BLE-FINGERPRING/', extract_mean=0, * args, **kwargs):
+def extract_fingerprinting_from_dirs(src_folder='../Data/BLE-FINGERPRING/',
+                                     tar_data_file=r'../Data/BLE_FINGERPRTING.txt',
+                                     extract_mean=0, * args, **kwargs):
     ble_fingerprints_all = pd.DataFrame(columns=['RSSI_FG', 'POS'])
     """ 从指纹原始数据文件夹中提取所有的指纹数据,并输出为特定格式保存
     -----
@@ -230,6 +232,8 @@ def extract_fingerprinting_from_dirs(src_folder='../Data/BLE-FINGERPRING/', extr
         源数据文件夹路径
     extract_mean:int
         指纹提取方式选择,默认0表示使用V1,1表示使用V2
+    tar_data_file:str
+        提取数据保存文件路径+名字
     -----
     输出
     ble_fingerprints_all:DataFrame
@@ -273,9 +277,9 @@ def extract_fingerprinting_from_dirs(src_folder='../Data/BLE-FINGERPRING/', extr
             ble_fingerprints_all = pd.concat(
                 [ble_fingerprints_all, ble_fingerprints], ignore_index=True)
     # return ble_fingerprints_all
-    ble_fingerprints_all.to_csv(r'../Data/BLE_FINGERPRTING.txt')
+    ble_fingerprints_all.to_csv(tar_data_file)
     print('extract ble rssi fingerprintings from %s,stored in %s' %
-          (src_folder, r'../Data/BLE_FINGERPRTING.txt'))
+          (src_folder, tar_data_file))
 
 
 def read_ble_fingerprinting_from_file(datafile=r'../Data/BLE_FINGERPRTING.txt', *args, **kwargs):
@@ -326,7 +330,7 @@ def save_ble_fingerprint_to_mat(ble_data, matfile=r'../Data/ble_data_base.mat', 
     print('save to mat file %s' % (matfile))
 
 
-def extract_ble_fingerprinting_run():
+def extract_ble_fingerprinting_main():
     """运行指纹提取
     -----
     参数
@@ -335,15 +339,18 @@ def extract_ble_fingerprinting_run():
     返回
     None
     """
+    #
     # 1.从指定文件夹提取指纹并保存到文件中
-    extract_fingerprinting_from_dirs()
+    # BLE_FINGERPRTING_LEAST | BLE_FINGERPRTING_ MOST
+    extract_fingerprinting_from_dirs(
+        tar_data_file=r'../Data/BLE_FINGERPRTING_LEAST.txt', extract_mean=1)
     # 2.从文件中提取指纹数据
-    data_temp = read_ble_fingerprinting_from_file()
+    data_temp = read_ble_fingerprinting_from_file(
+        datafile=r'../Data/BLE_FINGERPRTING_LEAST.txt')
     # 3.将文件中提取的指纹数据保留为mat格式方便调用
-    save_ble_fingerprint_to_mat(data_temp)
+    save_ble_fingerprint_to_mat(
+        data_temp, matfile=r'../Data/ble_data_base_least.mat')
 
 
 if __name__ == "__main__":
-    extract_fingerprinting_from_dirs(extract_mean=1)
-    data_temp = read_ble_fingerprinting_from_file()
-    save_ble_fingerprint_to_mat(data_temp)
+    extract_ble_fingerprinting_main()
