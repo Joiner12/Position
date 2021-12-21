@@ -48,11 +48,12 @@ def prediction_err(predictions, labels, *args, **kwargs):
         标注结果
     -----
     输出
-    k:float
-        knn算法k
+    err:float
+        欧拉距离
+        
     """
     #
-    err = np.mean(np.sqrt(np.sum((predictions - labels)**2, 1)))
+    err = np.sqrt(np.sum((predictions - labels)**2))
     return err
 
 

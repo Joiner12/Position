@@ -18,7 +18,7 @@ import numpy as np
 from math import pow
 from bledatabase import get_valid_data
 import matplotlib.pyplot as plt
-
+import os
 
 # %%
 mpl.rcParams['font.sans-serif'] = ['STZhongsong']    # 指定默认字体：解决plot不能显示中文问题
@@ -136,6 +136,24 @@ dist_1 = utm_distance(beacon_latlon_1[0], beacon_latlon_1[1],
 print(dist_1)
 
 # %%
-fig = plt.figure()
-ax = fig.subplots()
-ax.plot(1, 1, linestyle='--')
+import re
+test_file = r'../Data/BLE-FINGERPRING/7-6.txt'
+file_name = os.path.splitext(os.path.split(test_file)[-1])[0]
+a = re.findall(r'\d{1,}',file_name)
+
+#%% 
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Fixing random state for reproducibility
+np.random.seed(19680801)
+
+
+N = 50
+x = np.random.rand(N)
+y = np.random.rand(N)
+colors = np.random.rand(N)
+area = (30 * np.random.rand(N))**2  # 0 to 15 point radii
+
+plt.scatter(x, y, s=area, c=colors, alpha=0.5)
+plt.show()

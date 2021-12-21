@@ -16,8 +16,12 @@ offline_data_location():
 """
 
 from bledatabase import get_valid_data
-# import pandas as pd
 import numpy as np
+from bleknn import ble_fingerprinting_knn, prediction_err
+import os
+import re
+import matplotlib.pyplot as plt
+import pandas as pd
 
 
 def init_dict(key_name, *args, **kwargs):
@@ -41,6 +45,37 @@ def init_dict(key_name, *args, **kwargs):
     return dict_inited
 
 
+def generate_roc_data(x, N=11, * args, **kwargs):
+    """根据输入获取roc统计特征值
+    参数
+    ----------
+    x:array_like
+        原始数据
+    N:float
+        分段系数
+    返回值
+    -------
+    y_roc:array_like
+    x_roc:array_like
+        roc数组
+    说明
+        ...
+    """
+    #
+    x_roc = np.linspace(0, max(x), N)
+    y_roc = np.zeros((1, N))
+    print('test line')
+    # debug line
+    for k in range(len(x_roc)):
+        thresholds = x_roc[k]
+        temp_x = list()
+        for j in x:
+            if j <= thresholds:
+                temp_x.append(j)
+        y_roc[k] = len(temp_x)/len(x)
+    return x_roc, y_roc
+
+
 def offline_data_location():
     """离线数据指纹定位
     参数
@@ -58,6 +93,8 @@ def offline_data_location():
     4.收集指定数据帧内的不同信标RSSI值,并整合为一条指纹[Beacon0_RSSI,Beacon1_RSSI,Beacon6_RSSI,Beacon7_RSSI];
     5.所有数据帧整合方式采用均值方式;
     """
+    # 指纹数据库
+    ble_fingerprinting_base = r'../Data/ble_data_base_least.mat'
     # 读取离线测试数据
     test_file = r'../Data/BLE-FINGERPRING/7-6.txt'
     beacon_filter = ['Beacon0', 'Beacon1', 'Beacon6', 'Beacon7']
@@ -65,9 +102,12 @@ def offline_data_location():
                               beacon_filter=beacon_filter)
     frame_num = ble_data['FRAMENUM'].max()
     # 帧间隔
-    frame_gap = 4
+    frame_gap = 3
     # 过程数据,存储不同beacon发射的RSSI(Array)
     process_data = init_dict(beacon_filter)
+    # 模拟每次运行定位误差
+    location_err = list()
+    prediction_all = pd.DataFrame(columns=['pos_x', 'pos_y'])
     # 当前指纹
     cur_fingerprinting = list()
     # 主循环
@@ -75,17 +115,72 @@ def offline_data_location():
         data_slice = ble_data[(ble_data['FRAMENUM'] >= frame_index)
                               & (ble_data['FRAMENUM'] < frame_index+frame_gap)]
         for beacon_name in beacon_filter:
-            process_data[beacon_name] = data_slice[
-                data_slice['NAME'] == beacon_name]['RSSI'].tolist()
+            fingerprinting_temp = \
+                data_slice[data_slice['NAME'] == beacon_name]['RSSI'].tolist()
+            if len(fingerprinting_temp) == 0:
+                process_data[beacon_name] = [0]
+            else:
+                process_data[beacon_name] = fingerprinting_temp
+        # 当前指纹结果
         cur_fingerprinting = np.array([np.mean(x)
                                       for x in process_data.values()])
+        true_lable = [0, 0]
+        # 根据数据文件名字设定真实位置标签
+        if True:
+            file_name = os.path.splitext(os.path.split(test_file)[-1])[0]
+            true_lable = re.findall(r'\d{1,}', file_name)
+            true_lable = [float(x) for x in true_lable]
+        # knn 指纹匹配
+        # def ble_fingerprinting_knn(ble_data_point, true_lable=None, data_file=r'../Data/ble_data_base.mat',
+        #                            n_neigherbors=9, *args, **kwargs):
+        prediction = ble_fingerprinting_knn(
+            cur_fingerprinting, true_lable, ble_fingerprinting_base, 3, show_figure=False)  # 指纹查找结果
+
+        # 定位误差
+        err = prediction_err(prediction,
+                             np.array(true_lable).reshape(prediction.shape))
+        print('Location Error Euclidean Distance: %.2f' % (err))
+        location_err.append(err)
+        # 定位结果
+        index_temp = len(prediction_all)  # 索引值
+        prediction_all.at[index_temp, 'pos_x'] = \
+            prediction.tolist()[0]
+        prediction_all.at[index_temp, 'pos_y'] = \
+            prediction.tolist()[1]
+
         # 重置过程数据
         process_data = init_dict(beacon_filter)
-        # todo:knn 指纹匹配
+
         # 重置指纹数据
-        cur_fingerprinting = list()
-        print(process_data)
+        cur_fingerprinting = list(tuple(prediction))
+        # print(process_data)
+
+    # 绘制图形
+    fig = plt.figure(num=1)
+    axs = fig.subplots(2, 2)
+    # 定位过程误差
+    axs[0][0].plot(np.linspace(1, len(location_err),
+                               len(location_err)), location_err, marker='*')
+    axs[0][0].set(xlabel='Serial/n', ylabel='Error/m',
+                  title='Fingerprintings Location Error\n'+'Frame Length:'+str(frame_gap))
+    # 最大误差
+    axs[0][0].plot([0, len(location_err)], [
+                   max(location_err), max(location_err)])
+    # 最小误差
+    axs[0][0].plot([0, len(location_err)], [
+                   min(location_err), min(location_err)])
+    # 定位结果分布
+    area = 10*np.array(location_err)**2
+    colors = location_err/max(location_err)
+    axs[1][0].scatter(prediction_all['pos_x'],
+                      prediction_all['pos_y'], s=area, c=colors, alpha=0.5)
+    axs[1][0].set(xlabel='grid-x/m', ylabel='grid-y/m', title='location pos')
+    # 真实位置
+    axs[1][0].text(true_lable[0], true_lable[1], 'true pos')
+    axs[1][0].plot(true_lable[0], true_lable[1], marker='^')
 
 
 if __name__ == "__main__":
-    offline_data_location()
+    # offline_data_location()
+    x = np.linspace(1, 10, 10)
+    x_roc, y_roc = generate_roc_data(x)
