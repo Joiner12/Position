@@ -50,7 +50,7 @@ def prediction_err(predictions, labels, *args, **kwargs):
     输出
     err:float
         欧拉距离
-        
+
     """
     #
     err = np.sqrt(np.sum((predictions - labels)**2))
@@ -92,7 +92,7 @@ def ble_fingerprinting_find_best_n_neighbors(data_file=r'../Data/ble_data_base.m
 
 
 def ble_fingerprinting_knn(ble_data_point, true_lable=None, data_file=r'../Data/ble_data_base.mat',
-                           n_neigherbors=9, *args, **kwargs):
+                           n_neigherbors=9, weights='distance', *args, **kwargs):
     """knn匹配蓝牙指纹
     -----
     参数
@@ -102,11 +102,16 @@ def ble_fingerprinting_knn(ble_data_point, true_lable=None, data_file=r'../Data/
         蓝牙指纹离线数据库mat文件
     n_neigherbors:float
         KNN临近点数
+    weights:str
+        knn权重方法设置,['uniform','distance','...']
+        'uniform'表示加权平均
+        'distance'表示欧拉距离
     -----
     输出
     prediction:array
         指纹库匹配结果
     """
+    #
     x_data, y_data = data_preprocessing(data_file)
     # todo:验证sklearn库
     if False:
@@ -117,7 +122,18 @@ def ble_fingerprinting_knn(ble_data_point, true_lable=None, data_file=r'../Data/
     distances = np.linalg.norm(x_data - ble_data_point, axis=1)
     nearest_neighbor_ids = distances.argsort()[:n_neigherbors]
     nearest_neighbor_rings = y_data[nearest_neighbor_ids]
-    prediction = nearest_neighbor_rings.mean(axis=0)
+    # wknn
+    if weights == 'uniform':  # 权重系数默认为1/k(uniform)
+        weights_cof = np.ones([1, n_neigherbors])
+        weights_cof = weights_cof/weights_cof.size
+        # prediction = nearest_neighbor_rings.mean(axis=0)
+    elif weights == 'other':
+        pass
+    else:  # 欧拉距离
+        weights_cof = 1/distances[nearest_neighbor_ids]
+    prediction = (weights_cof@nearest_neighbor_rings)/weights_cof.sum()
+    #
+    #
     show_figure_flag = False
     try:
         show_figure_flag = kwargs['show_figure']
@@ -147,4 +163,4 @@ if __name__ == "__main__":
     test_point = np.array([-53., 0., -70., -68.])
     y_pos = ble_fingerprinting_knn(test_point, [13, 0],
                                    data_file=r'../Data/ble_data_base_least.mat',
-                                   n_neigherbors=3, show_figure=True)
+                                   weights='uniform', n_neigherbors=3, show_figure=True)

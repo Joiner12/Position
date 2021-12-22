@@ -22,6 +22,7 @@ import os
 import re
 import matplotlib.pyplot as plt
 import pandas as pd
+from math import ceil
 
 
 def init_dict(key_name, *args, **kwargs):
@@ -45,7 +46,7 @@ def init_dict(key_name, *args, **kwargs):
     return dict_inited
 
 
-def generate_roc_data(x, N=11, * args, **kwargs):
+def generate_roc_data(x, N=21, * args, **kwargs):
     """根据输入获取roc统计特征值
     参数
     ----------
@@ -62,9 +63,8 @@ def generate_roc_data(x, N=11, * args, **kwargs):
         ...
     """
     #
-    x_roc = np.linspace(0, max(x), N)
-    y_roc = np.zeros((1, N))
-    print('test line')
+    x_roc = np.linspace(0, ceil(max(x)), N)
+    y_roc = np.zeros(N)
     # debug line
     for k in range(len(x_roc)):
         thresholds = x_roc[k]
@@ -102,7 +102,7 @@ def offline_data_location():
                               beacon_filter=beacon_filter)
     frame_num = ble_data['FRAMENUM'].max()
     # 帧间隔
-    frame_gap = 3
+    frame_gap = 10
     # 过程数据,存储不同beacon发射的RSSI(Array)
     process_data = init_dict(beacon_filter)
     # 模拟每次运行定位误差
@@ -147,7 +147,8 @@ def offline_data_location():
             prediction.tolist()[0]
         prediction_all.at[index_temp, 'pos_y'] = \
             prediction.tolist()[1]
-
+        # 定位结果统计误差
+        error_roc_x, error_roc_y = generate_roc_data(location_err)
         # 重置过程数据
         process_data = init_dict(beacon_filter)
 
@@ -157,30 +158,32 @@ def offline_data_location():
 
     # 绘制图形
     fig = plt.figure(num=1)
-    axs = fig.subplots(2, 2)
+    axs = fig.subplots(3, 1)
     # 定位过程误差
-    axs[0][0].plot(np.linspace(1, len(location_err),
-                               len(location_err)), location_err, marker='*')
-    axs[0][0].set(xlabel='Serial/n', ylabel='Error/m',
-                  title='Fingerprintings Location Error\n'+'Frame Length:'+str(frame_gap))
-    # 最大误差
-    axs[0][0].plot([0, len(location_err)], [
-                   max(location_err), max(location_err)])
-    # 最小误差
-    axs[0][0].plot([0, len(location_err)], [
-                   min(location_err), min(location_err)])
+    axs[0].plot(np.linspace(1, len(location_err),
+                            len(location_err)), location_err, marker='*')
+    axs[0].set(xlabel='Serial/n', ylabel='Error/m',
+               title='Fingerprintings Location Error\n'+'Frame Length:'+str(frame_gap))
+    # # 最大误差
+    # axs[0].plot([0, len(location_err)], [max(location_err), max(location_err)])
+    # # 最小误差
+    # axs[0].plot([0, len(location_err)], [
+    #     min(location_err), min(location_err)])
+    #
     # 定位结果分布
     area = 10*np.array(location_err)**2
     colors = location_err/max(location_err)
-    axs[1][0].scatter(prediction_all['pos_x'],
-                      prediction_all['pos_y'], s=area, c=colors, alpha=0.5)
-    axs[1][0].set(xlabel='grid-x/m', ylabel='grid-y/m', title='location pos')
+    axs[1].scatter(prediction_all['pos_x'],
+                   prediction_all['pos_y'], s=area, c=colors, alpha=0.5)
+    axs[1].set(xlabel='grid-x/m', ylabel='grid-y/m')
     # 真实位置
-    axs[1][0].text(true_lable[0], true_lable[1], 'true pos')
-    axs[1][0].plot(true_lable[0], true_lable[1], marker='^')
+    axs[1].text(true_lable[0], true_lable[1], 'true pos')
+    axs[1].plot(true_lable[0], true_lable[1], marker='^')
+    # 定位统计误差图
+    axs[2].plot(error_roc_x, error_roc_y, marker='o')
+    axs[2].set(xlabel='error/m', ylabel='prolibility/(%)')
+    # error_roc_x, error_roc_y = generate_roc_data(err)
 
 
 if __name__ == "__main__":
-    # offline_data_location()
-    x = np.linspace(1, 10, 10)
-    x_roc, y_roc = generate_roc_data(x)
+    offline_data_location()

@@ -5,6 +5,7 @@ Created on Tue Dec  7 22:17:58 2021
 @author: W-H
 """
 
+import re
 from scipy import io
 import math
 from pylab import mpl
@@ -136,14 +137,11 @@ dist_1 = utm_distance(beacon_latlon_1[0], beacon_latlon_1[1],
 print(dist_1)
 
 # %%
-import re
 test_file = r'../Data/BLE-FINGERPRING/7-6.txt'
 file_name = os.path.splitext(os.path.split(test_file)[-1])[0]
-a = re.findall(r'\d{1,}',file_name)
+a = re.findall(r'\d{1,}', file_name)
 
-#%% 
-import numpy as np
-import matplotlib.pyplot as plt
+# %%
 
 # Fixing random state for reproducibility
 np.random.seed(19680801)
@@ -157,3 +155,20 @@ area = (30 * np.random.rand(N))**2  # 0 to 15 point radii
 
 plt.scatter(x, y, s=area, c=colors, alpha=0.5)
 plt.show()
+# %%
+a1 = np.array([[1, 2, 3], [4, 5, 6]])
+b1 = np.array([1, 2, 3])
+a2 = np.array([1, 2, 3])
+b2 = np.array([1, 2, 3])
+a1 * b1  # 对应元素相乘
+a1 @ b1  # 　矩阵相乘
+a2 * b2  # 　对应元素相乘
+a2 @ b2  # 　矩阵相乘
+np.multiply(a1, b1) # 对应元素相乘
+np.multiply(a2, b2)  # 对应元素相乘
+# 矩阵相乘
+np.dot(a1, b1)
+np.dot(a2, b2)
+# 矩阵相乘
+np.matmul(a1, b1)
+np.matmul(a2, b2)
