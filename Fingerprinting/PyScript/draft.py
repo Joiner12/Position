@@ -164,7 +164,7 @@ a1 * b1  # 对应元素相乘
 a1 @ b1  # 　矩阵相乘
 a2 * b2  # 　对应元素相乘
 a2 @ b2  # 　矩阵相乘
-np.multiply(a1, b1) # 对应元素相乘
+np.multiply(a1, b1)  # 对应元素相乘
 np.multiply(a2, b2)  # 对应元素相乘
 # 矩阵相乘
 np.dot(a1, b1)
@@ -172,3 +172,9 @@ np.dot(a2, b2)
 # 矩阵相乘
 np.matmul(a1, b1)
 np.matmul(a2, b2)
+
+a = np.mat('1,2,3;4,5,6')
+# %%
+for j in range(1, 5, 1):
+    print(j)
+s = 1

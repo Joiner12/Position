@@ -46,7 +46,7 @@ for i = 1:1:file_num
 
     true_pos_temp = position{i}.true_pos;
     % debug block
-    save_process_pic = false;
+    save_process_pic = true;
 
     if save_process_pic
         % delete procession pictures

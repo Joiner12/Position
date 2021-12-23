@@ -17,7 +17,7 @@ beacon(5).lon = 104.0588892;
 beacon(6).name = 'Beacon0';
 beacon(6).lat = 30.5478767;
 beacon(6).lon = 104.0587312;
-
+%
 point(1).name = 'nt2';
 point(1).lat = 30.547967082230;
 point(1).lon = 104.058615154603;
@@ -74,102 +74,106 @@ point(18).lat = 30.547920742096;
 point(18).lon = 104.058846421151;
 %--------------------------------------------------------------------------
 % ÑÕÉ«±í
-c_perfect = [30, 219, 41]./255; % 5m , 95%
-c_good = [75, 172, 159]./255; % 5m , 68%
-c_bad = [227, 51, 28]./255 % 5m
-% 
+c_effect_level = [ ...
+            [0, 255, 11] ./ 255; ... % 5m , >=95 %
+            [165, 255, 0] ./ 255; ... % 7m , >=95 %
+            [248, 255, 0] ./ 255; ... % 5m , >=68 %
+            [255, 195, 0] ./ 255; ... % 7m , >=68 %
+            [255, 124, 0] ./ 255; ... % 5m , <68 %
+            [255, 56, 0] ./ 255; ... % 7m , <68 %
+            ];
+%
 test_point = struct();
 %
 test_point(1).lat = 30.54796708;
 test_point(1).lon = 104.05861515;
 test_point(1).name = 'P30';
-test_point(1).effect_color = c_perfect;
+test_point(1).effect_color = c_effect_level(1, :);
 %
 test_point(2).lat = 30.54799414;
 test_point(2).lon = 104.05861489;
 test_point(2).name = 'P31';
-test_point(2).effect_color = c_perfect;
+test_point(2).effect_color = c_effect_level(1, :);
 %
 test_point(3).lat = 30.54799344;
 test_point(3).lon = 104.05870869;
 test_point(3).name = 'P32';
-test_point(3).effect_color = c_good;
+test_point(3).effect_color = c_effect_level(2, :);
 %
 test_point(4).lat = 30.54799320;
 test_point(4).lon = 104.05873996;
 test_point(4).name = 'P33';
-test_point(4).effect_color = c_good;
+test_point(4).effect_color = c_effect_level(6, :);
 %
 test_point(5).lat = 30.54799297;
 test_point(5).lon = 104.05877122;
 test_point(5).name = 'P34';
-test_point(5).effect_color = c_perfect;
+test_point(5).effect_color = c_effect_level(1, :);
 %
 test_point(6).lat = 30.54799267;
 test_point(6).lon = 104.05881446;
 test_point(6).name = 'P35';
-test_point(6).effect_color = c_good;
+test_point(6).effect_color = c_effect_level(2, :);
 %
 test_point(7).lat = 30.54799289;
 test_point(7).lon = 104.05884573;
 test_point(7).name = 'P36';
-test_point(7).effect_color = c_bad;
+test_point(7).effect_color = c_effect_level(6, :);
 %
 test_point(8).lat = 30.54796584;
 test_point(8).lon = 104.05884599;
 test_point(8).name = 'P37';
-test_point(8).effect_color = c_good;
+test_point(8).effect_color = c_effect_level(2, :);
 %
 test_point(9).lat = 30.54796561;
 test_point(9).lon = 104.05881472;
 test_point(9).name = 'P38';
-test_point(9).effect_color = c_perfect;
+test_point(9).effect_color = c_effect_level(1, :);
 %
 test_point(10).lat = 30.54796591;
 test_point(10).lon = 104.05877148;
 test_point(10).name = 'P39';
-test_point(10).effect_color = c_bad;
+test_point(10).effect_color = c_effect_level(3, :);
 %
 test_point(11).lat = 30.54796615;
 test_point(11).lon = 104.05874022;
 test_point(11).name = 'P40';
-test_point(11).effect_color = c_bad;
+test_point(11).effect_color = c_effect_level(6, :);
 %
 test_point(12).lat = 30.54796638;
 test_point(12).lon = 104.05870895;
 test_point(12).name = 'P41';
-test_point(12).effect_color = c_bad;
+test_point(12).effect_color = c_effect_level(6, :);
 %
 test_point(13).lat = 30.54792074;
 test_point(13).lon = 104.05884642;
 test_point(13).name = 'P42';
-test_point(13).effect_color = c_bad;
+test_point(13).effect_color = c_effect_level(6, :);
 %
 test_point(14).lat = 30.54792052;
 test_point(14).lon = 104.05881516;
 test_point(14).name = 'P43';
-test_point(14).effect_color = c_good;
+test_point(14).effect_color = c_effect_level(1, :);
 %
 test_point(15).lat = 30.54792082;
 test_point(15).lon = 104.05877192;
 test_point(15).name = 'P44';
-test_point(15).effect_color = c_bad;
+test_point(15).effect_color = c_effect_level(6, :);
 %
 test_point(16).lat = 30.54792105;
 test_point(16).lon = 104.05874065;
 test_point(16).name = 'P45';
-test_point(16).effect_color = c_bad;
+test_point(16).effect_color = c_effect_level(6, :);
 %
 test_point(17).lat = 30.54792129;
 test_point(17).lon = 104.05870939;
 test_point(17).name = 'P46';
-test_point(17).effect_color = c_bad;
+test_point(17).effect_color = c_effect_level(2, :);
 %
 test_point(18).lat = 30.54792199;
 test_point(18).lon = 104.05861559;
 test_point(18).name = 'P47';
-test_point(18).effect_color = c_bad;
-
+test_point(18).effect_color = c_effect_level(4, :);
 
 tcf('sketch');
 figure('name', 'sketch', 'color', 'w');
