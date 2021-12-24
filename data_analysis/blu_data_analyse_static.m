@@ -1,4 +1,4 @@
-function blu_data_analyse_static()
+function different_ap = blu_data_analyse_static()
     %功能:静态数据分析。
     %详细描述:蓝牙接收器在固定位置扫描数据，本函数将扫描到的所有帧的数据按ap提取，
     %         并将每个ap在不同时间扫描到的rssi数据绘制在图中，可分析ap
@@ -11,7 +11,7 @@ function blu_data_analyse_static()
     %    比如需要筛选名字为Beacon0和Beacon1的ap信息,则函数为:
     %    ble_data_analyse_static('ap_name_filter',["Beacon0","Beacon1"])
     %输出:
-    %    ap_msg:提取出的各帧的信标数据,细胞数组,各个细胞表示各帧的信标数据
+    %    different_ap:提取出的各帧的信标数据,细胞数组,各个细胞表示各帧的信标数据
     %获取文件
     [file_name, path] = uigetfile('*.*');
     file = [path, file_name];
