@@ -142,7 +142,15 @@ ax3 = subplot(2, 2, 3);
 subplot_m(ax3, rssi8, 'Beacon8')
 ax4 = subplot(2, 2, 4);
 subplot_m(ax4, rssi9, 'Beacon9')
-
+%% -------------------------------------------------------------------------- %%
+%% Beacon 标准数据分析
+% ['D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\data\Beacon\','Beacon6-2m.txt']
+tcf('Beacon-data')
+f3 = figure('name', 'Beacon-data', 'color', 'w');
+ax1 = subplot(2, 1, 1);
+subplot_m(ax1, BeaconRSSI(4).rssi, 'Beacon 4m')
+ax2 = subplot(2, 1, 2);
+subplot_m(ax2, BeaconRSSI(10).rssi, 'Beacon 10m')
 %% -------------------------------------------------------------------------- %%
 %% 绘图函数-1
 function subplot_m(ax, rssi_data, title_pre)

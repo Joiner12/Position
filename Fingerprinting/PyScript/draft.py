@@ -178,3 +178,8 @@ a = np.mat('1,2,3;4,5,6')
 for j in range(1, 5, 1):
     print(j)
 s = 1
+#%% 
+from tqdm import tqdm
+import time
+for i in tqdm(range(10000)):
+    time.sleep(0.01)
