@@ -38,7 +38,18 @@ function ap = prev_dist_calc(ap, calctype, param)
 
                 % 使用分段拟合对数模型rssi-dist转换
             case 'redefined_model'
+                % 2021-12-28 16:34 Wh
+                %{
+                    说明:
+                    1.对数模型加入方差作为距离辅助判断;
+                    2.对多径效应下RSSI方差统计分析有如下结论:
+                        2.1 RSSI相同,距离越远方差越大.
+                    3.方差阈值设定为2.5,RSSI方差小于阈值,距离小于10m,则输出距离按照1.5倍速计算;
+                %}
                 ap(i).dist = calc_distance_based_on_rssi(ap(i));
+                if ap(i).std_rssi~=0 && ap(i).dist <= 10
+                    ap(i).dist = 1.5*ap(i).dist;
+                end
                 
             otherwise
                 error('选择的距离计算方式错误,没有%s的计算方式', type);

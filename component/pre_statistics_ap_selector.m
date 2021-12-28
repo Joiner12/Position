@@ -118,7 +118,7 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
     trilat_table.SELECT_WEIGHT = zeros(size(trilat_table, 1), 1); % ap输出权重
     % trilat_table.CALCDIST = zeros(size(trilat_table.RECVRSSI)); % 节点信号接收RSSI序列
     % trilat_table.MEANVAL = zeros(size(trilat_table, 1), 1); % RSSI均值
-    % trilat_table.VARVAL = zeros(size(trilat_table, 1), 1); % RSSI方差
+    trilat_table.STDVAL = zeros(size(trilat_table, 1), 1); % RSSI标准差
 
     for k = 1:size(trilat_table, 1)
         rssi_s = trilat_table.RECVRSSI(k, :);
@@ -127,6 +127,7 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
         trilat_table.CHARAC_ACT(k) = ceil(5 * length(valid_rssi) / length(rssi_s));
         trilat_table.CHARAC_MEAN(k) = mean(valid_rssi);
         trilat_table.CHARAC_VAR(k) = var(valid_rssi);
+        trilat_table.STDVAL(k) = std(valid_rssi);
     end
 
     % mean sort character
@@ -171,6 +172,7 @@ function [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame,
             trilateration_ap(valid_ap_cnt).mac = trilat_table.MAC(table_index);
             trilateration_ap(valid_ap_cnt).lat = trilat_table.LAT(table_index);
             trilateration_ap(valid_ap_cnt).lon = trilat_table.LON(table_index);
+            trilateration_ap(valid_ap_cnt).std_rssi = trilat_table.STDVAL(table_index);
             trilateration_ap(valid_ap_cnt).recv_rssi = trilat_table.RSSI(table_index);
             trilateration_ap(valid_ap_cnt).rssi_reference = trilat_table.RSSI_REF(table_index);
             % 选择活跃度最大的三个ap的RSSI的均值作为定位选择输出
