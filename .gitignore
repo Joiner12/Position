@@ -79,3 +79,4 @@ Doc/img/temp-location-1/
 # fingerprinting simulator
 Fingerprinting/Simulator/
 __pycache__/
+Fingerprinting/PyScript/draft.py
