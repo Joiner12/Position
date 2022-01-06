@@ -80,3 +80,5 @@ Doc/img/temp-location-1/
 Fingerprinting/Simulator/
 __pycache__/
 Fingerprinting/PyScript/draft.py
+Fingerprinting/PyScript/KNN/data/testDigits/
+Fingerprinting/PyScript/KNN/data/trainingDigits/

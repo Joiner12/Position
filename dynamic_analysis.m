@@ -1,4 +1,10 @@
 %% -------------------------------------------------------------------------- %%
+%% 验证knn算法
+clc;
+n_neigherbors = 9;
+test_fingerprinting = [-64, -54, -61, -61.2];
+grid_pos_prediction = ble_knn_classify(test_fingerprinting, n_neigherbors);
+%% -------------------------------------------------------------------------- %%
 %% 标准测试数据对比6m和9m RSSI均值基本相同 11m和12m RSSI基本相同
 clc;
 load(['D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\', ...
@@ -26,53 +32,53 @@ load(['D:\Code\BlueTooth\pos_bluetooth_matlab\attenuation_model\', ...
 disp('HLK')
 tcf('HLK');
 figure('name', 'HLK', 'color', 'w');
-subplot(4,2,1)
+subplot(4, 2, 1)
 % rssi基本相同索引
 %[7,14,15]
 plot(linspace(1, 18, 18), m_RSSI_HLK_1, ...
-    'marker', 'o', 'linewidth', 1.5)
+'marker', 'o', 'linewidth', 1.5)
 title('HLK 1')
-subplot(4,2,2)
+subplot(4, 2, 2)
 % rssi基本相同索引
 %[9,13]
 plot(linspace(1, 18, 18), m_RSSI_HLK_2, ...
-    'marker', 'o', 'linewidth', 1.5)
+'marker', 'o', 'linewidth', 1.5)
 title('HLK 2')
-subplot(4,2,3)
+subplot(4, 2, 3)
 % rssi基本相同索引
 %[3,14;7,13]
 plot(linspace(1, 18, 18), m_RSSI_HLK_3, ...
-    'marker', 'o', 'linewidth', 1.5)
-    title('HLK 3')
-subplot(4,2,4)
+'marker', 'o', 'linewidth', 1.5)
+title('HLK 3')
+subplot(4, 2, 4)
 % rssi基本相同索引
 %[5,10;7,16;4,14]
 plot(linspace(1, 18, 18), m_RSSI_HLK_4, ...
-    'marker', 'o', 'linewidth', 1.5)
+'marker', 'o', 'linewidth', 1.5)
 title('HLK 4')
-subplot(4,2,5)
+subplot(4, 2, 5)
 % rssi基本相同索引
 %[5,13;7,14;4,14]
 plot(linspace(1, 18, 18), m_RSSI_HLK_5, ...
-    'marker', 'o', 'linewidth', 1.5)
+'marker', 'o', 'linewidth', 1.5)
 title('HLK 5')
-subplot(4,2,6)
+subplot(4, 2, 6)
 % rssi基本相同索引
 %[3,8;5,14;7,13;10,16]
 plot(linspace(1, 18, 18), m_RSSI_HLK_6, ...
-    'marker', 'o', 'linewidth', 1.5)
+'marker', 'o', 'linewidth', 1.5)
 title('HLK 6')
-subplot(4,2,7)
+subplot(4, 2, 7)
 % rssi基本相同索引
 %[5,13;12,14;11,18]
 plot(linspace(1, 18, 18), m_RSSI_HLK_7, ...
-    'marker', 'o', 'linewidth', 1.5)
+'marker', 'o', 'linewidth', 1.5)
 title('HLK 7')
-subplot(4,2,8)
+subplot(4, 2, 8)
 % rssi基本相同索引
 %[8,13;7,15;10,15]
 plot(linspace(1, 18, 18), m_RSSI_HLK_8, ...
-    'marker', 'o', 'linewidth', 1.5)
+'marker', 'o', 'linewidth', 1.5)
 title('HLK 8')
 %%
 filter_index = [6, 9, 11, 12];
@@ -94,25 +100,25 @@ subplot_m(ax2, m_12, '12m')
 %[5,10;7,16;4,14]
 % HLK-1
 tcf('HLK-1')
-figure('name','HLK-1','color','w')
-ax1=subplot(2,1,1);
-subplot_m(ax1, std_rssi_one_HLK_8{1,7}.RSSI, 'hlk-8-7m')
-ax2=subplot(2,1,2);
-subplot_m(ax2, std_rssi_one_HLK_8{1,15}.RSSI, 'hlk-8-15m')
+figure('name', 'HLK-1', 'color', 'w')
+ax1 = subplot(2, 1, 1);
+subplot_m(ax1, std_rssi_one_HLK_8{1, 7}.RSSI, 'hlk-8-7m')
+ax2 = subplot(2, 1, 2);
+subplot_m(ax2, std_rssi_one_HLK_8{1, 15}.RSSI, 'hlk-8-15m')
 
 tcf('HLK-2')
-figure('name','HLK-2','color','w')
-ax1=subplot(2,1,1);
-subplot_m(ax1, std_rssi_one_HLK_8{1,8}.RSSI, 'hlk-8-8m')
-ax2=subplot(2,1,2);
-subplot_m(ax2, std_rssi_one_HLK_8{1,13}.RSSI, 'hlk-8-13m')
+figure('name', 'HLK-2', 'color', 'w')
+ax1 = subplot(2, 1, 1);
+subplot_m(ax1, std_rssi_one_HLK_8{1, 8}.RSSI, 'hlk-8-8m')
+ax2 = subplot(2, 1, 2);
+subplot_m(ax2, std_rssi_one_HLK_8{1, 13}.RSSI, 'hlk-8-13m')
 
 tcf('HLK-3')
-figure('name','HLK-3','color','w')
-ax1=subplot(2,1,1);
-subplot_m(ax1, std_rssi_one_HLK_8{1,10}.RSSI, 'hlk-8-10m')
-ax2=subplot(2,1,2);
-subplot_m(ax2, std_rssi_one_HLK_8{1,15}.RSSI, 'hlk-8-15m')
+figure('name', 'HLK-3', 'color', 'w')
+ax1 = subplot(2, 1, 1);
+subplot_m(ax1, std_rssi_one_HLK_8{1, 10}.RSSI, 'hlk-8-10m')
+ax2 = subplot(2, 1, 2);
+subplot_m(ax2, std_rssi_one_HLK_8{1, 15}.RSSI, 'hlk-8-15m')
 
 % figure('name','HLK-4','color','w')
 % ax1=subplot(2,1,1);
