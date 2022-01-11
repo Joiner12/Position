@@ -45,15 +45,66 @@ function grid_pos_prediction = ble_knn_classify(test_fingerprinting, n_neigherbo
         [length(ble_labels_train), 1]);
 
     % ble_labels_train = data_mat(:, 5:end); % 标签数据
-    % 3.KNN分类器
-    Mdl = fitcknn(ble_figureprinting_train, ble_labels_train, 'NumNeighbors', n_neigherbors);
+    if true
+        %% Kd-tree搜索分类—显示分类
+        % 3.Kd-Tree构造
+        Mdl = KDTreeSearcher(ble_figureprinting_train);
 
-    % 4.KNN预测分类
-    grid_pos_prediction = predict(Mdl, test_fingerprinting);
-    % 5.KNN预测结果处理
-    % {"x:1,y:0"}→[1,0]
-    grid_pos_prediction = grid_pos_prediction{1};
-    temp = regexp(string(grid_pos_prediction), '-\d|\d', 'match');
+        % 4.knnsearch预测分类
+        [n, d] = knnsearch(Mdl, test_fingerprinting, 'k', n_neigherbors);
+
+        % 5.KNN预测结果处理——k个邻居的平均值作为预测
+        % tabulate(ble_labels_train(n))
+        prediction_pos = cell(n_neigherbors, 1);
+
+        for j = 1:n_neigherbors
+            label_temp = ble_labels_train(n(j));
+            array_temp = str2array(label_temp);
+            prediction_pos{j} = array_temp;
+        end
+
+        prediction_pos = cell2mat(prediction_pos);
+        % [x,y]
+        grid_pos_prediction = mean(prediction_pos);
+        % 6.分类结果可视化
+        if false
+
+            tcf('kd-tree-search');
+            figure('name', 'kd-tree-search', 'color', 'w');
+            hold on
+            % base
+            scatter(data_mat(:, 5), data_mat(:, 6), 'filled');
+            % k近邻
+            line(prediction_pos(:, 1), prediction_pos(:, 2), 'color', 'g', 'marker', 'o', ...
+            'linestyle', 'none', 'markersize', 10);
+            % 预测结果
+            line(grid_pos_prediction(:, 1), grid_pos_prediction(:, 2), 'color', 'r', 'marker', 's', ...
+            'linestyle', 'none', 'markersize', 10);
+            % 真实位置
+            line(prediction_pos(1, 1), prediction_pos(1, 2), 'color', 'r', 'marker', '^', ...
+            'linestyle', 'none', 'markersize', 10);
+            axis equal;
+
+        end
+
+    else
+        %% 使用ClassificationKNN分类器—隐式
+        % 3.KNN分类器
+        Mdl = fitcknn(ble_figureprinting_train, ble_labels_train, 'NumNeighbors', n_neigherbors);
+
+        % 4.KNN预测分类
+        grid_pos_prediction = predict(Mdl, test_fingerprinting);
+        % 5.KNN预测结果处理
+        % {"x:1,y:0"}→[1,0]
+        grid_pos_prediction = str2array(grid_pos_prediction{1})
+    end
+
+end
+
+%% 使用正则表达式从字符串中提取数组
+% 比如{"x:1,y:0"}→[1,0]
+function array_str = str2array(str_in, varargin)
+    temp = regexp(string(str_in), '-\d|\d', 'match');
     % [x,y]
-    grid_pos_prediction = [str2double(temp(1)), str2double(temp(2))];
+    array_str = [str2double(temp(1)), str2double(temp(2))];
 end
