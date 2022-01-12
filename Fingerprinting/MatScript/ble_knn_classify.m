@@ -64,8 +64,14 @@ function grid_pos_prediction = ble_knn_classify(test_fingerprinting, n_neigherbo
         end
 
         prediction_pos = cell2mat(prediction_pos);
+
         % [x,y]
-        grid_pos_prediction = mean(prediction_pos);
+        if ~isequal(size(prediction_pos, 1), 1)
+            grid_pos_prediction = mean(prediction_pos);
+        else
+            grid_pos_prediction = prediction_pos;
+        end
+
         % 6.分类结果可视化
         if false
 
@@ -81,8 +87,19 @@ function grid_pos_prediction = ble_knn_classify(test_fingerprinting, n_neigherbo
             line(grid_pos_prediction(:, 1), grid_pos_prediction(:, 2), 'color', 'r', 'marker', 's', ...
             'linestyle', 'none', 'markersize', 10);
             % 真实位置
-            line(prediction_pos(1, 1), prediction_pos(1, 2), 'color', 'r', 'marker', '^', ...
-            'linestyle', 'none', 'markersize', 10);
+            if false
+                true_pos = prediction_pos(1, :);
+            else
+
+                if any(strcmpi(varargin, 'truepos'))
+                    true_pos = varargin{find(strcmpi(varargin, 'truepos')) + 1};
+                end
+
+            end
+
+            line(true_pos(1), true_pos(2), 'color', 'r', 'marker', '^', ...
+                'linestyle', 'none', 'markersize', 10);
+            legend('base', 'k-neighbors', 'prediction', 'real pos');
             axis equal;
 
         end

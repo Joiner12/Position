@@ -1,7 +1,30 @@
 %% 蓝牙指纹定位主函数
 %% -------------------------------------------------------------------------- %%
-%% knnsearch对象准确性验证
+%% 验证knn算法
+clc;
+n_neigherbors = 9;
+% [-60	-56	-59	-65],[7,6]
+test_fingerprinting = [-60	-56	-59	-65];
+grid_pos_prediction = ble_knn_classify(test_fingerprinting, n_neigherbors, 'truepos', [7, 6]);
+pdist2(grid_pos_prediction, [7, 6], 'euclidean')
 %% -------------------------------------------------------------------------- %%
+%% 验证k和预测偏差的关系
+prediction_dist = zeros(0);
+
+for k = 1:20
+    n_neigherbors = k;
+    % [-60	-56	-59	-65],[7,6]
+    test_fingerprinting = [-60	-56	-59	-65];
+    grid_pos_prediction = ble_knn_classify(test_fingerprinting, n_neigherbors, 'truepos', [7, 6]);
+    prediction_dist(k) = pdist2(grid_pos_prediction, [7, 6], 'euclidean');
+end
+
+figure()
+plot(prediction_dist)
+set(get(gca, 'XLabel'), 'String', 'k');
+set(get(gca, 'YLabel'), 'String', 'euclidean dist');
+%% -------------------------------------------------------------------------- %%
+%% knnsearch对象准确性验证
 % 导入指纹数据
 if false
     load(['D:\Code\BlueTooth\pos_bluetooth_matlab\Fingerprinting\Data\', ...
@@ -43,4 +66,18 @@ for k = 1:20
     rng(10); % For reproducibility
     CVMdl = crossval(Mdl, 'KFold', 5);
     kloss = kfoldLoss(CVMdl);
+end
+
+%% -------------------------------------------------------------------------- %%
+%% 匿名函数绘图
+clc;
+
+f_gaussian = @(x, a, b, c)(a * exp((-0.5 .* (x - b).^2) / c^2));
+x_gaussian = -45:0.5:55;
+y_gaussian = f_gaussian(x_gaussian, 1, 5, 10);
+
+plot(x_gaussian, y_gaussian, 'Linewidth', 2)
+
+function weight_value = gaussian_weight(dist, a, b, c)
+    weight_value = a * exp((-0.5 .* (dist - b).^2) / c^2)
 end
