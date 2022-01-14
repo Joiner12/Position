@@ -32,12 +32,12 @@ files_data = init_rssi_reference(files_data, -50.06763);
 % 提取各文件的信标数据及真值
 [file_ap_msg, files_true_pos] = extract_files_apmsg_truepos(files_data, -10000);
 
-disp('数据初始化成功');
 file_num = length(files_data);
 position = cell(file_num, 1);
 filter_points = cell(file_num, 1);
 debug = cell(file_num, 1);
-% return;
+disp('数据初始化成功');
+%%
 % 逐个文件处理
 for i = 1:1:file_num
     t_main = tic();

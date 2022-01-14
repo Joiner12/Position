@@ -1,4 +1,5 @@
-function grid_pos_prediction = ble_knn_classify(test_fingerprinting, n_neigherbors, varargin)
+function prediciton_pos = ble_knn_classify(test_fingerprinting, n_neigherbors, ...
+        weight_select, varargin)
     % 蓝牙指纹匹配函数
     % 说明:
     %   1.蓝牙指纹特征数据及对应的网格坐标存储在本地,
@@ -8,8 +9,9 @@ function grid_pos_prediction = ble_knn_classify(test_fingerprinting, n_neigherbo
     % 参数:
     %   test_fingerprinting:待匹配蓝牙指纹数据
     %   n_neigherbors:k值
+    %   weight_select:权重系数选项,包括:'uniform'(均值),'gaussian'(高斯),'reverse_distance'(距离倒数)
     % 输出:
-    %   grid_pos_prediction:KNN分类的网格坐标
+    %   prediciton_pos:KNN分类的网格坐标
     %%
     % 1.加载预先处理好的特征数据和标签
     % 数据格式说明:
@@ -55,22 +57,22 @@ function grid_pos_prediction = ble_knn_classify(test_fingerprinting, n_neigherbo
 
         % 5.KNN预测结果处理——k个邻居的平均值作为预测
         % tabulate(ble_labels_train(n))
-        prediction_pos = cell(n_neigherbors, 1);
+        neighbor_pos = cell(n_neigherbors, 1);
 
         for j = 1:n_neigherbors
             label_temp = ble_labels_train(n(j));
             array_temp = str2array(label_temp);
-            prediction_pos{j} = array_temp;
+            neighbor_pos{j} = array_temp;
         end
 
-        prediction_pos = cell2mat(prediction_pos);
+        neighbor_pos = cell2mat(neighbor_pos);
 
+        % 加权
+        weights_cof = get_weights(d, weight_select, n_neigherbors);
+        weights_cof = reshape(weights_cof, [1, n_neigherbors]);
         % [x,y]
-        if ~isequal(size(prediction_pos, 1), 1)
-            grid_pos_prediction = mean(prediction_pos);
-        else
-            grid_pos_prediction = prediction_pos;
-        end
+        neighbor_pos_temp = reshape(neighbor_pos, [n_neigherbors, 2]);
+        prediciton_pos = weights_cof * neighbor_pos / sum(weights_cof);
 
         % 6.分类结果可视化
         if false
@@ -81,14 +83,14 @@ function grid_pos_prediction = ble_knn_classify(test_fingerprinting, n_neigherbo
             % base
             scatter(data_mat(:, 5), data_mat(:, 6), 'filled');
             % k近邻
-            line(prediction_pos(:, 1), prediction_pos(:, 2), 'color', 'g', 'marker', 'o', ...
+            line(neighbor_pos(:, 1), neighbor_pos(:, 2), 'color', 'g', 'marker', 'o', ...
             'linestyle', 'none', 'markersize', 10);
             % 预测结果
-            line(grid_pos_prediction(:, 1), grid_pos_prediction(:, 2), 'color', 'r', 'marker', 's', ...
+            line(prediciton_pos(:, 1), prediciton_pos(:, 2), 'color', 'r', 'marker', 's', ...
             'linestyle', 'none', 'markersize', 10);
             % 真实位置
             if false
-                true_pos = prediction_pos(1, :);
+                true_pos = neighbor_pos(1, :);
             else
 
                 if any(strcmpi(varargin, 'truepos'))
@@ -110,10 +112,10 @@ function grid_pos_prediction = ble_knn_classify(test_fingerprinting, n_neigherbo
         Mdl = fitcknn(ble_figureprinting_train, ble_labels_train, 'NumNeighbors', n_neigherbors);
 
         % 4.KNN预测分类
-        grid_pos_prediction = predict(Mdl, test_fingerprinting);
+        prediciton_pos = predict(Mdl, test_fingerprinting);
         % 5.KNN预测结果处理
         % {"x:1,y:0"}→[1,0]
-        grid_pos_prediction = str2array(grid_pos_prediction{1})
+        prediciton_pos = str2array(prediciton_pos{1})
     end
 
 end
@@ -124,4 +126,29 @@ function array_str = str2array(str_in, varargin)
     temp = regexp(string(str_in), '-\d|\d', 'match');
     % [x,y]
     array_str = [str2double(temp(1)), str2double(temp(2))];
+end
+
+%% 权重函数
+function weights_cof = get_weights(dist, weight_select, n_neigherbors, varargin)
+    % weights_cof = np.ones([1, n_neigherbors])
+    weights_cof = ones(1, n_neigherbors);
+    % 相同权重
+    if strcmpi(weight_select, 'uniform')
+        weights_cof = 1 ./ weights_cof;
+    end
+
+    % 高斯权重
+    if strcmpi(weight_select, 'gaussian')
+        % 高斯函数,a:曲线的高度,b:曲线中心线在x轴的偏移,c:半峰宽度(函数峰值一半处相距的宽度)
+        gaussian_f = @(x, a, b, c)(a * exp((-0.5 .* (x - b).^2) / c^2));
+        weights_cof = gaussian_f(dist, 1, 0, 4);
+    end
+
+    % 距离反比
+    if strcmpi(weight_select, 'reverse_distance')
+        % 避免/0
+        off_side = 0.5;
+        weights_cof = 1 ./ (dist + off_side);
+    end
+
 end

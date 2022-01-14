@@ -93,7 +93,7 @@ def offline_data_location():
     5.所有数据帧整合方式采用均值方式;
     """
     # 指纹数据库
-    ble_fingerprinting_base = r'../Data/ble_data_base_least.mat'
+    ble_fingerprinting_base = r'../Data/ble_data_base_least_completion.mat'
     # 读取离线测试数据
     test_file = r'../Data/BLE-FINGERPRING/7-6.txt'
     beacon_filter = ['Beacon0', 'Beacon1', 'Beacon6', 'Beacon7']
@@ -212,16 +212,26 @@ def single_point_test():
     cur_fingerprinting = np.array([-60, -56, -59, -65])
     # 指纹数据库
     ble_fingerprinting_base = r'../Data/ble_data_base_least.mat'
-    weights_s = ['gaussian', 'uniform', 'other']
-    prediction = ble_fingerprinting_knn(cur_fingerprinting,
-                                        true_lable,
-                                        ble_fingerprinting_base,
-                                        3,
-                                        weights=weights_s[-1],
-                                        show_figure=False)  # 指纹查找结果
-    print(prediction)
+    weights_s = ['gaussian', 'uniform', 'reverse_distance']
+    prediction_err = list()
+    for k in range(3, 21, 1):
+        prediction = ble_fingerprinting_knn(cur_fingerprinting,
+                                            true_lable,
+                                            ble_fingerprinting_base,
+                                            k,
+                                            weights=weights_s[-1],
+                                            show_figure=False)  # 指纹查找结果
+        err_temp = np.linalg.norm(true_lable - np.array(prediction))
+        prediction_err.append(err_temp)
+
+    f1 = plt.figure()
+    ax1 = f1.subplots()
+    ax1.plot([x for x in range(3, 21, 1)], prediction_err)
 
 
 if __name__ == "__main__":
-    offline_data_location()
-    # single_point_test()
+    print('__main__')
+    if False:
+        offline_data_location()
+    if True:
+        single_point_test()

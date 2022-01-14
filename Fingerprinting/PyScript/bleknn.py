@@ -135,15 +135,17 @@ def ble_fingerprinting_knn(ble_data_point,
     nearest_neighbor_rings = y_data[nearest_neighbor_ids]
     # wknn
     weights_cof = np.ones([1, n_neigherbors])
-    if weights == 'uniform':  # 权重系数默认为1/k(uniform)
+    if weights == 'uniform':  # 均值1/k(uniform)
         weights_cof = 1 / np.ones(weights_cof.size)
     elif weights == 'gaussian':  # 高斯权重
         weights_cof = gaussian_weight(distances[nearest_neighbor_ids], 1, 0, 4)
-    else:
+    elif weights == 'reverse_distance':
         # 距离反比权重
         # 添加偏置量解决:RuntimeWarning: invalid value encountered in true_divide
         off_side = 0.5
         weights_cof = 1 / (distances[nearest_neighbor_ids] + off_side)
+    else:
+        pass
     prediction = (weights_cof @ nearest_neighbor_rings) / weights_cof.sum()
     #
     #

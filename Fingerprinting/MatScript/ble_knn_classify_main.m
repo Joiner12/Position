@@ -78,6 +78,29 @@ y_gaussian = f_gaussian(x_gaussian, 1, 5, 10);
 
 plot(x_gaussian, y_gaussian, 'Linewidth', 2)
 
+%% -------------------------------------------------------------------------- %%
+%% test class
+org_data = [1; 2; 4; 5];
+data_in = 1;
+org_data = append_data(org_data, data_in);
+data_in = [2, 4];
+org_data = append_data(org_data, data_in);
+
+function data_appened = append_data(org_data, data_in, varargin)
+    data_appened = org_data;
+    in_data_len = length(data_in);
+    org_data_len = length(org_data);
+
+    if in_data_len > 1
+        data_appened(org_data_len + 1:org_data_len + in_data_len) = reshape(data_in, [in_data_len, 1]);
+    elseif in_data_len == 1
+        data_appened(org_data_len + 1) = data_in;
+    else
+
+    end
+
+end
+
 function weight_value = gaussian_weight(dist, a, b, c)
     weight_value = a * exp((-0.5 .* (dist - b).^2) / c^2)
 end
