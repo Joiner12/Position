@@ -24,7 +24,8 @@ clc;
 tcf;
 clear;
 system_config = sys_config(); % 读取配置文件
-[files_data, test_file_name] = data_import();
+[files_data, test_file_name] = data_import('datafile', ...
+'D:\Code\BlueTooth\pos_bluetooth_matlab\data\data_beacon_100ms_6_15米-rename\P30.txt');
 
 % 初始化1米处rssi值(实际工程中由蓝牙信标广播出来)
 files_data = init_rssi_reference(files_data, -50.06763);
@@ -37,7 +38,7 @@ position = cell(file_num, 1);
 filter_points = cell(file_num, 1);
 debug = cell(file_num, 1);
 disp('数据初始化成功');
-%%
+
 % 逐个文件处理
 for i = 1:1:file_num
     t_main = tic();
@@ -59,7 +60,7 @@ for i = 1:1:file_num
     filter_points{i} = debug{i}.centroid;
 
     % 静态分析
-    if true
+    if false
         draw_type = 'splashes';
         %获取环境特征
         env_feat = tencent_lib_environment();

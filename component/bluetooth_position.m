@@ -27,7 +27,9 @@ function [position, debug_param] = bluetooth_position(data, varargin)
     %% apselector 初始化
     ap_selector = init_ap_selector(21);
     gif_cnt = 1;
-
+    %% 指纹定位初始化
+    frame_gap = 5; %指纹定位帧间隔
+    ble_fgpt = bluetooth_fingerprinting(frame_gap);
     % 逐帧处理
     for i = 1:frame_num
         %% 定位前预处理
@@ -40,17 +42,17 @@ function [position, debug_param] = bluetooth_position(data, varargin)
 
         %整合相同的ap数据
         cur_frame_ap = prev_data_redcution_integrate_same_ap(cur_frame_ap, ...
-            config.integrate_same_ap_param);
+        config.integrate_same_ap_param);
 
         % 对ap接收到的原始RSSI进行滤波处理——滑动滤波
         cur_frame_ap = prev_data_reduction_rssi_fit(cur_frame_ap, ...
-            config.rssi_fit_type, ...
+        config.rssi_fit_type, ...
             config.rssi_fit_param);
 
         if rssi_fit_flag
             %rssi滤波（后续只会用到卡尔曼滤波后结果rssi_kf，高斯及平滑结果仅用于数据分析）
             [cur_frame_ap, ap_buf] = prev_rssi_filter(cur_frame_ap, ...
-                ap_buf, ...
+            ap_buf, ...
                 config.rssi_filter_param);
 
             for j = 1:length(cur_frame_ap)
@@ -66,6 +68,9 @@ function [position, debug_param] = bluetooth_position(data, varargin)
         end
 
         [trilateration_ap, ap_selector] = pre_statistics_ap_selector(cur_frame_ap, ap_selector);
+        % 更新指纹定位数据缓存
+        ble_fgpt.update_frame_data(cur_frame_ap);
+
         %% 次级选择器——奇异值问题
         if true
             trilateration_ap = secondary_selector(trilateration_ap, 'singularvalue');
@@ -73,14 +78,16 @@ function [position, debug_param] = bluetooth_position(data, varargin)
 
         %% 对数模型:RSSI转换为距离
         cur_frame_ap = prev_dist_calc(trilateration_ap, ...
-            config.dist_calc_type, ...
+        config.dist_calc_type, ...
             config.dist_calc_param);
 
         debug_param.ap_final_dist_calc{i} = cur_frame_ap;
 
         %% 三边定位,pos_res = [x,y]
         [pos_res, ~] = trilateration_calc(cur_frame_ap);
-
+        %% 指纹定位
+        relative_pos_fgpt = ble_fgpt.knn_prediction();
+        fprintf('fgpt_pos:%.3f,%.3f\n', relative_pos_fgpt(1), relative_pos_fgpt(2));
         %% 定位后处理-范围滤波
         if true
             pos_res = final_scope_filter(pos_res, ...
@@ -115,11 +122,12 @@ function [position, debug_param] = bluetooth_position(data, varargin)
 
             % pause(0.01); % save failed
             png_file = fullfile('D:\Code\BlueTooth\pos_bluetooth_matlab\Doc\img\temp-location-1', ...
-                strcat('location-temp', num2str(gif_cnt), '.png'));
+            strcat('location-temp', num2str(gif_cnt), '.png'));
             draw_positioning_state('static', cur_frame_ap, 'estimated_positon', ...
                 [pos_res.lat, pos_res.lon], ...
                 'true_pos', [true_pos.lat, true_pos.lon], 'target_pic', png_file, ...
-                'visible', false, 'save_figure', save_process_pic);
+                'visible', false, 'save_figure', save_process_pic, ...
+                'fingerprinting_pos', relative_pos_fgpt);
 
         end
 

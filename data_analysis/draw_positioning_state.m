@@ -93,9 +93,16 @@ function f1 = draw_positioning_state(drawmode, data, varargin)
 
     end
 
+    % 'fingerprinting_pos':指纹定位结果(x,y)
+    if any(strcmp(varargin, 'fingerprinting_pos'))
+        vartemp = varargin{find(strcmp(varargin, 'fingerprinting_pos')) + 1};
+        plot(vartemp(1), vartemp(2), 'bs');
+        text(vartemp(1), vartemp(2), '指纹位置');
+    end
+
     % 动态参考轨迹
     % rectangle('Position', [0.8, 8, 30, 5], ...
-        %     'edgecolor', 'g', 'curvature', 0.1);
+    %     'edgecolor', 'g', 'curvature', 0.1);
     % line([2, 23], [10, 10], 'Color', 'r', 'LineWidth', 1.8)
     % line([23, 23], [3, 10], 'Color', 'r', 'LineWidth', 1.8)
     % line([2, 2], [1, 10], 'Color', 'r', 'LineWidth', 1.8)
@@ -113,7 +120,7 @@ function f1 = draw_positioning_state(drawmode, data, varargin)
             for ii = 1:1:length(cur_ap)
                 ap_temp = cur_ap(ii);
                 % cur_color = rand(1, 3);
-                cur_color = [231, 184, 98]./255;
+                cur_color = [231, 184, 98] ./ 255;
                 [c_x, c_y, ~] = latlon_to_xy(ap_temp.lat, ap_temp.lon);
                 c_x = c_x - ref_point_xy(1);
                 c_y = c_y - ref_point_xy(2);

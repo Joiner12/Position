@@ -40,7 +40,7 @@ classdef bluetooth_fingerprinting < handle
             obj.frame_buffer{end, :} = cur_frame_data;
             obj.frame_buffer(1:obj.frame_buffer_size - 1, :) = date_temp;
             % 更新指纹数据
-            obj.build_fingerprinting_info()
+            obj.build_fingerprinting_info();
         end
 
     end
@@ -136,13 +136,21 @@ classdef bluetooth_fingerprinting < handle
     %   指纹数据中的相对坐标的坐标原点是:Beacon1,坐标[30.5478754, 104.0585674];
     methods (Access = public)
 
-        function [relat_pos, obj] = knn_prediction(obj, varargin)
+        function [relative_pos, obj] = knn_prediction(obj, varargin)
             % fprintf('lalala\n');
             % knn参数设置
             n_neigherbors = 3;
             test_fingerprinting = obj.buffer_fingerprints;
             weight_select = "reverse_distance";
-            relat_pos = ble_knn_classify(test_fingerprinting, n_neigherbors, weight_select);
+            % 异常处理Nan
+            % 1.方式1:如果数组中有NaN元素,则relative_pos返回缺省值[-100,-100]
+            % 2.方式2:将NaN元素替换为较小的一个RSSI值,RSSI_SMALL=-80dBm
+            if any(isnan(test_fingerprinting))
+                test_fingerprinting(isnan(test_fingerprinting)) = -80;
+            end
+
+            relative_pos = ble_knn_classify(test_fingerprinting, n_neigherbors, weight_select);
+
         end
 
     end

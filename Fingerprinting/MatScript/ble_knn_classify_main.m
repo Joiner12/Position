@@ -101,6 +101,27 @@ function data_appened = append_data(org_data, data_in, varargin)
 
 end
 
+beacon = hlk_beacon_location();
+beacon0 = beacon(10);
+beacon1 = beacon(2);
+beacon6 = beacon(6);
+beacon7 = beacon(7);
+[bx0, by0, lam0] = latlon_to_xy(beacon0.lat, beacon0.lon);
+[bx1, by1, ~] = latlon_to_xy(beacon1.lat, beacon1.lon);
+[bx6, by6, ~] = latlon_to_xy(beacon6.lat, beacon6.lon);
+[x7, y7, ~] = latlon_to_xy(beacon7.lat, beacon7.lon);
+% 0-0.txt
+x_y_0_0 = [bx1, by1];
+[lat_0_0, lon_0_0] = xy_to_latlon(bx1, by1, lam0)
+% 7-10.txt
+x_y_7_10 = [bx1 + 7, by1 + 10];
+figure()
+hold on
+scatter([bx0, bx1, bx6], [by0, bx1, bx6], 'Marker', 's')
+text([bx0, bx1, bx6], [by0, bx1, bx6], {'0', '1', '6'});
+
+scatter(x_y_7_10(1), x_y_7_10(2))
+
 function weight_value = gaussian_weight(dist, a, b, c)
     weight_value = a * exp((-0.5 .* (dist - b).^2) / c^2)
 end
